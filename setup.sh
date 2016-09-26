@@ -3,8 +3,6 @@
 # Get correct pip
 THIS_PIP="$(which pip)"
 
-echo $THIS_PIP
-
 # Install/upgrade requirements from requirements file
 $THIS_PIP install --upgrade -r requirements.txt
 
