@@ -1,0 +1,24 @@
+# Setting indicates that we ALWAYS run all the steps
+force: true
+
+# The phrase we're trying to estimate
+phrase: HEI
+
+# Settings for text
+text:
+    font: arial-mono
+    size: 35
+
+# Settings for the canvas we write on (should be irrelevant)
+canvas:
+    width: 1000
+    height: 200
+
+# List of characters to include in our dataset (the phrase CAN NOT use characters that are not defined here). Separate
+# each character with a comma with no ending comma present
+characters: A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z
+
+# The signature stuff
+signature:
+    height: 1
+    level: 14

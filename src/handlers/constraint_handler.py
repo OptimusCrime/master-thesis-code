@@ -1,8 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from src.utilities.filesystem import Filesystem
+from src.utilities.pickler import pickle_data
 
-class CenteringHandler:
+import numpy as np
+
+
+class ConstraintHandler:
 
     def __init__(self):
         self.constraints = {
@@ -23,6 +28,26 @@ class CenteringHandler:
                 'letter': None
             }
         }
+
+
+    def save(self):
+        clean_constraint = {
+            'top': self.constraints['top']['value'],
+            'bottom': self.constraints['bottom']['value']
+        }
+
+        pickle_data(clean_constraint, Filesystem.get_root_path('dump/data/constraints.pickl'))
+
+    def combine(self, old_constraint):
+        self.constraints['top']['value'] = old_constraint['top']
+        self.constraints['bottom']['value'] = old_constraint['bottom']
+
+    def transform_and_apply(self, image, character):
+        # Transform image into numpy matrix
+        arr = np.fromiter(list(image.getdata()), dtype="int").reshape((-1, image.width))
+
+        # We just call our centering handler, because we need to do the same later
+        self.apply(arr, character)
 
     def apply(self, arr, key):
         height = len(arr)

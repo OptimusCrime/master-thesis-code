@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from src.handlers.centering_handler import CenteringHandler
+from src.handlers.constraint_handler import CenteringHandler
 from src.handlers.text_handler import TextCreator
 from src.utilities.filesystem import Filesystem
 

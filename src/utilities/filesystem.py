@@ -4,6 +4,7 @@
 import inspect
 import os
 
+
 class Filesystem:
 
     def __init__(self):
@@ -19,6 +20,11 @@ class Filesystem:
         return os.path.dirname(utilities_path)
 
     @staticmethod
-    def get_root_path():
+    def get_root_path(file):
         # The root directory is the parent of the source directory
-        return os.path.dirname(Filesystem.get_source_path())
+        dir = os.path.dirname(Filesystem.get_source_path())
+
+        if file is None:
+            return dir
+
+        return os.path.join(dir, file)
