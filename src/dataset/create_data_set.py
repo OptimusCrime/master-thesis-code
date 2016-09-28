@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from utilities.filesystem import Filesystem
-from utilities.pickler import pickle_data
+from src.utilities.filesystem import Filesystem
+from src.utilities.pickler import pickle_data
 
 from PIL import Image
 
@@ -49,7 +49,7 @@ class CreateDataSet:
 
     @staticmethod
     def adjust_image(image, signature_level, signature_height):
-        # First adjust according to signature
+        # First adjust according to dataset
         signature_image = image['object'].crop((0, signature_level, image['object'].width,
                                                 signature_level + signature_height))
 

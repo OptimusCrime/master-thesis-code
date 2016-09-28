@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from utilities.filesystem import Filesystem
+from src.utilities.filesystem import Filesystem
 
 from PIL import Image
 
@@ -52,10 +52,10 @@ class SignatureGenerator:
 
     @staticmethod
     def create_signatures(image):
-        # Save the entire signature first
+        # Save the entire dataset first
         image.save(Filesystem.get_root_path() + '/dump/signatures/complete.png')
 
-        # Now loop the image one signature level at the time
+        # Now loop the image one data set level at the time
         for i in range(SignatureGenerator.SIGNATURE_SIZE[1]):
             SignatureGenerator.create_signature(image, i)
 
