@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from utilities.filesystem import Filesystem
+
 import numpy as np
 
 from PIL import Image
@@ -57,7 +59,7 @@ class LetterCentering:
             img = Image.new('1', LetterCentering.IMAGE_SIZE, 1)
             draw = ImageDraw.Draw(img)
 
-            font_object = ImageFont.truetype('fonts/' + font + '.ttf', 35)
+            font_object = ImageFont.truetype(Filesystem.get_root_path() + '/fonts/' + font + '.ttf', 35)
             draw.text((0, 0), letter, font=font_object, fill=0)
 
             LetterCentering.calculate_constraint_for_letter(letter, img)
@@ -106,7 +108,7 @@ class LetterCentering:
     def center_images(images, constraints):
         for image in images:
             image['object'] = image['object'].crop(constraints)
-            image['object'].save('dump/letters/' + image['letter'] + '.png')
+            image['object'].save(Filesystem.get_root_path() + '/dump/letters/' + image['letter'] + '.png')
 
 
 if __name__ == '__main__':

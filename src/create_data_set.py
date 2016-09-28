@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from utilities.filesystem import Filesystem
 from utilities.pickler import pickle_data
 
 from PIL import Image
@@ -29,7 +30,7 @@ class CreateDataSet:
         images = []
         for letter in CreateDataSet.LETTER_SET:
             images.append({
-                'object': Image.open('dump/letters/' + letter + '.png'),
+                'object': Image.open(Filesystem.get_root_path() + '/dump/letters/' + letter + '.png'),
                 'letter': letter
             })
 
@@ -72,7 +73,7 @@ class CreateDataSet:
 
     @staticmethod
     def dump_data_set(data):
-        pickle_data(data, 'dump/data/signatures.pickl')
+        pickle_data(data, Filesystem.get_root_path() + '/dump/data/signatures.pickl')
 
 
 if __name__ == '__main__':
