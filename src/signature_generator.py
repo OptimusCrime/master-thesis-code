@@ -53,7 +53,7 @@ class SignatureGenerator:
     @staticmethod
     def create_signatures(image):
         # Save the entire signature first
-        image.save('dump/signatures/complete.png')
+        image.save(Filesystem.get_root_path() + '/dump/signatures/complete.png')
 
         # Now loop the image one signature level at the time
         for i in range(SignatureGenerator.SIGNATURE_SIZE[1]):
