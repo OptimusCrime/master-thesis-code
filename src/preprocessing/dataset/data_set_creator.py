@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from preprocessing.abstracts import AbstractImageSet
-from preprocessing.handlers.text_handler import TextCreator
-from preprocessing.utilities import Config, Filesystem, pickle_data
+from preprocessing.handlers import TextCreator
+from utilities import Config, Filesystem, pickle_data
 
 
 class DataSetCreator(AbstractImageSet):

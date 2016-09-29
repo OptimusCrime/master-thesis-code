@@ -3,7 +3,7 @@
 
 from preprocessing.abstracts import AbstractImageSet
 from preprocessing.handlers import TextCreator
-from preprocessing.utilities import Config, Filesystem, pickle_data, unpickle_data
+from utilities import Config, Filesystem, pickle_data, unpickle_data
 
 
 class PhraseCreator(AbstractImageSet):

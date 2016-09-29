@@ -6,7 +6,7 @@ import sys
 
 import yaml
 
-from preprocessing.utilities import Filesystem
+from . import Filesystem
 
 
 class Config:

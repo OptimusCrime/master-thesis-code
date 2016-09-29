@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from preprocessing.utilities import Config
+from utilities import Config
 
 
 class SignatureHandler:

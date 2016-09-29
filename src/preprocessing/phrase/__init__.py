@@ -1,1 +1,1 @@
-from preprocessing.phrase.phrase_creator import PhraseCreator
+from .phrase_creator import PhraseCreator

@@ -5,7 +5,7 @@ from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 
-from preprocessing.utilities import Config
+from utilities import Config
 
 
 class TextCreator:

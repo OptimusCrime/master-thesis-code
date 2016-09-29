@@ -3,7 +3,7 @@
 
 import numpy as np
 
-from preprocessing.utilities import Filesystem, pickle_data
+from utilities import Filesystem, pickle_data
 
 
 class ConstraintHandler:

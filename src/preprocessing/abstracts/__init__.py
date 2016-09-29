@@ -1,1 +1,1 @@
-from preprocessing.abstracts.abstract_image_set import AbstractImageSet
+from .abstract_image_set import AbstractImageSet
