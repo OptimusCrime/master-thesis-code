@@ -6,7 +6,6 @@ from preprocessing.handlers import SignatureHandler
 from preprocessing.phrase import PhraseCreator
 
 
-
 class Preprocessor:
 
     def __init__(self):
