@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from src.utilities.config import Config
-from src.utilities.filesystem import Filesystem
-
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
+
+from preprocessing.utilities import Config
 
 
 class TextCreator:

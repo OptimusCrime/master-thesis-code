@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from src.utilities.filesystem import Filesystem
-
 import os
 import sys
+
 import yaml
+
+from preprocessing.utilities import Filesystem
 
 
 class Config:

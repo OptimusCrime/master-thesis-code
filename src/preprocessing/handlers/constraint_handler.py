@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from src.utilities.filesystem import Filesystem
-from src.utilities.pickler import pickle_data
-
 import numpy as np
+
+from preprocessing.utilities import Filesystem, pickle_data
 
 
 class ConstraintHandler:
@@ -36,7 +35,7 @@ class ConstraintHandler:
             'bottom': self.constraints['bottom']['value']
         }
 
-        pickle_data(clean_constraint, Filesystem.get_root_path('dump/data/constraints.pickl'))
+        pickle_data(clean_constraint, Filesystem.get_root_path('data/constraints.pickl'))
 
     def combine(self, old_constraint):
         self.constraints['top']['value'] = old_constraint['top']
