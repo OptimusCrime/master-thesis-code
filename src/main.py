@@ -14,8 +14,8 @@ def main():
         preprocessor.run()
 
     # Do the predicting
-    predicter = Predicter()
-    predicter.run()
+    #predicter = Predicter()
+    #predicter.run()
 
 
 if __name__ == '__main__':

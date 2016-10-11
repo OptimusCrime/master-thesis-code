@@ -3,6 +3,7 @@
 
 from utilities import Filesystem, pickle_data, unpickle_data
 
+
 class Predicter:
 
     def __init__(self):
