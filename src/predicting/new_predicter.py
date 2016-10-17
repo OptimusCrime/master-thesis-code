@@ -88,6 +88,45 @@ with tf.Session() as sess:
     print('')
     print('Predicting time!')
     print('')
+
+    raw_phrase = unpickle_data(Filesystem.get_root_path('data/phrase.pickl'))
+    print(raw_phrase)
+    phrase = raw_phrase[0]['matrix'][0]
+    print(phrase)
+
+    for i in range(0, len(phrase)):
+        padded = phrase[i : min(i + size_input, len(phrase))]
+        ipt = np.pad(padded, (0, 17 - len(padded)), 'constant',  constant_values=1)
+        print(ipt)
+
+        # Only predict when we have a starting 0
+        if ipt[0] == 1:
+            continue
+
+        # If the previous pixel also was a 0 we can ignore this as it is part of another signature
+        if i != 0 and phrase[i - 1] == 0:
+            continue
+
+        # If the last pixel is a 0 and we have a 0 following it, we can ignore it as a part of another signature
+        if ipt[len(ipt) - 1] == 0 and i < len(phrase) and phrase[i + size_input] == 0:
+            continue
+
+        print('Predicting: ')
+        print(ipt)
+
+        feed_dict = {
+            x: np.array([ipt], dtype=np.float)
+        }
+
+        prediction = sess.run(pred, feed_dict)
+        print(prediction)
+        print(np.argmax(prediction))
+        print(prediction[0][np.argmax(prediction)])
+        print(Config.get('characters')[np.argmax(prediction)])
+        print('-----')
+
+
+    '''
     for i in range(len(data_set)):
         print('Predicting: ')
         print(data_set[i])
@@ -101,3 +140,4 @@ with tf.Session() as sess:
         print(np.argmax(prediction))
         print('Should be: ' + raw_data_set[i]['character'] + '. Predicted ' + Config.get('characters')[np.argmax(prediction)])
         print('=====================================================')
+    '''
