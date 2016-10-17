@@ -124,20 +124,3 @@ with tf.Session() as sess:
         print(prediction[0][np.argmax(prediction)])
         print(Config.get('characters')[np.argmax(prediction)])
         print('-----')
-
-
-    '''
-    for i in range(len(data_set)):
-        print('Predicting: ')
-        print(data_set[i])
-
-        feed_dict = {
-            x: np.array([data_set[i]], dtype=np.float)
-        }
-
-        prediction = sess.run(pred, feed_dict)
-        print(prediction)
-        print(np.argmax(prediction))
-        print('Should be: ' + raw_data_set[i]['character'] + '. Predicted ' + Config.get('characters')[np.argmax(prediction)])
-        print('=====================================================')
-    '''
