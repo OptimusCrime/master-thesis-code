@@ -7,7 +7,6 @@ from utilities import Filesystem, pickle_data
 
 
 class ConstraintHandler:
-
     def __init__(self):
         self.constraints = {
             'left': {
@@ -27,7 +26,6 @@ class ConstraintHandler:
                 'letter': None
             }
         }
-
 
     def save(self):
         clean_constraint = {

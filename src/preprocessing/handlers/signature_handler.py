@@ -5,7 +5,6 @@ from utilities import Config
 
 
 class SignatureHandler:
-
     def __init__(self):
         pass
 
@@ -15,5 +14,4 @@ class SignatureHandler:
 
         for i in range(len(images)):
             images[i]['object'] = images[i]['object'].crop((0, signature_position, images[i]['object'].width,
-                                       signature_position + signature_height))
-
+                                                            signature_position + signature_height))

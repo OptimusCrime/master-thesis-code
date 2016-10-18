@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# noinspection PyPackageRequirements
 from PIL import Image
+# noinspection PyPackageRequirements
 from PIL import ImageDraw
+# noinspection PyPackageRequirements
 from PIL import ImageFont
 
 from utilities import Config

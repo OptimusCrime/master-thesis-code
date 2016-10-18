@@ -4,7 +4,9 @@
 from utilities import Config, Filesystem, unpickle_data
 
 import numpy as np
+# noinspection PyPackageRequirements
 import tensorflow as tf
+
 
 # WIP
 # WIP
@@ -12,9 +14,9 @@ import tensorflow as tf
 
 def from_character_to_character_index(char):
     characters = Config.get('characters')
-    for i in range(len(characters)):
-        if characters[i] == char:
-            return i
+    for ii in range(len(characters)):
+        if characters[ii] == char:
+            return ii
     return -1
 
 
@@ -51,18 +53,18 @@ size_input = widest
 size_output = len(Config.get('characters'))
 
 # tf Graph Input
-x = tf.placeholder(tf.float32, [None, size_input], name='Input') # mnist data image of shape 28*28=784
-y = tf.placeholder(tf.float32, [None, size_output], name='Output') # 0-9 digits recognition => 10 classes
+x = tf.placeholder(tf.float32, [None, size_input], name='Input')  # mnist data image of shape 28*28=784
+y = tf.placeholder(tf.float32, [None, size_output], name='Output')  # 0-9 digits recognition => 10 classes
 
 # Set model weights
 W = tf.Variable(tf.zeros([size_input, size_output]))
 b = tf.Variable(tf.zeros([size_output]))
 
 # Construct model
-pred = tf.nn.softmax(tf.matmul(x, W) + b) # Softmax
+pred = tf.nn.softmax(tf.matmul(x, W) + b)  # Softmax
 
 # Minimize error using cross entropy
-cost = tf.reduce_mean(-tf.reduce_sum(y*tf.log(pred), reduction_indices=1))
+cost = tf.reduce_mean(-tf.reduce_sum(y * tf.log(pred), reduction_indices=1))
 
 # Gradient Descent
 optimizer = tf.train.GradientDescentOptimizer(learning_rate).minimize(cost)
@@ -95,8 +97,8 @@ with tf.Session() as sess:
     print(phrase)
 
     for i in range(0, len(phrase)):
-        padded = phrase[i : min(i + size_input, len(phrase))]
-        ipt = np.pad(padded, (0, 17 - len(padded)), 'constant',  constant_values=1)
+        padded = phrase[i: min(i + size_input, len(phrase))]
+        ipt = np.pad(padded, (0, 17 - len(padded)), 'constant', constant_values=1)
         print(ipt)
 
         # Only predict when we have a starting 0

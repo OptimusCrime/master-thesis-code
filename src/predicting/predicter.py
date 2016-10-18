@@ -35,7 +35,7 @@ class Predicter:
         predicts = []
         for i in range(phrase_length):
             for character_set in data_set:
-                if (self.naive_match(phrase, i, character_set)):
+                if self.naive_match(phrase, i, character_set):
                     predicts.append({
                         'character': character_set['character'],
                         'offset': i,

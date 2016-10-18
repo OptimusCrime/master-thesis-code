@@ -42,7 +42,7 @@ class Config:
 
         # Shortcut for canvas size
         if key == 'canvas_size':
-            return (Config.CONTENTS['canvas']['width'], Config.CONTENTS['canvas']['height'])
+            return Config.CONTENTS['canvas']['width'], Config.CONTENTS['canvas']['height']
 
         # Special handler for the font file location
         if key == 'text-font':

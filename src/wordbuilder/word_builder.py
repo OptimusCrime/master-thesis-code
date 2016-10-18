@@ -3,8 +3,8 @@
 
 from wordbuilder.parser import ProbabilityParser
 
-class WordBuilder:
 
+class WordBuilder:
     def __init__(self):
         pass
 

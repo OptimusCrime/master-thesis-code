@@ -8,7 +8,6 @@ from wordbuilder.parser import ListParser
 
 
 class ProbabilityParser:
-
     def __init__(self):
         self.char_map = {}
         self.words = []
@@ -55,7 +54,7 @@ class ProbabilityParser:
             for i in range(1, len(word)):
                 # count_trans[from][to] += 1
                 idx_from = self.char_map[word[i - 1]]
-                idx_to  = self.char_map[word[i]]
+                idx_to = self.char_map[word[i]]
                 count_trans[idx_from][idx_to] += 1
 
                 # Keep track of how many translations there are in total

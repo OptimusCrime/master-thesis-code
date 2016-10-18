@@ -8,6 +8,7 @@ from preprocessing import Preprocessor
 from utilities import Config, Filesystem
 from wordbuilder import WordBuilder
 
+
 def main():
     # Do pre processing
     if Config.get('force') or not os.path.exists(Filesystem.get_root_path('data/data_set.pickl')):
@@ -18,8 +19,8 @@ def main():
     word_builder.run()
 
     # Do the predicting
-    #predicter = Predicter()
-    #predicter.run()
+    # predicter = Predicter()
+    # predicter.run()
 
 
 if __name__ == '__main__':
