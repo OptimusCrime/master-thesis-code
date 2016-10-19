@@ -5,10 +5,12 @@ from utilities import Config
 
 
 class SignatureHandler:
+
     def __init__(self):
         pass
 
-    def apply(self, images):
+    @staticmethod
+    def apply(images):
         signature_position = Config.get('signature-position')
         signature_height = Config.get('signature-height')
 

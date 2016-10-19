@@ -8,6 +8,7 @@ class WordBuilder:
     def __init__(self):
         pass
 
-    def run(self):
+    @staticmethod
+    def run():
         probability_parser = ProbabilityParser()
         probability_parser.run()

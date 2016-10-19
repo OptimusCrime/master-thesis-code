@@ -2,9 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import os
-import numpy as np
 
-from utilities import Config, Filesystem
+from utilities import Filesystem
 
 
 class ListParser:
@@ -20,10 +19,11 @@ class ListParser:
         return self._words
 
     def run(self):
-        files = self.get_word_files()
+        files = ListParser.get_word_files()
         self.get_words(files)
 
-    def get_word_files(self):
+    @staticmethod
+    def get_word_files():
         wordfiles_dir = Filesystem.get_root_path('config/wordlists')
         files = os.listdir(wordfiles_dir)
         files.remove('.gitignore')

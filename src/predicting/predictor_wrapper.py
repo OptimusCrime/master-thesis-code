@@ -4,6 +4,7 @@
 from . import NaiveNNPredictor
 from utilities import Filesystem, unpickle_data
 
+
 class PredictorWrapper:
 
     def __init__(self):
@@ -15,4 +16,3 @@ class PredictorWrapper:
 
         self.predictor.preprocess()
         self.predictor.predict()
-

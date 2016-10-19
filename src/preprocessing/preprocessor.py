@@ -21,12 +21,9 @@ class Preprocessor:
         phrase = PhraseCreator()
         phrase.create()
 
-        # Calculate signature
-        signature_handler = SignatureHandler()
-
         # Apply the signature
-        signature_handler.apply(data_set.images)
-        signature_handler.apply(phrase.images)
+        SignatureHandler.apply(data_set.images)
+        SignatureHandler.apply(phrase.images)
 
         # Transform and dump
         data_set.transform_and_dump()

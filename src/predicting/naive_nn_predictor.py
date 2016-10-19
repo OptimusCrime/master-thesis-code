@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from .abstracts import AbstractPredictor
-from utilities import Config, Filesystem, unpickle_data
+from utilities import Config
 
 import numpy as np
 import tensorflow as tf
@@ -70,11 +70,11 @@ class NaiveNNPredictor(AbstractPredictor):
         y = tf.placeholder(tf.float32, [None, size_output], name='Output')
 
         # Set model weights
-        W = tf.Variable(tf.zeros([size_input, size_output]))
+        weights = tf.Variable(tf.zeros([size_input, size_output]))
         b = tf.Variable(tf.zeros([size_output]))
 
         # Construct model
-        pred = tf.nn.softmax(tf.matmul(x, W) + b)  # Softmax
+        pred = tf.nn.softmax(tf.matmul(x, weights) + b)  # Softmax
 
         # Minimize error using cross entropy
         cost = tf.reduce_mean(-tf.reduce_sum(y * tf.log(pred), reduction_indices=1))
