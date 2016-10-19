@@ -22,9 +22,9 @@ class Filesystem:
     @staticmethod
     def get_root_path(file):
         # The root directory is the parent of the source directory
-        dir = os.path.dirname(Filesystem.get_source_path())
+        directory = os.path.dirname(Filesystem.get_source_path())
 
         if file is None:
-            return dir
+            return directory
 
-        return os.path.join(dir, file)
+        return os.path.join(directory, file)

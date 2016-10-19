@@ -16,7 +16,7 @@ class PhraseCreator(AbstractImageSet):
     def create_image(self):
         phrase_image = TextCreator.write(Config.get('phrase'))
 
-        self.images = [{
+        self._images = [{
             'character': None,
             'object': phrase_image
         }]
@@ -26,13 +26,13 @@ class PhraseCreator(AbstractImageSet):
         data_set_constraints = unpickle_data(Filesystem.get_root_path('data/constraints.pickl'))
 
         # Calculate the constraints for the text (left/right)
-        self.constraint_handler.transform_and_apply(self.images[0]['object'], None)
+        self.constraint_handler.transform_and_apply(self._images[0]['object'], None)
 
         # Combine the constraint from the data set
         self.constraint_handler.combine(data_set_constraints)
 
     def apply_crop(self):
-        self.images[0]['object'] = self.images[0]['object'].crop(self.constraint_handler.get_constraints())
+        self._images[0]['object'] = self._images[0]['object'].crop(self.constraint_handler.get_constraints())
 
     def transform_and_dump(self):
         # Run parent method. Transform data

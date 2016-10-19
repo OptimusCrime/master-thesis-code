@@ -18,7 +18,7 @@ class DataSetCreator(AbstractImageSet):
 
             self.constraint_handler.transform_and_apply(character_image, character)
 
-            self.images.append({
+            self._images.append({
                 'character': character,
                 'object': character_image
             })
@@ -27,7 +27,7 @@ class DataSetCreator(AbstractImageSet):
 
     def apply_constraints(self):
         for i in range(len(self.images)):
-            self.images[i]['object'] = self.images[i]['object'].crop(self.constraint_handler.get_constraints())
+            self._images[i]['object'] = self._images[i]['object'].crop(self.constraint_handler.get_constraints())
 
     def transform_and_dump(self):
         # Run parent method. Transform data

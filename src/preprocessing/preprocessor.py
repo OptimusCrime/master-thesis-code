@@ -11,7 +11,8 @@ class Preprocessor:
     def __init__(self):
         pass
 
-    def run(self):
+    @staticmethod
+    def run():
         # Create the data set
         data_set = DataSetCreator()
         data_set.create()
@@ -24,8 +25,8 @@ class Preprocessor:
         signature_handler = SignatureHandler()
 
         # Apply the signature
-        signature_handler.apply(data_set.get_images())
-        signature_handler.apply(phrase.get_images())
+        signature_handler.apply(data_set.images)
+        signature_handler.apply(phrase.images)
 
         # Transform and dump
         data_set.transform_and_dump()

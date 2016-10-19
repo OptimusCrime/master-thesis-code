@@ -12,15 +12,16 @@ class AbstractImageSet:
     __metaclass__ = ABCMeta
 
     def __init__(self):
-        self.images = []
+        self._images = []
         self.constraint_handler = ConstraintHandler()
 
-    def get_images(self):
-        return self.images
+    @property
+    def images(self):
+        return self._images
 
     def transform_and_dump(self):
         transformed = []
-        for image in self.images:
+        for image in self._images:
             # Construct numpy array and reshape into matrix
             arr = np.fromiter(list(image['object'].getdata()), dtype="int").reshape((-1, image['object'].width))
 
