@@ -16,3 +16,7 @@ class PredictorWrapper:
 
         self.predictor.preprocess()
         self.predictor.predict()
+
+    @property
+    def predictions(self):
+        return self.predictor.predictions

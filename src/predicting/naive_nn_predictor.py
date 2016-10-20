@@ -60,7 +60,7 @@ class NaiveNNPredictor(AbstractPredictor):
 
     def predict(self):
         learning_rate = 0.01
-        training_epochs = 70
+        training_epochs = 400
 
         size_input = self.widest
         size_output = len(Config.get('characters'))
@@ -98,18 +98,10 @@ class NaiveNNPredictor(AbstractPredictor):
                 correct_prediction = tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1))
                 # Calculate accuracy
                 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-                print("Accuracy:", accuracy.eval({
-                    x: self.training_images_transformed,
-                    y: self.training_labels_transformed}))
-
-            print('')
-            print('Predicting time!')
-            print('')
 
             for i in range(0, len(self.phrase_transformed)):
                 padded = self.phrase_transformed[i: min(i + size_input, len(self.phrase_transformed))]
-                ipt = np.pad(padded, (0, 17 - len(padded)), 'constant', constant_values=1)
-                print(ipt)
+                ipt = np.pad(padded, (0, self.widest - len(padded)), 'constant', constant_values=1)
 
                 # Only predict when we have a starting 0
                 if ipt[0] == 1:
@@ -120,20 +112,18 @@ class NaiveNNPredictor(AbstractPredictor):
                     continue
 
                 # If the last pixel is a 0 and we have a 0 following it, we can ignore it as a part of another signature
-                if ipt[len(ipt) - 1] == 0 and i < len(self.phrase_transformed) and \
+                if ipt[len(ipt) - 1] == 0 and (i + size_input) < len(self.phrase_transformed) and \
                         self.phrase_transformed[i + size_input] == 0:
                     continue
 
-                print('Predicting: ')
-                print(ipt)
-
-                feed_dict = {
+                # Do the actual prediction here
+                prediction = sess.run(pred, {
                     x: np.array([ipt], dtype=np.float)
-                }
+                })
 
-                prediction = sess.run(pred, feed_dict)
-                print(prediction)
-                print(np.argmax(prediction))
-                print(prediction[0][np.argmax(prediction)])
-                print(Config.get('characters')[np.argmax(prediction)])
-                print('-----')
+                # Add to list of predictions
+                self.predictions.append({
+                    'input': ipt,
+                    'offset': i,
+                    'values': prediction
+                })

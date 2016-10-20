@@ -42,8 +42,6 @@ class ProbabilityParser:
         for i in range(len(self.prob_initial)):
             self.prob_initial[i] = count_initial[i] / number_of_words
 
-        print(self.prob_initial)
-
     def calculate_probability_state(self):
         self.prob_trans = np.zeros((len(self.char_map), len(self.char_map)))
 

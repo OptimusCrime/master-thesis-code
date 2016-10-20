@@ -16,7 +16,9 @@ def main():
     predictor = PredictorWrapper()
     predictor.run()
 
-    WordBuilder.run()
+    word_builder = WordBuilder()
+    word_builder.build()
+    word_builder.calculate(predictor.predictions)
 
 
 if __name__ == '__main__':
