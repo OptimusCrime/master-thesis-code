@@ -19,8 +19,21 @@ class WordBuilder:
     def calculate(self, predictions):
         self.predictions = predictions
 
+        self.normalize_predictions()
         #self.calculate_first()
         self.calculate_transisitions()
+
+    def normalize_predictions(self):
+        for prediction in self.predictions:
+            prediction_matrix = prediction['values'][0]
+
+            prediction_normalized = np.zeros((len(prediction_matrix)))
+            prediction_sum = sum(prediction_matrix)
+            for i in range(len(prediction_matrix)):
+                prediction_normalized[i] = prediction_matrix[i] / prediction_sum
+
+            # OVerwrite unnormalized prediction
+            prediction['values'][0] = prediction_normalized
 
     def calculate_transisitions(self):
         previous_letter = None
