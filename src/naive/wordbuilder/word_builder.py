@@ -3,8 +3,8 @@
 
 import numpy as np
 
+from naive.wordbuilder.parser import ProbabilityParser
 from utilities import Config
-from wordbuilder.parser import ProbabilityParser
 
 
 class WordBuilder:
@@ -14,14 +14,16 @@ class WordBuilder:
 
     def build(self):
         self.probability_parser = ProbabilityParser()
-        #self.probability_parser.run()
+        self.probability_parser.run()
 
     def calculate(self, predictions):
         self.predictions = predictions
 
         self.normalize_predictions()
-        #self.calculate_first()
+        self.calculate_first()
         self.calculate_transisitions()
+
+        self.debug()
 
     def normalize_predictions(self):
         for prediction in self.predictions:
@@ -37,8 +39,6 @@ class WordBuilder:
 
     def calculate_transisitions(self):
         previous_letter = None
-        print(WordBuilder.sort_prabilities(self.predictions[0]['values'][0]))
-
         for i in range(len(self.predictions)):
             current_prediction = self.predictions[i]['values'][0]
 
@@ -46,24 +46,23 @@ class WordBuilder:
                 previous_letter = np.argmax(current_prediction)
                 continue
 
-            #from_probabilities = self.probability_parser.prob_trans[previous_letter]
+            from_probabilities = self.probability_parser.prob_trans[previous_letter]
 
             # Matrix multiplication
-            #prediction_probabilities = np.multiply(current_prediction, from_probabilities)
+            self.predictions[i]['values'] = WordBuilder.matrix_mul(current_prediction, from_probabilities,
+                                                                   lambda x, y: (x * 2) + (y * 0))
 
-            ordered_prediction_prabilities = WordBuilder.sort_prabilities(current_prediction)
-            print(ordered_prediction_prabilities)
+            sorted_probabilities = WordBuilder.sort_prabilities(self.predictions[i]['values'])
 
-            previous_letter = ordered_prediction_prabilities[0]['index']
+            previous_letter = sorted_probabilities[0]['index']
 
     def calculate_first(self):
-        initial_probability = self.probability_parser.prob_initial
         initial_prediction = self.predictions[0]['values']
+        initial_probability = self.probability_parser.prob_initial
 
         # Matrix multiplication
-        prediction_probability = np.multiply(initial_probability, initial_prediction)
-
-        print(prediction_probability)
+        self.predictions[0]['values'] = WordBuilder.matrix_mul(initial_prediction[0], initial_probability,
+                                                        lambda x, y: (x * 1) + (y * 0))
 
     @staticmethod
     def sort_prabilities(matrix, keyword='value'):
@@ -78,3 +77,15 @@ class WordBuilder:
 
         return sorted(ordered_prediction_probability, key=lambda x: x[keyword], reverse=True)
 
+    @staticmethod
+    def matrix_mul(initial, factor, formula):
+        combined_matrix = np.empty_like(initial)
+        for i in range(len(initial)):
+            combined_matrix[i] = formula(initial[i], factor[i])
+        return combined_matrix
+
+    def debug(self):
+        print('here')
+        for i in range(len(self.predictions)):
+            print(WordBuilder.sort_prabilities(self.predictions[i]['values']))
+        print('done')

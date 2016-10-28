@@ -3,8 +3,8 @@
 
 import numpy as np
 
+from naive.wordbuilder.parser import ListParser
 from utilities import Config
-from wordbuilder.parser import ListParser
 
 
 class ProbabilityParser:

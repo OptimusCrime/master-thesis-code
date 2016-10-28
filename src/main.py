@@ -3,10 +3,10 @@
 
 import os
 
-from predicting import PredictorWrapper
+from naive.predicting import PredictorWrapper
+from naive.wordbuilder import WordBuilder
 from preprocessing import Preprocessor
 from utilities import Config, Filesystem
-from wordbuilder import WordBuilder
 
 
 def main():
