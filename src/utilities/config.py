@@ -53,8 +53,14 @@ class Config:
             return Config.CONTENTS[key]
 
         # Multilevel key. Traverse the tree
+        return Config.get_nested(key)
+
+    @staticmethod
+    def get_nested(key):
         key_split = key.split('-')
         current_pool = Config.CONTENTS
         for sub_key in key_split:
+            if sub_key not in current_pool:
+                return None
             current_pool = current_pool[sub_key]
         return current_pool
