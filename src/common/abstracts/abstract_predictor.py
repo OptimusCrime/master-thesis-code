@@ -15,5 +15,8 @@ class AbstractPredictor:
     def preprocess(self):
         pass
 
+    def train(self):
+        pass
+
     def predict(self):
         pass

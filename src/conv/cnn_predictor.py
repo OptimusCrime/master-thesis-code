@@ -2,11 +2,13 @@
 # -*- coding: utf-8 -*-
 
 from common.abstracts import AbstractPredictor
+from preprocessing.shifter import DatasetShifter
 from utilities import Config, CharacterHandling
 
 import numpy as np
 from keras.layers import Convolution2D, MaxPooling2D, Flatten, Dense, Input
 from keras.models import Model
+from keras.optimizers import SGD
 
 
 class CNNPredictor(AbstractPredictor):
@@ -21,15 +23,14 @@ class CNNPredictor(AbstractPredictor):
         self.training_labels_transformed = None
         self.phrase_transformed = None
 
-        print(Config.get('preprocessing-shift'))
-        print(Config.get('preprocessing-shifxt'))
-        print(Config.get('preprocessixng-shifxt'))
-        print(Config.get('cnn-sizes'))
-
     def preprocess(self):
         self.calculate_widest()
 
-        self.transform_data_set()
+        if Config.get('preprocessing-shift'):
+            self.transform_shift_data_set()
+        else:
+            self.transform_data_set()
+
         self.transform_phrase()
 
         self.keras_setup()
@@ -40,6 +41,13 @@ class CNNPredictor(AbstractPredictor):
         # The narrowest input our network can handle is 40
         if self.widest < 40:
             self.widest = 40
+
+    def transform_shift_data_set(self):
+        shifter = DatasetShifter(self.data_set, self.widest)
+        shifter.shift()
+
+        self.training_images_transformed = shifter.training_images_transformed
+        self.training_labels_transformed = shifter.training_labels_transformed
 
     def transform_data_set(self):
         self.training_images_transformed = np.ones((len(self.data_set), self.widest))
@@ -59,8 +67,6 @@ class CNNPredictor(AbstractPredictor):
 
     def transform_phrase(self):
         self.phrase_transformed = self.phrase[0]['matrix'][0].reshape((1, 1, self.widest, 1))
-        print(self.phrase_transformed)
-        print(self.phrase_transformed.shape)
 
     def keras_setup(self):
         input_shape = (1, self.widest, 1)
@@ -103,6 +109,36 @@ class CNNPredictor(AbstractPredictor):
         # Create model
         self.model = Model(img_input, x)
 
+        # Compile with sgd
+        sgd = SGD(lr=0.01, decay=1e-6, momentum=0.5, nesterov=True)
+        self.model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
+
+    def train(self):
+        self.model.fit(self.training_images_transformed,
+                       self.training_labels_transformed,
+                       nb_epoch=10,
+                       batch_size=32,
+                       validation_split=0.2,
+                       verbose=1
+                       )
+
     def predict(self):
-        self.predictions = self.model.predict(self.phrase_transformed)
+        idx = 100
+        ipt = self.training_images_transformed[idx].reshape((1, 1, self.widest, 1))
+
+        self.predictions = self.model.predict(ipt)
+
+        print('matrix')
+        print(self.training_images_transformed[idx].reshape(self.widest))
+
+        print('')
+        print('predictions')
         print(self.predictions)
+        print(np.argmax(self.predictions))
+        print(Config.get('characters')[np.argmax(self.predictions)])
+
+        print('')
+        print('correct')
+        print(self.training_labels_transformed[idx])
+        print(np.argmax(self.training_labels_transformed[idx]))
+        print(Config.get('characters')[np.argmax(self.training_labels_transformed[idx])])

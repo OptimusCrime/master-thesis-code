@@ -16,6 +16,7 @@ class PredictorWrapper:
         self.predictor.phrase = unpickle_data(Filesystem.get_root_path('data/phrase.pickl'))
 
         self.predictor.preprocess()
+        self.predictor.train()
         self.predictor.predict()
 
     @property
