@@ -4,6 +4,10 @@ force: true
 # The phrase we're trying to estimate
 phrase: HEI
 
+# Preprocessing
+preprocessing:
+    shift: true
+
 # Settings for text
 text:
     font: arial-mono
@@ -22,3 +26,11 @@ characters: A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W,
 signature:
     height: 1
     position: 14
+
+# CNN specific stuff
+cnn:
+    sizes:
+    - 2
+    - 3
+    - 4
+    - 5
