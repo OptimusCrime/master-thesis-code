@@ -3,7 +3,8 @@
 
 import os
 
-from conv import PredictorWrapper
+from common import PredictorWrapper
+from conv import CNNPredictor
 from naive.wordbuilder import WordBuilder
 from preprocessing import Preprocessor
 from utilities import Config, Filesystem
@@ -13,8 +14,9 @@ def main():
     if Config.get('force') or not os.path.exists(Filesystem.get_root_path('data/data_set.pickl')):
         Preprocessor.run()
 
-    predictor = PredictorWrapper()
-    predictor.run()
+    wrapper = PredictorWrapper()
+    wrapper.predictor = CNNPredictor()
+    wrapper.run()
 
     #word_builder = WordBuilder()
     #word_builder.build()

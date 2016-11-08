@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from .abstracts import AbstractPredictor
-from utilities import Config
+from common.abstracts import AbstractPredictor
+from utilities import Config, CharacterHandling
 
 import numpy as np
 import tensorflow as tf
@@ -19,14 +19,6 @@ class NaiveNNPredictor(AbstractPredictor):
         self.training_images_transformed = None
         self.training_labels_transformed = None
         self.phrase_transformed = None
-
-    @staticmethod
-    def from_character_to_character_index(char):
-        characters = Config.get('characters')
-        for ii in range(len(characters)):
-            if characters[ii] == char:
-                return ii
-        return -1
 
     def preprocess(self):
         self.calculate_widest()
@@ -51,7 +43,7 @@ class NaiveNNPredictor(AbstractPredictor):
             for j in range(len(data_flatten)):
                 if data_flatten[j] == 0:
                     self.training_images_transformed[i][j] = 0
-            character_index = NaiveNNPredictor.from_character_to_character_index(self.data_set[i]['character'])
+            character_index = CharacterHandling.char_to_index(self.data_set[i]['character'])
             if character_index >= 0:
                 self.training_labels_transformed[i][character_index] = 1
 

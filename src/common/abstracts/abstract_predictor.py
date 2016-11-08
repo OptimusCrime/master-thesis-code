@@ -12,8 +12,8 @@ class AbstractPredictor:
         self.phrase = None
         self.predictions = []
 
-    def predict(self):
+    def preprocess(self):
         pass
 
-    def preprocess(self):
+    def predict(self):
         pass

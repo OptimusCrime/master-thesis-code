@@ -1,1 +1,1 @@
-from .predictor_wrapper import PredictorWrapper
+from .cnn_predictor import CNNPredictor
