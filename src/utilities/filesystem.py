@@ -20,7 +20,7 @@ class Filesystem:
         return os.path.dirname(utilities_path)
 
     @staticmethod
-    def get_root_path(file):
+    def get_root_path(file=None):
         # The root directory is the parent of the source directory
         directory = os.path.dirname(Filesystem.get_source_path())
 
@@ -28,3 +28,12 @@ class Filesystem:
             return directory
 
         return os.path.join(directory, file)
+
+    @staticmethod
+    def create(path):
+        path_split = path.split('/')
+        current_path = Filesystem.get_root_path()
+        for path_fragment in path_split:
+            current_path = os.path.join(current_path, path_fragment)
+            if not os.path.isdir(current_path):
+                os.makedirs(current_path)

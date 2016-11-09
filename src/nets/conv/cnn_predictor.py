@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from common.abstracts import AbstractPredictor
-from preprocessing.shifter import DatasetShifter
-from utilities import Config, CharacterHandling
-
 import numpy as np
 from keras.layers import Convolution2D, MaxPooling2D, Flatten, Dense, Input
 from keras.models import Model
 from keras.optimizers import SGD
+
+from nets.abstracts import AbstractPredictor
+from preprocessing.shifter import DatasetShifter
+from utilities import Config, CharacterHandling
 
 
 class CNNPredictor(AbstractPredictor):
@@ -62,7 +62,7 @@ class CNNPredictor(AbstractPredictor):
             self.training_labels_transformed[i][char_index] = 1
 
         # Because
-        self.training_images_transformed = self.training_images_transformed.reshape((len(self.data_set),
+        self.training_images_transformed = self.training_images_transformed.reshape((len(self.data_set), 1,
                                                                                      self.widest, 1))
 
     def transform_phrase(self):
@@ -117,13 +117,13 @@ class CNNPredictor(AbstractPredictor):
         self.model.fit(self.training_images_transformed,
                        self.training_labels_transformed,
                        nb_epoch=10,
-                       batch_size=32,
+                       batch_size=1,
                        validation_split=0.2,
                        verbose=1
                        )
 
     def predict(self):
-        idx = 100
+        idx = 1
         ipt = self.training_images_transformed[idx].reshape((1, 1, self.widest, 1))
 
         self.predictions = self.model.predict(ipt)

@@ -4,8 +4,7 @@
 import os
 
 from common import PredictorWrapper
-from conv import CNNPredictor
-from naive.wordbuilder import WordBuilder
+from nets.conv import CNNPredictor
 from preprocessing import Preprocessor
 from utilities import Config, Filesystem
 
@@ -18,9 +17,9 @@ def main():
     wrapper.predictor = CNNPredictor()
     wrapper.run()
 
-    #word_builder = WordBuilder()
-    #word_builder.build()
-    #word_builder.calculate(predictor.predictions)
+    # word_builder = WordBuilder()
+    # word_builder.build()
+    # word_builder.calculate(predictor.predictions)
 
 
 if __name__ == '__main__':

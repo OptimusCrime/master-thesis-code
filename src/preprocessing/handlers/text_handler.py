@@ -8,7 +8,7 @@ from PIL import ImageDraw
 # noinspection PyPackageRequirements
 from PIL import ImageFont
 
-from utilities import Config
+from utilities import Config, Filesystem
 
 
 class TextCreator:
@@ -18,10 +18,14 @@ class TextCreator:
 
     @staticmethod
     def write(text):
-        img = Image.new('1', Config.get('canvas_size'), 1)
-        draw = ImageDraw.Draw(img)
+        im = Image.new('1', Config.get('canvas_size'), 1)
+        draw = ImageDraw.Draw(im)
 
         font_object = ImageFont.truetype(Config.get('text-font'), Config.get('text-size'))
         draw.text((0, 0), text, font=font_object, fill=0)
 
-        return img
+        if Config.get('preprocessing-save'):
+            Filesystem.create('data/raw')
+            im.save(Filesystem.get_root_path('data/raw/' + text + '.png'))
+
+        return im

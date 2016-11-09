@@ -22,8 +22,8 @@ class Preprocessor:
         phrase.create()
 
         # Apply the signature
-        SignatureHandler.apply(data_set.images)
-        SignatureHandler.apply(phrase.images)
+        SignatureHandler.apply(data_set.images, set_type=SignatureHandler.DATA_SET)
+        SignatureHandler.apply(phrase.images, set_type=SignatureHandler.PHRASE)
 
         # Transform and dump
         data_set.transform_and_dump()

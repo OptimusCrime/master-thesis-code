@@ -6,6 +6,7 @@ phrase: HEI
 
 # Preprocessing
 preprocessing:
+    save: false
     shift: true
 
 # Settings for text

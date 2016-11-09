@@ -1,1 +1,0 @@
-from .naive_nn_predictor import NaiveNNPredictor

@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from common.abstracts import AbstractPredictor
-from utilities import Config, CharacterHandling
-
 import numpy as np
 import tensorflow as tf
 
+from nets.abstracts import AbstractPredictor
+from utilities import Config, CharacterHandling
 
-class NaiveNNPredictor(AbstractPredictor):
+
+class ANNPredictor(AbstractPredictor):
 
     def __init__(self):
         super().__init__()
@@ -88,8 +88,10 @@ class NaiveNNPredictor(AbstractPredictor):
                                                               y: self.training_labels_transformed})
 
                 correct_prediction = tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1))
+
                 # Calculate accuracy
                 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+                print(accuracy)
 
             for i in range(0, len(self.phrase_transformed)):
                 padded = self.phrase_transformed[i: min(i + size_input, len(self.phrase_transformed))]
