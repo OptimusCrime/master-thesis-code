@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from abc import ABCMeta
 
-
-class AbstractPredictor:
-    __metaclass__ = ABCMeta
+class BasePredictor:
 
     def __init__(self):
         self.data_set = None

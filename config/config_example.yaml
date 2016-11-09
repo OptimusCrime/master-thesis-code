@@ -2,7 +2,7 @@
 force: true
 
 # The phrase we're trying to estimate
-phrase: HEI
+phrase: HELLO
 
 # Preprocessing
 preprocessing:
@@ -27,6 +27,9 @@ characters: A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W,
 signature:
     height: 1
     position: 14
+
+# Predictor
+predictor: nets.lstm.RNNPredictor
 
 # CNN specific stuff
 cnn:
