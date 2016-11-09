@@ -4,7 +4,7 @@
 import os
 
 from common import PredictorWrapper
-from nets.conv import CNNPredictor
+from nets.lstm import RNNPredictor
 from preprocessing import Preprocessor
 from utilities import Config, Filesystem
 
@@ -14,7 +14,7 @@ def main():
         Preprocessor.run()
 
     wrapper = PredictorWrapper()
-    wrapper.predictor = CNNPredictor()
+    wrapper.predictor = RNNPredictor()
     wrapper.run()
 
     # word_builder = WordBuilder()
