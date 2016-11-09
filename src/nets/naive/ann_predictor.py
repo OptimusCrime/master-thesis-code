@@ -4,11 +4,11 @@
 import numpy as np
 import tensorflow as tf
 
-from nets.abstracts import AbstractPredictor
+from nets.base import BasePredictor
 from utilities import Config, CharacterHandling
 
 
-class ANNPredictor(AbstractPredictor):
+class ANNPredictor(BasePredictor):
 
     def __init__(self):
         super().__init__()

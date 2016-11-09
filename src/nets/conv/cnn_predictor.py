@@ -6,12 +6,12 @@ from keras.layers import Convolution2D, MaxPooling2D, Flatten, Dense, Input
 from keras.models import Model
 from keras.optimizers import SGD
 
-from nets.abstracts import AbstractPredictor
+from nets.base import BasePredictor
 from preprocessing.shifter import DatasetShifter
 from utilities import Config, CharacterHandling
 
 
-class CNNPredictor(AbstractPredictor):
+class CNNPredictor(BasePredictor):
 
     def __init__(self):
         super().__init__()

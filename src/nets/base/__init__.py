@@ -1,1 +1,1 @@
-from .abstract_predictor import AbstractPredictor
+from .base_predictor import BasePredictor
