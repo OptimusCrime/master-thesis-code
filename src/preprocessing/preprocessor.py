@@ -4,6 +4,8 @@
 from preprocessing.dataset import DataSetCreator
 from preprocessing.handlers import SignatureHandler
 from preprocessing.phrase import PhraseCreator
+from preprocessing.words import WordSetCreator
+from utilities import Config
 
 
 class Preprocessor:
@@ -28,3 +30,8 @@ class Preprocessor:
         # Transform and dump
         data_set.transform_and_dump()
         phrase.transform_and_dump()
+
+        if Config.get('preprocessing-words'):
+            word_set = WordSetCreator()
+            word_set.letter_matrices = data_set.images
+            word_set.create()

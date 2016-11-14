@@ -8,7 +8,7 @@ from utilities import Filesystem, pickle_data
 
 class ConstraintHandler:
     def __init__(self):
-        self.constraints = {
+        self._constraints = {
             'left': {
                 'value': None,
                 'letter': None
@@ -29,15 +29,15 @@ class ConstraintHandler:
 
     def save(self):
         clean_constraint = {
-            'top': self.constraints['top']['value'],
-            'bottom': self.constraints['bottom']['value']
+            'top': self._constraints['top']['value'],
+            'bottom': self._constraints['bottom']['value']
         }
 
         pickle_data(clean_constraint, Filesystem.get_root_path('data/constraints.pickl'))
 
     def combine(self, old_constraint):
-        self.constraints['top']['value'] = old_constraint['top']
-        self.constraints['bottom']['value'] = old_constraint['bottom']
+        self._constraints['top']['value'] = old_constraint['top']
+        self._constraints['bottom']['value'] = old_constraint['bottom']
 
     def transform_and_apply(self, image, character):
         # Transform image into numpy matrix
@@ -55,31 +55,33 @@ class ConstraintHandler:
             for j in range(width):
                 if arr[i][j] == 0:
                     # left
-                    if self.constraints['left']['value'] is None or \
-                            self.constraints['left']['value'] > j:
-                        self.constraints['left']['value'] = j
-                        self.constraints['left']['letter'] = key
+                    if self._constraints['left']['value'] is None or \
+                            self._constraints['left']['value'] > j:
+                        self._constraints['left']['value'] = j
+                        self._constraints['left']['letter'] = key
 
                     # right
-                    if self.constraints['right']['value'] is None or \
-                            self.constraints['right']['value'] < j:
-                        self.constraints['right']['value'] = j
-                        self.constraints['right']['letter'] = key
+                    if self._constraints['right']['value'] is None or \
+                            self._constraints['right']['value'] < j:
+                        self._constraints['right']['value'] = j
+                        self._constraints['right']['letter'] = key
 
                     # top
-                    if self.constraints['top']['value'] is None or \
-                            self.constraints['top']['value'] > i:
-                        self.constraints['top']['value'] = i
-                        self.constraints['top']['letter'] = key
+                    if self._constraints['top']['value'] is None or \
+                            self._constraints['top']['value'] > i:
+                        self._constraints['top']['value'] = i
+                        self._constraints['top']['letter'] = key
 
                     # bottom
-                    if self.constraints['bottom']['value'] is None or \
-                            self.constraints['bottom']['value'] < i:
-                        self.constraints['bottom']['value'] = i
-                        self.constraints['bottom']['letter'] = key
+                    if self._constraints['bottom']['value'] is None or \
+                            self._constraints['bottom']['value'] < i:
+                        self._constraints['bottom']['value'] = i
+                        self._constraints['bottom']['letter'] = key
 
-    def get_constraints(self):
-        return tuple([self.constraints['left']['value'],
-                      self.constraints['top']['value'],
-                      self.constraints['right']['value'],
-                      self.constraints['bottom']['value']])
+    @property
+    def constraints(self):
+        return tuple([self._constraints['left']['value'],
+                      self._constraints['top']['value'],
+                      self._constraints['right']['value'],
+                      self._constraints['bottom']['value']])
+

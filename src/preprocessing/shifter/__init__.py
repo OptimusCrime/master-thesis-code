@@ -1,1 +1,1 @@
-from .DatasetShifter import DatasetShifter
+from .dataset_shifter import DatasetShifter

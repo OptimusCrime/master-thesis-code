@@ -8,6 +8,7 @@ phrase: HELLO
 preprocessing:
     save: false
     shift: true
+    words: false
 
 # Settings for text
 text:

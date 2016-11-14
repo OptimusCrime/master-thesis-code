@@ -13,10 +13,10 @@ def main():
     if Config.get('force') or not os.path.exists(Filesystem.get_root_path('data/data_set.pickl')):
         Preprocessor.run()
 
-    if Config.get('predictor') is not None:
-        wrapper = PredictorWrapper()
-        wrapper.predictor = PredictorImporter.load(Config.get('predictor'))
-        wrapper.run()
+    #if Config.get('predictor') is not None:
+    #    wrapper = PredictorWrapper()
+    #    wrapper.predictor = PredictorImporter.load(Config.get('predictor'))
+    #    wrapper.run()
 
     # word_builder = WordBuilder()
     # word_builder.build()

@@ -30,12 +30,11 @@ class DataSetCreator(AbstractImageSet):
             Filesystem.create('data/crop')
 
         for i in range(len(self.images)):
-            self._images[i]['object'] = self._images[i]['object'].crop(self.constraint_handler.get_constraints())
+            self._images[i]['object'] = self._images[i]['object'].crop(self.constraint_handler.constraints)
 
             if Config.get('preprocessing-save'):
                 self._images[i]['object'].save(Filesystem.get_root_path(
                     'data/crop/' + self._images[i]['character'] + '.png'))
-
 
     def transform_and_dump(self):
         # Run parent method. Transform data

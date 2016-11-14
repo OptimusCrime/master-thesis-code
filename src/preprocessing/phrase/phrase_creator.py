@@ -32,7 +32,7 @@ class PhraseCreator(AbstractImageSet):
         self.constraint_handler.combine(data_set_constraints)
 
     def apply_crop(self):
-        self._images[0]['object'] = self._images[0]['object'].crop(self.constraint_handler.get_constraints())
+        self._images[0]['object'] = self._images[0]['object'].crop(self.constraint_handler.constraints)
 
     def transform_and_dump(self):
         # Run parent method. Transform data
@@ -40,8 +40,3 @@ class PhraseCreator(AbstractImageSet):
 
         # Store data for later use
         pickle_data(transformed, Filesystem.get_root_path('data/phrase.pickl'))
-
-
-if __name__ == '__main__':
-    phrase_creator = PhraseCreator()
-    phrase_creator.create()

@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import random
 
 from utilities import Filesystem
 
@@ -10,6 +11,9 @@ class ListParser:
 
     def __init__(self):
         self._words = set()
+
+    def random_word(self):
+        return random.choice(tuple(self.words))
 
     @property
     def words(self):
