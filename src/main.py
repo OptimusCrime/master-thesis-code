@@ -10,7 +10,7 @@ from utilities import Config, Filesystem, PredictorImporter
 
 
 def main():
-    if Config.get('force') or not os.path.exists(Filesystem.get_root_path('data/data_set.pickl')):
+    if Config.get('preprocessing.run'):
         Preprocessor.run()
 
     #if Config.get('predictor') is not None:

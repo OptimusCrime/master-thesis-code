@@ -13,7 +13,7 @@ class CharacterHandling:
 
     @staticmethod
     def fetch_characters():
-        CharacterHandling.CHARACTERS = Config.get('characters')
+        CharacterHandling.CHARACTERS = Config.get('general.characters')
 
     @staticmethod
     def char_to_index(char):

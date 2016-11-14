@@ -22,7 +22,7 @@ class WordSetCreator(AbstractImageSet):
         self.apply_constraints()
 
     def create_images(self):
-        for i in range(2):
+        for i in range(Config.get('preprocessing.word.size')):
             # Get a random word from our word set
             random_word = self.list_parser.random_word()
 
@@ -38,13 +38,13 @@ class WordSetCreator(AbstractImageSet):
             self.constraint_handler.save()
 
     def apply_constraints(self):
-        if Config.get('preprocessing-save'):
+        if Config.get('preprocessing.save'):
             Filesystem.create('data/words')
 
         for i in range(len(self.images)):
             self._images[i]['object'] = self._images[i]['object'].crop(self.constraint_handler.constraints)
 
-            if Config.get('preprocessing-save'):
+            if Config.get('preprocessing.save'):
                 self._images[i]['object'].save(Filesystem.get_root_path(
                     'data/words/' + self._images[i]['character'] + '.png'))
 
@@ -65,7 +65,7 @@ class WordSetCreator(AbstractImageSet):
         return None
 
     def construct_label_matrix(self, word_object):
-        label_matrix = np.zeros((len(word_object['matrix'][0]), len(Config.get('characters'))))
+        label_matrix = np.zeros((len(word_object['matrix'][0]), len(Config.get('general.characters'))))
         current_offset = 0
         word_matrix_size = len(word_object['matrix'][0])
 

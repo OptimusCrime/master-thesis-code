@@ -36,20 +36,21 @@ class Config:
             Config.load_config()
 
         # Special handler for list of acceptable characters
-        if key == 'characters':
+        if key == 'general.characters':
             # Split all characters, strip whitespace, remove empty elements from the list
-            return list(filter(None, [x.strip() for x in Config.CONTENTS['characters'].split(',')]))
+            return list(filter(None, [x.strip() for x in Config.CONTENTS['general']['characters'].split(',')]))
 
         # Shortcut for canvas size
-        if key == 'canvas_size':
-            return Config.CONTENTS['canvas']['width'], Config.CONTENTS['canvas']['height']
+        if key == 'preprocessing.canvas.size':
+            return Config.CONTENTS['preprocessing']['canvas']['width'], \
+                   Config.CONTENTS['preprocessing']['canvas']['height']
 
         # Special handler for the font file location
-        if key == 'text-font':
-            return Filesystem.get_root_path('fonts/' + Config.CONTENTS['text']['font'] + '.ttf')
+        if key == 'preprocessing.text.font':
+            return Filesystem.get_root_path('fonts/' + Config.CONTENTS['preprocessing']['text']['font'] + '.ttf')
 
         # If we have no dash in our key we can access it directly
-        if '-' not in key:
+        if '.' not in key:
             return Config.CONTENTS[key]
 
         # Multilevel key. Traverse the tree
@@ -57,7 +58,7 @@ class Config:
 
     @staticmethod
     def get_nested(key):
-        key_split = key.split('-')
+        key_split = key.split('.')
         current_pool = Config.CONTENTS
         for sub_key in key_split:
             if sub_key not in current_pool:

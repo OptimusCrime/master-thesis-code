@@ -18,7 +18,7 @@ class SignatureHandler:
 
     @staticmethod
     def apply(images, set_type=None):
-        if Config.get('preprocessing-save') and set_type != SignatureHandler.PHRASE:
+        if Config.get('preprocessing.save') and set_type != SignatureHandler.PHRASE:
             SignatureHandler.save_signature(images)
 
         SignatureHandler.apply_matrix(images)
@@ -27,8 +27,8 @@ class SignatureHandler:
     def save_signature(images):
         Filesystem.create('data/illustration')
 
-        signature_position = Config.get('signature-position')
-        signature_height = Config.get('signature-height')
+        signature_position = Config.get('preprocessing.signature.position')
+        signature_height = Config.get('preprocessing.signature.height')
 
         for i in range(len(images)):
             # Create matrix
@@ -65,8 +65,8 @@ class SignatureHandler:
 
     @staticmethod
     def apply_matrix(images):
-        signature_position = Config.get('signature-position')
-        signature_height = Config.get('signature-height')
+        signature_position = Config.get('preprocessing.signature.position')
+        signature_height = Config.get('preprocessing.signature.height')
 
         for i in range(len(images)):
             images[i]['object'] = images[i]['object'].crop((0, signature_position, images[i]['object'].width,

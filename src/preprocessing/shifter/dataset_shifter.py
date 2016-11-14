@@ -43,7 +43,7 @@ class DatasetShifter:
         data_set_size = self.calculate_data_set_size()
 
         self.training_images_transformed = np.ones((data_set_size, self.width))
-        self.training_labels_transformed = np.zeros((data_set_size, len(Config.get('characters'))))
+        self.training_labels_transformed = np.zeros((data_set_size, len(Config.get('general.characters'))))
 
     def expand_data_set(self, length, char_index, matrix):
         for j in range(length):

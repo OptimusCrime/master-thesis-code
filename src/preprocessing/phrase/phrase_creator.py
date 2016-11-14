@@ -14,7 +14,7 @@ class PhraseCreator(AbstractImageSet):
         self.apply_crop()
 
     def create_image(self):
-        phrase_image = TextCreator.write(Config.get('phrase'))
+        phrase_image = TextCreator.write(Config.get('general.phrase'))
 
         self._images = [{
             'character': None,

@@ -55,7 +55,7 @@ class ANNPredictor(BasePredictor):
         training_epochs = 400
 
         size_input = self.widest
-        size_output = len(Config.get('characters'))
+        size_output = len(Config.get('general.characters'))
 
         # tf Graph Input
         x = tf.placeholder(tf.float32, [None, size_input], name='Input')

@@ -13,7 +13,7 @@ class DataSetCreator(AbstractImageSet):
         self.apply_constraints()
 
     def calculate_constraints(self):
-        for character in Config.get('characters'):
+        for character in Config.get('general.characters'):
             character_image = TextCreator.write(character)
 
             self.constraint_handler.transform_and_apply(character_image, character)
@@ -26,13 +26,13 @@ class DataSetCreator(AbstractImageSet):
         self.constraint_handler.save()
 
     def apply_constraints(self):
-        if Config.get('preprocessing-save'):
+        if Config.get('preprocessing.save'):
             Filesystem.create('data/crop')
 
         for i in range(len(self.images)):
             self._images[i]['object'] = self._images[i]['object'].crop(self.constraint_handler.constraints)
 
-            if Config.get('preprocessing-save'):
+            if Config.get('preprocessing.save'):
                 self._images[i]['object'].save(Filesystem.get_root_path(
                     'data/crop/' + self._images[i]['character'] + '.png'))
 

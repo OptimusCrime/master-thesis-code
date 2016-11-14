@@ -31,7 +31,7 @@ class Preprocessor:
         data_set.transform_and_dump()
         phrase.transform_and_dump()
 
-        if Config.get('preprocessing-words'):
+        if Config.get('preprocessing.words'):
             word_set = WordSetCreator()
             word_set.letter_matrices = data_set.dump
             word_set.create()

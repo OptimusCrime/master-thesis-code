@@ -26,7 +26,7 @@ class CNNPredictor(BasePredictor):
     def preprocess(self):
         self.calculate_widest()
 
-        if Config.get('preprocessing-shift'):
+        if Config.get('preprocessing.shift'):
             self.transform_shift_data_set()
         else:
             self.transform_data_set()
@@ -51,7 +51,7 @@ class CNNPredictor(BasePredictor):
 
     def transform_data_set(self):
         self.training_images_transformed = np.ones((len(self.data_set), self.widest))
-        self.training_labels_transformed = np.zeros((len(self.data_set), len(Config.get('characters'))))
+        self.training_labels_transformed = np.zeros((len(self.data_set), len(Config.get('general.characters'))))
 
         for i in range(len(self.data_set)):
             matrix = self.data_set[i]['matrix'][0]
@@ -104,7 +104,7 @@ class CNNPredictor(BasePredictor):
         x = Dense(1024, activation='relu', name='fc1')(x)
         x = Dense(1024, activation='relu', name='fc2')(x)
         x = Dense(512, activation='relu', name='fc3')(x)
-        x = Dense(len(Config.get('characters')), activation='softmax', name='predictions')(x)
+        x = Dense(len(Config.get('general.characters')), activation='softmax', name='predictions')(x)
 
         # Create model
         self.model = Model(img_input, x)
@@ -135,10 +135,10 @@ class CNNPredictor(BasePredictor):
         print('predictions')
         print(self.predictions)
         print(np.argmax(self.predictions))
-        print(Config.get('characters')[np.argmax(self.predictions)])
+        print(Config.get('general.characters')[np.argmax(self.predictions)])
 
         print('')
         print('correct')
         print(self.training_labels_transformed[idx])
         print(np.argmax(self.training_labels_transformed[idx]))
-        print(Config.get('characters')[np.argmax(self.training_labels_transformed[idx])])
+        print(Config.get('general.characters')[np.argmax(self.training_labels_transformed[idx])])
