@@ -33,5 +33,8 @@ class Preprocessor:
 
         if Config.get('preprocessing-words'):
             word_set = WordSetCreator()
-            word_set.letter_matrices = data_set.images
+            word_set.letter_matrices = data_set.dump
             word_set.create()
+
+            SignatureHandler.apply(word_set.images, set_type=SignatureHandler.PHRASE)
+            word_set.transform_and_dump()

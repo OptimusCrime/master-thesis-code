@@ -40,5 +40,8 @@ class DataSetCreator(AbstractImageSet):
         # Run parent method. Transform data
         transformed = super(DataSetCreator, self).transform_and_dump()
 
+        # Store the dump
+        self.dump = transformed
+
         # Store data for later use
         pickle_data(transformed, Filesystem.get_root_path('data/data_set.pickl'))

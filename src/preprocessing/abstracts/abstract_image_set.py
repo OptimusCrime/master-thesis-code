@@ -13,6 +13,7 @@ class AbstractImageSet:
 
     def __init__(self):
         self._images = []
+        self.dump = []
         self.constraint_handler = ConstraintHandler()
 
     @property
