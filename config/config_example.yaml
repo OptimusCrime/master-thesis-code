@@ -34,10 +34,18 @@ preprocessing:
 
     # Specific settings for the word mode (if chosen)
     word:
-        size: 10
+        number: 2
+
+
+# Logging
+logging:
+    batch_reporting: 10
 
 
 # Settings for predicting
 predicting:
+    run: true
+    epochs: 10
+
     # Class to lazy load for the prediction
     predictor: nets.lstm.RNNPredictor

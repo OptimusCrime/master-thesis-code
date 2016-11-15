@@ -2,9 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+import logging
 from keras.layers import Convolution2D, MaxPooling2D, Flatten, Dense, Input
 from keras.models import Model
 from keras.optimizers import SGD
+from keras.utils.visualize_util import plot
 
 from nets.base import BasePredictor
 from preprocessing.shifter import DatasetShifter
@@ -112,6 +114,8 @@ class CNNPredictor(BasePredictor):
         # Compile with sgd
         sgd = SGD(lr=0.01, decay=1e-6, momentum=0.5, nesterov=True)
         self.model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
+
+        plot(self.model, to_file='model.png', show_shapes=True)
 
     def train(self):
         self.model.fit(self.training_images_transformed,

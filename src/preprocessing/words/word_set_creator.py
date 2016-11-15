@@ -5,7 +5,7 @@ import numpy as np
 
 from preprocessing.abstracts import AbstractImageSet
 from preprocessing.handlers import TextCreator
-from utilities import Config, CharacterHandling, Filesystem, pickle_data
+from utilities import Config, CharacterHandling, Filesystem, LoggerWrapper, pickle_data
 from wordbuilder.parser import ListParser
 
 
@@ -13,6 +13,8 @@ class WordSetCreator(AbstractImageSet):
 
     def __init__(self):
         super().__init__()
+
+        self.log = LoggerWrapper.load(__name__)
 
         self.letter_matrices = []
         self.list_parser = ListParser()
@@ -22,7 +24,12 @@ class WordSetCreator(AbstractImageSet):
         self.apply_constraints()
 
     def create_images(self):
-        for i in range(Config.get('preprocessing.word.size')):
+        self.log.info('Prepearing to create %s images for the word set.', Config.get('preprocessing.word.number'))
+
+        for i in range(Config.get('preprocessing.word.number')):
+            if (i + 1) % Config.get('logging.batch_reporting') == 0:
+                self.log.info('Creating image %s/%s.', i + 1, Config.get('preprocessing.word.number'))
+
             # Get a random word from our word set
             random_word = self.list_parser.random_word()
 
@@ -37,11 +44,20 @@ class WordSetCreator(AbstractImageSet):
 
             self.constraint_handler.save()
 
+        self.log.info('Finished creating word image set.')
+
     def apply_constraints(self):
         if Config.get('preprocessing.save'):
             Filesystem.create('data/words')
 
-        for i in range(len(self.images)):
+        image_set_size = len(self.images)
+
+        self.log.info('Applying constraints to images.')
+
+        for i in range(image_set_size):
+            if (i + 1) % Config.get('logging.batch_reporting') == 0:
+                self.log.info('Applying constraint to image %s/%s.', i + 1, image_set_size)
+
             self._images[i]['object'] = self._images[i]['object'].crop(self.constraint_handler.constraints)
 
             if Config.get('preprocessing.save'):
@@ -49,14 +65,26 @@ class WordSetCreator(AbstractImageSet):
                     'data/words/' + self._images[i]['character'] + '.png'))
 
     def transform_and_dump(self):
+        self.log.info('Transforming word set.')
+
         # Run parent method. Transform data
         transformed = super(WordSetCreator, self).transform_and_dump()
+        data_set_size = len(transformed)
 
-        for word_object in transformed:
+        self.log.info('Done transforming word set.')
+        self.log.info('Constructing word label matrix.')
+
+        for i in range(data_set_size):
+            if (i + 1) % Config.get('logging.batch_reporting') == 0:
+                self.log.info('Constructing label matrix for image %s/%s', i + 1, data_set_size)
+
+            word_object = transformed[i]
             word_object['label'] = self.construct_label_matrix(word_object)
 
             # Store data for later use
             pickle_data(transformed, Filesystem.get_root_path('data/word_set.pickl'))
+
+        self.log.info('Finished constructing word label matrix.')
 
     def matrix_for_char(self, char):
         for char_object in self.letter_matrices:

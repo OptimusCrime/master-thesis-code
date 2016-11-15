@@ -1,5 +1,6 @@
 # Incorrect order due to import conflicts between filesystem and config
 from .filesystem import Filesystem
+from .logger import LoggerWrapper
 from .config import Config
 from .character_handling import CharacterHandling
 from .pickler import pickle_data, unpickle_data

@@ -19,39 +19,41 @@ from keras.layers import Dense, Dropout, Activation, Embedding
 from keras.layers import LSTM, SimpleRNN, GRU
 from keras.datasets import imdb
 
-max_features = 500
+from keras.utils.visualize_util import plot
+
+max_features = 100
 maxlen = 80  # cut texts after this number of words (among top max_features most common words)
 batch_size = 32
 
+
+
+
+print('Loading data...')
 (X_train, y_train), (X_test, y_test) = imdb.load_data(nb_words=max_features)
 
 print('X_train')
 print(X_train.shape)
 print(X_train)
 print(X_train[0])
-print(X_train[0][0])
-print('len')
 print(len(X_train[0]))
 print(len(X_train[1]))
+
 print('y_train')
 print(y_train.shape)
-
-print('X_test')
-print(X_test.shape)
-print('y_test')
-print(y_test.shape)
-
-'''
-print('Loading data...')
-(X_train, y_train), (X_test, y_test) = imdb.load_data(nb_words=max_features)
-print(len(X_train), 'train sequences')
-print(len(X_test), 'test sequences')
+print(y_train)
+print(y_train[0])
 
 print('Pad sequences (samples x time)')
 X_train = sequence.pad_sequences(X_train, maxlen=maxlen)
 X_test = sequence.pad_sequences(X_test, maxlen=maxlen)
-print('X_train shape:', X_train.shape)
-print('X_test shape:', X_test.shape)
+
+print('X_train')
+print(X_train.shape)
+print(X_train)
+print(X_train[0])
+print(len(X_train[0]))
+print(len(X_train[1]))
+
 
 print('Build model...')
 model = Sequential()
@@ -65,6 +67,9 @@ model.compile(loss='binary_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
 
+plot(model, to_file='cefererer.png', show_shapes=True)
+
+'''
 print('Train...')
 model.fit(X_train, y_train, batch_size=batch_size, nb_epoch=3,
           validation_data=(X_test, y_test))
