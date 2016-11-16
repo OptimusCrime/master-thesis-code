@@ -26,6 +26,8 @@ class RNNPredictor(BasePredictor):
 
     def preprocess(self):
         self.transform_data_set()
+        self.transform_phrase()
+
         self.keras_setup()
 
     def transform_data_set(self):
@@ -38,6 +40,9 @@ class RNNPredictor(BasePredictor):
 
         self.training_images_transformed = np.array(local_training_images)
         self.training_labels_transformed = np.array(local_training_labels)
+
+    def transform_phrase(self):
+        self.phrase_transformed = self.phrase[0]['matrix'][0]
 
     def keras_setup(self):
         self.model = Sequential()
@@ -56,7 +61,7 @@ class RNNPredictor(BasePredictor):
 
         self.model.summary()
 
-        plot(self.model, to_file='model_rnn.png', show_shapes=True)
+        #plot(self.model, to_file='model_rnn.png', show_shapes=True)
 
     def train(self):
         image_set_size = len(self.training_images_transformed)
@@ -74,9 +79,10 @@ class RNNPredictor(BasePredictor):
                     self.log.info('Image %s/%s. Loss = %.4f, acc = %.4f', i + 1, image_set_size,
                                   history.history['loss'][0], history.history['acc'][0])
 
-
-
-
     def predict(self):
-        predictions = self.model.predict(self.training_images_transformed[0])
-        print(np.array_str(predictions, max_line_width=300, precision=3))
+        predictions = self.model.predict(self.phrase_transformed)
+
+        for line in predictions:
+            print(line[0])
+
+
