@@ -10,19 +10,6 @@ import numpy as np
 
 class SignatureHandler:
 
-    DATA_SET = 0
-    PHRASE = 1
-
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def apply(images, set_type=None):
-        if Config.get('preprocessing.save') and set_type != SignatureHandler.PHRASE:
-            SignatureHandler.save_signature(images)
-
-        SignatureHandler.apply_matrix(images)
-
     @staticmethod
     def save_signature(images):
         Filesystem.create('data/illustration')
@@ -62,12 +49,3 @@ class SignatureHandler:
                     new_img_pixels[x, y] = color
 
             new_img.save(Filesystem.get_root_path('data/illustration/' + images[i]['character'] + '.png'))
-
-    @staticmethod
-    def apply_matrix(images):
-        signature_position = Config.get('preprocessing.signature.position')
-        signature_height = Config.get('preprocessing.signature.height')
-
-        for i in range(len(images)):
-            images[i]['object'] = images[i]['object'].crop((0, signature_position, images[i]['object'].width,
-                                                            signature_position + signature_height))

@@ -12,7 +12,8 @@ general:
 preprocessing:
     run: true
     save: false
-    shift: true
+    shift: false
+    pad: false
 
     # Settings for text
     text:

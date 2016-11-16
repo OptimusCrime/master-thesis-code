@@ -6,25 +6,45 @@ from abc import ABCMeta
 import numpy as np
 
 from preprocessing.handlers import ConstraintHandler
+from utilities import Config, LoggerWrapper
 
 
-class AbstractImageSet:
+class AbstractCreator:
     __metaclass__ = ABCMeta
 
     def __init__(self):
-        self._images = []
-        self.dump = []
+        self.log = LoggerWrapper.load(__name__)
+
+        self.contents = []
         self.constraint_handler = ConstraintHandler()
 
-    @property
-    def images(self):
-        return self._images
+    def create(self):
+        self.create_sets()
+        self.apply_constraints()
+        self.apply_signature()
+
+    def create_sets(self):
+        pass
+
+    def apply_constraints(self):
+        pass
+
+    def apply_signature(self):
+        signature_position = Config.get('preprocessing.signature.position')
+        signature_height = Config.get('preprocessing.signature.height')
+
+        for i in range(len(self.contents)):
+            self.contents[i]['matrix'] = self.contents[i]['matrix'][
+                                         signature_position:(signature_position + signature_height)]
+
+    def save(self):
+        pass
 
     def transform_and_dump(self):
         transformed = []
-        for image in self._images:
+        for content in self.contents:
             # Construct numpy array and reshape into matrix
-            arr = np.fromiter(list(image['object'].getdata()), dtype="int").reshape((-1, image['object'].width))
+            arr = np.fromiter(list(content['object'].getdata()), dtype="int").reshape((-1, content['object'].width))
 
             # Get the leftmost and rightmost values, so we can cut away all the whitespace
             left_pad = None
@@ -39,7 +59,7 @@ class AbstractImageSet:
 
             # Slice! (I have no idea why I had to add + 1)
             transformed.append({
-                'character': image['character'],
+                'character': content['character'],
                 'matrix': arr[::, left_pad:right_pad + 1]
             })
 

@@ -1,52 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import numpy as np
-
 from utilities import Filesystem, pickle_data
 
 
 class ConstraintHandler:
     def __init__(self):
-        self._constraints = {
-            'left': {
-                'value': None,
-                'letter': None
-            },
-            'right': {
-                'value': None,
-                'letter': None
-            },
-            'top': {
-                'value': None,
-                'letter': None
-            },
-            'bottom': {
-                'value': None,
-                'letter': None
-            }
+        self.constraints = {
+            'left': None,
+            'right': None,
+            'top': None,
+            'bottom': None
         }
 
     def save(self):
-        clean_constraint = {
-            'top': self._constraints['top']['value'],
-            'bottom': self._constraints['bottom']['value']
-        }
+        pickle_data(self.constraints, Filesystem.get_root_path('data/constraints.pickl'))
 
-        pickle_data(clean_constraint, Filesystem.get_root_path('data/constraints.pickl'))
-
-    def combine(self, old_constraint):
-        self._constraints['top']['value'] = old_constraint['top']
-        self._constraints['bottom']['value'] = old_constraint['bottom']
-
-    def transform_and_apply(self, image, character):
-        # Transform image into numpy matrix
-        arr = np.fromiter(list(image.getdata()), dtype="int").reshape((-1, image.width))
-
-        # We just call our centering handler, because we need to do the same later
-        self.apply(arr, character)
-
-    def apply(self, arr, key):
+    def calculate(self, arr):
         height = len(arr)
         width = len(arr[0])
 
@@ -55,33 +25,21 @@ class ConstraintHandler:
             for j in range(width):
                 if arr[i][j] == 0:
                     # left
-                    if self._constraints['left']['value'] is None or \
-                            self._constraints['left']['value'] > j:
-                        self._constraints['left']['value'] = j
-                        self._constraints['left']['letter'] = key
+                    if self.constraints['left'] is None or \
+                            self.constraints['left'] > j:
+                        self.constraints['left'] = j
 
                     # right
-                    if self._constraints['right']['value'] is None or \
-                            self._constraints['right']['value'] < j:
-                        self._constraints['right']['value'] = j
-                        self._constraints['right']['letter'] = key
+                    if self.constraints['right'] is None or \
+                            self.constraints['right'] < j:
+                        self.constraints['right'] = j
 
                     # top
-                    if self._constraints['top']['value'] is None or \
-                            self._constraints['top']['value'] > i:
-                        self._constraints['top']['value'] = i
-                        self._constraints['top']['letter'] = key
+                    if self.constraints['top'] is None or \
+                            self.constraints['top'] > i:
+                        self.constraints['top'] = i
 
                     # bottom
-                    if self._constraints['bottom']['value'] is None or \
-                            self._constraints['bottom']['value'] < i:
-                        self._constraints['bottom']['value'] = i
-                        self._constraints['bottom']['letter'] = key
-
-    @property
-    def constraints(self):
-        return tuple([self._constraints['left']['value'],
-                      self._constraints['top']['value'],
-                      self._constraints['right']['value'],
-                      self._constraints['bottom']['value']])
-
+                    if self.constraints['bottom'] is None or \
+                            self.constraints['bottom'] < i:
+                        self.constraints['bottom'] = i
