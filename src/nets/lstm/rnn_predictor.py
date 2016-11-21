@@ -52,7 +52,7 @@ class RNNPredictor(BasePredictor):
         #self.model.add(Embedding(256, 26, dropout=0.2, name="embedding_2"))
         #self.model.add(Dense(len(Config.get('general.characters')), name="dense_1"))
         #self.model.add(Reshape((26,), input_shape=(26,)))
-        self.model.add(Activation('sigmoid', name="activation_1"))
+        self.model.add(Activation('softmax', name="activation_1"))
         #self.model.add(TimeDistributed(Dense(1, activation='softmax')))
 
         self.model.compile(loss='binary_crossentropy',
@@ -64,25 +64,25 @@ class RNNPredictor(BasePredictor):
         #plot(self.model, to_file='model_rnn.png', show_shapes=True)
 
     def train(self):
-        image_set_size = len(self.training_images_transformed)
-        for n in range(Config.get('predicting.epochs')):
-            self.log.info('=============== Training epoch %s ===============', n + 1)
-            for i in range(image_set_size):
-                history = self.model.fit(np.array([self.training_images_transformed[i]]),
-                               np.array([self.training_labels_transformed[i]]),
-                               nb_epoch=1,
-                               verbose=0,
-                               batch_size=1
-                               )
+        self.log.info('Begin training')
 
-                if (i + 1) % Config.get('logging.batch_reporting') == 0:
-                    self.log.info('Image %s/%s. Loss = %.4f, acc = %.4f', i + 1, image_set_size,
-                                  history.history['loss'][0], history.history['acc'][0])
+        self.model.fit(self.training_images_transformed,
+                       self.training_labels_transformed,
+                       nb_epoch=5,
+                       verbose=1,
+                       batch_size=40
+                       )
+
+        self.log.info('Finished training')
 
     def predict(self):
+        self.log.info('Begin predicting')
+
         predictions = self.model.predict(self.phrase_transformed)
 
         for line in predictions:
             print(line[0])
+
+        self.log.info('Finished')
 
 
