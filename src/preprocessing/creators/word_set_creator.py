@@ -16,6 +16,7 @@ class WordSetCreator(TermCreator):
         super().__init__()
 
         self.letter_matrices = []
+        self.unique_signatures = None
         self.list_parser = ListParser()
 
     def apply_constraints(self):
@@ -47,18 +48,58 @@ class WordSetCreator(TermCreator):
     def construct_labels(self):
         self.log.info('Constructing word labels matrices.')
 
+        if Config.get('preprocessing.unique-signatures'):
+            self.log.info('Removing identical signatures.')
+            self.identify_identical_signatures()
+
         data_set_size = len(self.contents)
         for i in range(data_set_size):
             if (i + 1) % Config.get('logging.batch_reporting') == 0:
                 self.log.info('Constructing label matrix for image %s/%s', i + 1, data_set_size)
 
             word_object = self.contents[i]
+
             word_object['label'] = self.construct_label_matrix(word_object)
 
         self.log.info('Finished constructing word label matrix.')
 
+    def identify_identical_signatures(self):
+        unique_signatures_arr = []
+        handled = []
+        for i in range(len(self.letter_matrices)):
+            current_obj = self.letter_matrices[i]
+            current_obj['duplicates'] = []
+            current_signature = current_obj['matrix']
+            current_text = current_obj['text']
+
+            for j in range(i + 1, len(self.letter_matrices)):
+                inner_obj = self.letter_matrices[j]
+                inner_signature = inner_obj['matrix']
+                inner_text = inner_obj['text']
+
+                if np.array_equal(current_signature, inner_signature):
+                    current_obj['duplicates'].append(inner_text)
+                    handled.append(inner_text)
+
+            if current_text not in handled:
+                handled.append(current_text)
+                unique_signatures_arr.append(current_obj)
+
+        self.define_unique_indexes(unique_signatures_arr)
+
+    def define_unique_indexes(self, arr):
+        self.unique_signatures = {}
+
+        for i in range(len(arr)):
+            self.unique_signatures[arr[i]['text']] = i
+
+            for dup in arr[i]['duplicates']:
+                self.unique_signatures[dup] = i
+
+        pickle_data(self.unique_signatures, Filesystem.get_root_path('data/unique_signatures.pickl'))
+
     def construct_label_matrix(self, word_object):
-        label_matrix = np.zeros((len(word_object['matrix'][0]), len(Config.get('general.characters'))))
+        label_matrix = np.zeros((len(word_object['matrix'][0]), self.calculate_label_matrix_size()))
         current_offset = 0
         word_matrix_size = len(word_object['matrix'][0])
 
@@ -70,7 +111,7 @@ class WordSetCreator(TermCreator):
                 word_sub_matrix = word_object['matrix'][0][current_offset:current_offset + len(char_matrix[0])]
                 if np.array_equal(word_sub_matrix, char_matrix[0]):
                     # Mark the label matrix (set the 2nd dimention to 1 for the corresponding character)
-                    WordSetCreator.mark_label_matrix(label_matrix, current_offset, len(word_sub_matrix), character)
+                    self.mark_label_matrix(label_matrix, current_offset, len(word_sub_matrix), character)
 
                     current_offset += len(word_sub_matrix)
                     break
@@ -86,14 +127,26 @@ class WordSetCreator(TermCreator):
 
         return label_matrix
 
+    def calculate_label_matrix_size(self):
+        if Config.get('preprocessing.unique-signatures'):
+            return len(self.unique_signatures)
+
+        return len(Config.get('general.characters'))
+
     def matrix_for_char(self, char):
         for char_object in self.letter_matrices:
             if char == char_object['text']:
                 return char_object['matrix']
         return None
 
-    @staticmethod
-    def mark_label_matrix(matrix, start, length, char):
-        char_index = CharacterHandling.char_to_index(char)
+    def mark_label_matrix(self, matrix, start, length, char):
+        if Config.get('preprocessing.unique-signatures'):
+            char_index = self.char_to_unique_index(char)
+        else:
+            char_index = CharacterHandling.char_to_index(char)
+
         for i in range(start, start + length):
             matrix[i][char_index] = 1
+
+    def char_to_unique_index(self, char):
+        return self.unique_signatures[char]

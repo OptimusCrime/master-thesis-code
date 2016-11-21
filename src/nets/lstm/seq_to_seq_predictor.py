@@ -6,12 +6,15 @@ from keras.models import Sequential
 from keras.layers import LSTM, SimpleRNN, GRU, Reshape, Activation, Embedding, TimeDistributed, Dense
 from keras.optimizers import SGD
 from keras.utils.visualize_util import plot
+import seq2seq
+from seq2seq.models import SimpleSeq2Seq, Seq2Seq
+
 
 from nets.base import BasePredictor
 from utilities import Config, LoggerWrapper
 
 
-class RNNPredictor(BasePredictor):
+class Seq2SeqPredictor(BasePredictor):
 
     def __init__(self):
         super().__init__()
@@ -43,59 +46,36 @@ class RNNPredictor(BasePredictor):
 
         self.training_images_transformed = self.training_images_transformed.reshape(
             len(self.training_images_transformed),
-            self.training_images_transformed.shape[1],
-            1
+            1,
+            self.training_images_transformed.shape[1]
+
         )
+
+        print(self.training_labels_transformed.shape)
 
     def transform_phrase(self):
         self.phrase_transformed = self.phrase[0]['matrix'][0]
-
         self.phrase_transformed = self.phrase_transformed.reshape(
-            1,
-            self.phrase_transformed.shape[0],
-            1
-        )
+            1, 1, len(self.phrase[0]['matrix'][0]))
 
-        #self.phrase_transformed = self.phrase_transformed.reshape(
-        #    1,
-        #    self.phrase_transformed.shape[0],
-        #    len(Config.get('general.characters'))
-        #)
 
     def keras_setup(self):
-        print(self.training_images_transformed.shape)
-        #print(self.training_images_transformed.shape)
-        self.model = Sequential()
-        #self.model.add(Embedding(len(self.phrase[0]['matrix'][0]) + 1,
-        #                         128,
-        #                         dropout=0,
-        #                         name="embedding_1"
-        #                         ))
-        self.model.add(SimpleRNN(len(Config.get('general.characters')),
-                            dropout_W=0.0,
-                            dropout_U=0.0,
-                            name="lstm_1",
-                            return_sequences=True,
-                            stateful=False,
-                            batch_input_shape=(
-                                Config.get('predicting.batch_size'),
-                                self.training_images_transformed.shape[1],
-                                self.training_images_transformed.shape[2],
-                            )
-                            ))
-        #self.model.add(LSTM(26, dropout_W=0.2, dropout_U=0.2, name="lstm_1", input_shape=(None, 1)))
-        #self.model.add(Embedding(256, 26, dropout=0.2, name="embedding_2"))
-        #self.model.add(Dense(len(Config.get('general.characters')), name="dense_1"))
-        #self.model.add(Reshape((26,), input_shape=(26,)))
+        #self.model = Sequential()
+        self.model = Seq2Seq(output_dim=len(Config.get('general.characters')),
+                             hidden_dim=500,
+                             input_dim=len(self.phrase[0]['matrix'][0]),
+                             output_length=len(self.phrase[0]['matrix'][0])
+                             )
 
-        self.model.add(Activation('softmax',
-                                  name="activation_1"))
-        #self.model.add(TimeDistributed(Dense(1, activation='softmax')))
+        #self.model.add(seq)
+        #self.model.add(Activation('softmax',
+        #                          name="activation_1"))
+        # self.model.add(TimeDistributed(Dense(1, activation='softmax')))
 
         # Compile with sgd
-        sgd = SGD(lr=0.01, decay=1e-6, momentum=0.5, nesterov=True)
-        self.model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
-
+        #sgd = SGD(lr=0.01, decay=1e-6, momentum=0.5, nesterov=True)
+        self.model.compile(loss='mse', optimizer='rmsprop', metrics=['accuracy'])
+        #self.model.compile(loss='mse', optimizer='rmsprop')
         self.model.summary()
 
         plot(self.model, to_file='model_rnn.png', show_shapes=True)
@@ -118,8 +98,6 @@ class RNNPredictor(BasePredictor):
         predictions = self.model.predict(self.phrase_transformed)
 
         for line in predictions[0]:
-            print(line)
+            print('[' + ' | '.join(map(str, line)) + ']')
 
         self.log.info('Finished')
-
-
