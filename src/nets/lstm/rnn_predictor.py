@@ -8,7 +8,7 @@ from keras.optimizers import SGD
 from keras.utils.visualize_util import plot
 
 from nets.base import BasePredictor
-from utilities import Config, LoggerWrapper
+from utilities import Config, LoggerWrapper, MatrixDim
 
 
 class RNNPredictor(BasePredictor):
@@ -71,7 +71,7 @@ class RNNPredictor(BasePredictor):
         #                         dropout=0,
         #                         name="embedding_1"
         #                         ))
-        self.model.add(SimpleRNN(len(Config.get('general.characters')),
+        self.model.add(SimpleRNN(MatrixDim.get_size(),
                             dropout_W=0.0,
                             dropout_U=0.0,
                             name="lstm_1",
