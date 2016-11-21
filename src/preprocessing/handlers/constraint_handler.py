@@ -6,11 +6,20 @@ from utilities import Filesystem, pickle_data
 
 class ConstraintHandler:
     def __init__(self):
-        self.constraints = {
+        self._constraints = {
             'left': None,
             'right': None,
             'top': None,
             'bottom': None
+        }
+
+    @property
+    def constraints(self):
+        return {
+            'left': self._constraints['left'],
+            'right': self._constraints['right'] + 1,
+            'top': self._constraints['top'],
+            'bottom': self._constraints['bottom'],
         }
 
     def save(self):
@@ -25,21 +34,21 @@ class ConstraintHandler:
             for j in range(width):
                 if arr[i][j] == 0:
                     # left
-                    if self.constraints['left'] is None or \
-                            self.constraints['left'] > j:
-                        self.constraints['left'] = j
+                    if self._constraints['left'] is None or \
+                            self._constraints['left'] > j:
+                        self._constraints['left'] = j
 
                     # right
-                    if self.constraints['right'] is None or \
-                            self.constraints['right'] < j:
-                        self.constraints['right'] = j
+                    if self._constraints['right'] is None or \
+                            self._constraints['right'] < j:
+                        self._constraints['right'] = j
 
                     # top
-                    if self.constraints['top'] is None or \
-                            self.constraints['top'] > i:
-                        self.constraints['top'] = i
+                    if self._constraints['top'] is None or \
+                            self._constraints['top'] > i:
+                        self._constraints['top'] = i
 
                     # bottom
-                    if self.constraints['bottom'] is None or \
-                            self.constraints['bottom'] < i:
-                        self.constraints['bottom'] = i
+                    if self._constraints['bottom'] is None or \
+                            self._constraints['bottom'] < i:
+                        self._constraints['bottom'] = i

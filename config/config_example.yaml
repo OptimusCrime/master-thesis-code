@@ -11,9 +11,30 @@ general:
 # Settings for preprocessing
 preprocessing:
     run: true
-    save: false
     shift: false
     pad: false
+
+    # Saves
+    save:
+        # The entire canvas (as defined in this config file)
+        raw: true
+
+        # Save letters
+        letters: true
+        letters-signatures: true
+
+        # Save letters with highlighed signature
+        # TODO
+        letters-illustration: true
+
+        # Save phrase
+        phrase: true
+        phrase-signatures: true
+
+        # Save words
+        words: true
+        words-signtures: true
+        words-verification: true
 
     # Settings for text
     text:
@@ -37,6 +58,9 @@ preprocessing:
     word:
         number: 2
 
+        # Avoid random words, use this hardcoded word instead. Leave empty to skip
+        hardcoded: HE
+
 
 # Logging
 logging:
@@ -47,6 +71,7 @@ logging:
 predicting:
     run: true
     epochs: 10
+    batch_size: 20
 
     # Class to lazy load for the prediction
     predictor: nets.lstm.RNNPredictor

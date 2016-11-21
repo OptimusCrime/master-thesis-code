@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+import sys
 
 from preprocessing.creators import TermCreator
+from preprocessing.savers import MatrixSaver, VerificationSaver
 from utilities import Config, CharacterHandling, Filesystem, pickle_data
 from wordbuilder.parser import ListParser
 
@@ -16,13 +18,29 @@ class WordSetCreator(TermCreator):
         self.letter_matrices = []
         self.list_parser = ListParser()
 
+    def apply_constraints(self):
+        super().apply_constraints()
+
+        if Config.get('preprocessing.save.words'):
+            MatrixSaver.save('data/words', self.contents)
+
     def generate_random_words(self):
         for i in range(Config.get('preprocessing.word.number')):
-            # Get a random word from our word set
-            self.terms.append(self.list_parser.random_word())
+            if Config.get('preprocessing.word.hardcoded') is not None \
+                and len(Config.get('preprocessing.word.hardcoded')) > 0:
+                self.terms.append(Config.get('preprocessing.word.hardcoded'))
+            else:
+                # Get a random word from our word set
+                self.terms.append(self.list_parser.random_word())
 
     def save(self):
+        if Config.get('preprocessing.save.words-signtures'):
+            MatrixSaver.save('data/words-signatures', self.contents)
+
         self.construct_labels()
+
+        if Config.get('preprocessing.save.words-verification'):
+            VerificationSaver.save('data/words-verification', self.contents)
 
         pickle_data(self.contents, Filesystem.get_root_path('data/word_set.pickl'))
 
@@ -60,7 +78,11 @@ class WordSetCreator(TermCreator):
                     current_offset += 1
 
                 if current_offset >= word_matrix_size:
-                    break
+                    self.log.error('Could not locate letter %s in image.', character)
+                    self.log.error('Image dump:')
+                    self.log.error(word_object['matrix'])
+
+                    sys.exit(-1)
 
         return label_matrix
 

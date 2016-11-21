@@ -4,8 +4,8 @@
 import numpy as np
 from keras.models import Sequential
 from keras.layers import LSTM, SimpleRNN, GRU, Reshape, Activation, Embedding, TimeDistributed, Dense
+from keras.optimizers import SGD
 from keras.utils.visualize_util import plot
-import sys
 
 from nets.base import BasePredictor
 from utilities import Config, LoggerWrapper
@@ -55,9 +55,9 @@ class RNNPredictor(BasePredictor):
         self.model.add(Activation('softmax', name="activation_1"))
         #self.model.add(TimeDistributed(Dense(1, activation='softmax')))
 
-        self.model.compile(loss='binary_crossentropy',
-                      optimizer='adam',
-                      metrics=['accuracy'])
+        # Compile with sgd
+        sgd = SGD(lr=0.01, decay=1e-6, momentum=0.5, nesterov=True)
+        self.model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
 
         self.model.summary()
 
@@ -68,9 +68,9 @@ class RNNPredictor(BasePredictor):
 
         self.model.fit(self.training_images_transformed,
                        self.training_labels_transformed,
-                       nb_epoch=5,
+                       nb_epoch=Config.get('predicting.epochs'),
                        verbose=1,
-                       batch_size=40
+                       batch_size=Config.get('predicting.batch_size')
                        )
 
         self.log.info('Finished training')

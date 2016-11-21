@@ -25,7 +25,7 @@ class TextCreator:
                                          Config.get('preprocessing.text.size'))
         draw.text((0, 0), text, font=font_object, fill=0)
 
-        if Config.get('preprocessing.save'):
+        if Config.get('preprocessing.save.raw'):
             Filesystem.create('data/raw')
             im.save(Filesystem.get_root_path('data/raw/' + text + '.png'))
 
