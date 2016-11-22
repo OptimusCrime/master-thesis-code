@@ -7,14 +7,14 @@ from keras.layers import LSTM, SimpleRNN, GRU, Reshape, Activation, Embedding, T
 from keras.optimizers import SGD
 from keras.utils.visualize_util import plot
 import seq2seq
-from seq2seq.models import SimpleSeq2Seq, Seq2Seq
+from seq2seq.models import SimpleSeq2Seq, Seq2Seq, AttentionSeq2Seq
 
 
 from nets.base import BasePredictor
 from utilities import Config, LoggerWrapper, MatrixDim
 
 
-class Seq2SeqPredictor(BasePredictor):
+class AttentionSeqPredictor(BasePredictor):
 
     def __init__(self):
         super().__init__()
@@ -57,17 +57,17 @@ class Seq2SeqPredictor(BasePredictor):
         self.phrase_transformed = self.phrase[0]['matrix'][0]
         self.phrase_transformed = self.phrase_transformed.reshape(
             1, 1, len(self.phrase[0]['matrix'][0]))
-        print(self.phrase_transformed)
+
 
     def keras_setup(self):
         #self.model = Sequential()
-        self.model = Seq2Seq(output_dim=MatrixDim.get_size(),
+        self.model = AttentionSeq2Seq(output_dim=MatrixDim.get_size(),
                              hidden_dim=500,
                              input_dim=len(self.phrase[0]['matrix'][0]),
                              output_length=len(self.phrase[0]['matrix'][0]),
-                             depth=4
-                             )
 
+
+                              )
         #self.model.add(seq)
         #self.model.add(Activation('softmax',
         #                          name="activation_1"))

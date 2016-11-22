@@ -21,8 +21,6 @@ class MatrixDim:
     @staticmethod
     def get_unique_size():
         if MatrixDim.UNIQUE_SIZE is None:
-            unique_data = unpickle_data(Filesystem.get_root_path('data/unique_signatures.pickl'))
-
-            MatrixDim.UNIQUE_SIZE = len(unique_data)
+            MatrixDim.UNIQUE_SIZE = unpickle_data(Filesystem.get_root_path('data/unique_signatures.pickl'))
 
         return MatrixDim.UNIQUE_SIZE

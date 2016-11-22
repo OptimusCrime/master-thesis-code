@@ -1,2 +1,4 @@
+from .attention_seq_predictor import AttentionSeqPredictor
 from .rnn_predictor import RNNPredictor
 from .seq_to_seq_predictor import Seq2SeqPredictor
+from .simple_rnn_predictor import SimpleRNNPredictor

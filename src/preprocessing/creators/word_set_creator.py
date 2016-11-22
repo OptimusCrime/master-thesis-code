@@ -6,7 +6,7 @@ import sys
 
 from preprocessing.creators import TermCreator
 from preprocessing.savers import MatrixSaver, VerificationSaver
-from utilities import Config, CharacterHandling, Filesystem, pickle_data
+from utilities import Config, CharacterHandling, Filesystem, MatrixDim, pickle_data
 from wordbuilder.parser import ListParser
 
 
@@ -96,10 +96,10 @@ class WordSetCreator(TermCreator):
             for dup in arr[i]['duplicates']:
                 self.unique_signatures[dup] = i
 
-        pickle_data(self.unique_signatures, Filesystem.get_root_path('data/unique_signatures.pickl'))
+        pickle_data(len(arr), Filesystem.get_root_path('data/unique_signatures.pickl'))
 
     def construct_label_matrix(self, word_object):
-        label_matrix = np.zeros((len(word_object['matrix'][0]), self.calculate_label_matrix_size()))
+        label_matrix = np.zeros((len(word_object['matrix'][0]), MatrixDim.get_size()))
         current_offset = 0
         word_matrix_size = len(word_object['matrix'][0])
 
@@ -126,12 +126,6 @@ class WordSetCreator(TermCreator):
                     sys.exit(-1)
 
         return label_matrix
-
-    def calculate_label_matrix_size(self):
-        if Config.get('preprocessing.unique-signatures'):
-            return len(self.unique_signatures)
-
-        return len(Config.get('general.characters'))
 
     def matrix_for_char(self, char):
         for char_object in self.letter_matrices:
