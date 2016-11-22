@@ -4,7 +4,7 @@
 import os
 
 from common import PredictorWrapper
-from nets.lstm import RNNPredictor
+from nets.recurrent import RNNPredictor
 from preprocessing import Preprocessor
 from utilities import Config, Filesystem, PredictorImporter
 

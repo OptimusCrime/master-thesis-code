@@ -88,4 +88,4 @@ predicting:
     batch_size: 20
 
     # Class to lazy load for the prediction
-    predictor: nets.lstm.RNNPredictor
+    predictor: nets.recurrent.RNNPredictor
