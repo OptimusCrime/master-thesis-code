@@ -3,23 +3,22 @@
 
 import numpy as np
 
+from preprocessing.handlers import BaseHandler
 
-class PadHandler:
+
+class PadHandler(BaseHandler):
 
     def __init__(self):
-        self.set_list = []
+        super().__init__()
         self.widest = None
-
-    def add(self, pad_set):
-        self.set_list.append(pad_set)
 
     def run(self):
         self.calculate_widest()
         self.add_padding()
 
     def calculate_widest(self):
-        for sl in self.set_list:
-            for content in sl:
+        for set_list_obj in self.set_list:
+            for content in set_list_obj['data']:
                 matrix_length = len(content['matrix'][0])
 
                 if self.widest is None or matrix_length > self.widest:
@@ -27,13 +26,14 @@ class PadHandler:
 
     def add_padding(self):
         for i in range(len(self.set_list)):
+            # Note: Not sure what this is supposed to do?
             # Check if this list has the correct dims
-            if len(self.set_list[i][0]['matrix'][0]) == self.widest:
-                continue
+            # if len(self.set_list[i]['data'][0]['matrix'][0]) == self.widest:
+            #     continue
 
-            for j in range(len(self.set_list[i])):
+            for j in range(len(self.set_list[i]['data'])):
                 # Fetch the old matrix here
-                old_matrix = self.set_list[i][j]['matrix']
+                old_matrix = self.set_list[i]['data'][j]['matrix']
 
                 # NOTE:
                 # np.concatenate merges two tables, BUT it does not overwrite the overlapping parts of the matrices.
@@ -41,4 +41,4 @@ class PadHandler:
                 # To hack this, I simply create a matrix that is the size of the widest minus the old width. When
                 # concatenating this, it will return a matrix with the correct (widest) width.
                 new_matrix = np.ones((old_matrix.shape[0], self.widest - old_matrix.shape[1]))
-                self.set_list[i][j]['matrix'] = np.concatenate((old_matrix, new_matrix), axis=1)
+                self.set_list[i]['data'][j]['matrix'] = np.concatenate((old_matrix, new_matrix), axis=1)

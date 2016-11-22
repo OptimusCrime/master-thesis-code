@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from preprocessing.creators import DataSetCreator, PhraseCreator, WordSetCreator
-from preprocessing.handlers import PadHandler
+from preprocessing.handlers import BaseHandler, EmbeddingHandler, PadEmbeddingHandler, PadHandler
 from utilities import Config, LoggerWrapper
 
 
@@ -20,6 +20,9 @@ class Preprocessor:
 
         if Config.get('preprocessing.mode') == 'words':
             self.create_word_set()
+
+        if Config.get('preprocessing.embedding'):
+            self.embedding()
 
         if Config.get('preprocessing.pad'):
             self.apply_pad()
@@ -42,19 +45,48 @@ class Preprocessor:
         self.log.info('Creating word set.')
         self.word_set = WordSetCreator()
         self.word_set.generate_random_words()
-        # TODO BROKEN
         self.word_set.letter_matrices = self.data_set.contents
         self.word_set.create()
 
     def apply_pad(self):
-        self.log.info('Applying padding to sets.')
-        pad_handler = PadHandler()
-        pad_handler.add(self.phrase.contents)
+        if Config.get('preprocessing.embedding'):
+            self.log.info('Applying padding to sets via embedding.')
+            pad_handler = PadEmbeddingHandler()
+        else:
+            self.log.info('Applying padding to sets.')
+            pad_handler = PadHandler()
+
+        pad_handler.add({
+            'data': self.phrase.contents,
+            'identifier': BaseHandler.PHRASE
+        })
 
         if self.word_set is not None:
-            pad_handler.add(self.word_set.contents)
+            pad_handler.add({
+                'data': self.word_set.contents,
+                'identifier': BaseHandler.WORD_SET
+            })
 
         pad_handler.run()
+
+    def embedding(self):
+        embedding_handler = EmbeddingHandler()
+        embedding_handler.add({
+            'data': self.data_set.contents,
+            'identifier': BaseHandler.DATA_SET
+        })
+        embedding_handler.add({
+            'data': self.phrase.contents,
+            'identifier': BaseHandler.PHRASE
+        })
+
+        if self.word_set is not None:
+            embedding_handler.add({
+                'data': self.word_set.contents,
+                'identifier': BaseHandler.WORD_SET
+            })
+
+        embedding_handler.run()
 
     def save_sets(self):
         self.data_set.save()

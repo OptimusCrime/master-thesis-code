@@ -13,6 +13,7 @@ preprocessing:
     run: true
     shift: false
     pad: false
+    embedding: false
 
     # Set to true to delete everyone once started
     # TODO
@@ -20,6 +21,12 @@ preprocessing:
 
     # Turn on to handle identical signatures as one
     unique-signatures: true
+
+    # Embedding settings
+    embedding:
+        # Unique black/white patterns
+        # TODO
+        unique-patterns: false
 
     # Saves
     save:

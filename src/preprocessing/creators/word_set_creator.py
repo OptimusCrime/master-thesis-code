@@ -40,7 +40,8 @@ class WordSetCreator(TermCreator):
 
         self.construct_labels()
 
-        if Config.get('preprocessing.save.words-verification'):
+        # TODO, crashes with embedding
+        if Config.get('preprocessing.save.words-verification') and not Config.get('preprocessing.embedding'):
             VerificationSaver.save('data/words-verification', self.contents)
 
         pickle_data(self.contents, Filesystem.get_root_path('data/word_set.pickl'))
@@ -59,7 +60,10 @@ class WordSetCreator(TermCreator):
 
             word_object = self.contents[i]
 
-            word_object['label'] = self.construct_label_matrix(word_object)
+            if Config.get('preprocessing.embedding'):
+                word_object['label'] = self.construct_embedding_label_matrix(word_object)
+            else:
+                word_object['label'] = self.construct_label_matrix(word_object)
 
         self.log.info('Finished constructing word label matrix.')
 
@@ -127,17 +131,34 @@ class WordSetCreator(TermCreator):
 
         return label_matrix
 
+    def construct_embedding_label_matrix(self, word_object):
+        label_matrix = np.zeros((len(word_object['embedding']), MatrixDim.get_size()))
+
+        for i in range(len(word_object['embedding'])):
+            if i >= len(word_object['labels_raw']):
+                break
+
+            raw_label_value = word_object['labels_raw'][i]
+            if raw_label_value is not None:
+                char_index = self.get_char_index(raw_label_value)
+                label_matrix[i][char_index] = 1
+
+        return label_matrix
+
     def matrix_for_char(self, char):
         for char_object in self.letter_matrices:
             if char == char_object['text']:
                 return char_object['matrix']
         return None
 
-    def mark_label_matrix(self, matrix, start, length, char):
+    def get_char_index(self, char):
         if Config.get('preprocessing.unique-signatures'):
-            char_index = self.char_to_unique_index(char)
-        else:
-            char_index = CharacterHandling.char_to_index(char)
+            return self.char_to_unique_index(char)
+
+        return CharacterHandling.char_to_index(char)
+
+    def mark_label_matrix(self, matrix, start, length, char):
+        char_index = self.get_char_index(char)
 
         for i in range(start, start + length):
             matrix[i][char_index] = 1
