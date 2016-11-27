@@ -101,6 +101,7 @@ class WordSetCreator(TermCreator):
                 self.unique_signatures[dup] = i
 
         pickle_data(len(arr), Filesystem.get_root_path('data/unique_signatures.pickl'))
+        pickle_data(self.unique_signatures, Filesystem.get_root_path('data/unique_signatures_data.pickl'))
 
     def construct_label_matrix(self, word_object):
         label_matrix = np.zeros((len(word_object['matrix'][0]), MatrixDim.get_size()))

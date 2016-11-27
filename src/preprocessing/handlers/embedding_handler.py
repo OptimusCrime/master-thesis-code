@@ -37,7 +37,7 @@ class EmbeddingHandler(BaseHandler):
                 continue
 
             if matrix[current_offset] != current_type:
-                expression.append(str(current_length))
+                expression.append(str(current_length) + ('B' if current_type == 0 else 'W'))
                 current_length = 0
                 current_type = matrix[current_offset]
 

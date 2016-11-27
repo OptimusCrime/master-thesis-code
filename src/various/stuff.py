@@ -1,16 +1,8 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-import numpy as np
-import tensorflow as tf
-
-import tensorflow as tf
-
-seq_width = 20
+'''seq_length = 20
 
 
 def sequencify(x):
-    seq = np.zeros(seq_width, dtype=np.int32)
+    seq = np.zeros(seq_length, dtype=np.int32)
     current_index = 0
     current_type = None
     current_length = 0
@@ -36,17 +28,5 @@ def sequencify(x):
     return np.array(seq, dtype=np.int32)
 
 
-class Model:
-
-    def __init__(self):
-        pass
-
-
 x = tf.placeholder(tf.bool, None)
-y = tf.py_func(sequencify, [x], [tf.int32])
-
-with tf.Session() as session:
-    tf.initialize_all_variables().run()
-
-    result = session.run(y, feed_dict={x: [True, False, False, False, True, False, False, False, False, True]})
-    print(result)
+y = tf.py_func(sequencify, [x], [tf.int32])'''
