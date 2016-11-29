@@ -32,7 +32,15 @@ class WordSetCreator(TermCreator):
                 self.terms.append(Config.get('preprocessing.word.hardcoded'))
             else:
                 # Get a random word from our word set
-                self.terms.append(self.list_parser.random_word())
+                random_word = self.list_parser.random_word()
+
+                if Config.get('preprocessing.word.max-length') is not None:
+                    if len(random_word) > Config.get('preprocessing.word.max-length'):
+                        random_word = random_word[0:Config.get('preprocessing.word.max-length')]
+
+                self.terms.append(random_word)
+
+        print(self.terms)
 
     def save(self):
         if Config.get('preprocessing.save.words-signtures'):

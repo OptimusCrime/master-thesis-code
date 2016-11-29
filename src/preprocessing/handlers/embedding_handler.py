@@ -44,13 +44,24 @@ class EmbeddingHandler(BaseHandler):
             current_length += 1
             current_offset += 1
 
-        expression.append(str(current_length))
+        expression.append(str(current_length) + ('B' if current_type == 0 else 'W'))
 
         if identifier != BaseHandler.DATA_SET:
             expression.append('0')
-            obj['embedding_raw'] = expression
+
+        new_expression = []
+        for i in range(1, len(expression) - 1):
+            new_expression.append(
+                expression[i - 1] + expression[i]
+            )
+
+        if len(new_expression) == 0:
+            new_expression.append(expression[0])
+
+        if identifier != BaseHandler.DATA_SET:
+            obj['embedding_raw'] = new_expression
         else:
-            self.letter_embedded[obj['text']] = expression
+            self.letter_embedded[obj['text']] = new_expression
 
     def contract(self):
         data_set = None
