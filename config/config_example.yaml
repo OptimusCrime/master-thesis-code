@@ -1,4 +1,7 @@
-# General settings
+##################################################################
+#                          General                               #
+##################################################################
+
 general:
     # List of characters to include in our dataset (the phrase CAN NOT use characters that are not defined here).
     # Separate each character with a comma with no ending comma present
@@ -7,26 +10,28 @@ general:
     # The phrase we're trying to predict
     phrase: HELLO
 
+##################################################################
+#                          Logging                               #
+##################################################################
 
-# Settings for preprocessing
+logging:
+    batch_reporting: 10
+
+##################################################################
+#                       Preprocessing                            #
+##################################################################
+
 preprocessing:
-    run: true
-    shift: false
-    pad: false
-    embedding: false
+    run: false
+
+    # If a new phrase is detected, we'll preprocess the phrase
+    new-phrase-run: true
 
     # Set to true to delete everyone once started
-    # TODO
-    wipe: true
+    wipe: false
 
     # Turn on to handle identical signatures as one
     unique-signatures: true
-
-    # Embedding settings
-    embedding:
-        # Unique black/white patterns
-        # TODO
-        unique-patterns: false
 
     # Saves
     save:
@@ -65,23 +70,28 @@ preprocessing:
         height: 1
         position: 14
 
-    # Mode to produce data set. Either normal (single chars), or words (generate using the word list)
-    mode: words
-
     # Specific settings for the word mode (if chosen)
     word:
         number: 2
 
         # Avoid random words, use this hardcoded word instead. Leave empty to skip
-        hardcoded: HE
+        hardcoded:
 
+##################################################################
+#                       Transformation                           #
+##################################################################
 
-# Logging
-logging:
-    batch_reporting: 10
+transformation:
+    run: true
 
+    # List of transformations to apply, in order
+    transformations:
+    - TODO
 
-# Settings for predicting
+##################################################################
+#                         Predicting                             #
+##################################################################
+
 predicting:
     run: true
     epochs: 10

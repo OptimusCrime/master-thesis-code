@@ -7,7 +7,7 @@ from rorchach.utilities import Config, PredictorImporter
 
 
 def main():
-    if Config.get('preprocessing.run'):
+    if Config.get('preprocessing.run') or Config.get('preprocessing.new-phrase-run'):
         preprocessor = Preprocessor()
         preprocessor.run()
 

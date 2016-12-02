@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
 import numpy as np
 
 from rorchach.preprocessing.creators import AbstractCreator
@@ -33,8 +34,13 @@ class TermCreator(AbstractCreator):
             })
 
     def apply_constraints(self):
+        constraints_file = Filesystem.get_root_path('data/constraints.pickl')
+
+        # We can not apply constraints unless we have the pickle file
+        assert os.path.isfile(constraints_file) is True
+
         # Load the constraints for upper/lower lines
-        char_constraints = unpickle_data(Filesystem.get_root_path('data/constraints.pickl'))
+        char_constraints = unpickle_data(constraints_file)
 
         # Word constraint
         term_constraints = self.constraint_handler.constraints
