@@ -5,15 +5,15 @@ import importlib
 import sys
 
 
-class PredictorImporter:
+class ModuleImporter:
 
     def __init__(self):
         pass
 
     @staticmethod
-    def load(predictor_module_string):
+    def load(module_string):
         try:
-            module_path_split = predictor_module_string.split('.')
+            module_path_split = module_string.split('.')
 
             # We're transforming path.to.module_name to the format "from path.to import module_name", which is the
             # format we're using
@@ -27,6 +27,6 @@ class PredictorImporter:
 
         except Exception as e:
             print(str(e))
-            print('Could not import predictor ' + predictor_module_string, file=sys.stderr)
+            print('Could not import module ' + module_string, file=sys.stderr)
 
         return None

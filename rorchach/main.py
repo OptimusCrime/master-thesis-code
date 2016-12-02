@@ -3,7 +3,7 @@
 
 from rorchach.prediction import PredictorWrapper
 from rorchach.preprocessing import Preprocessor
-from rorchach.utilities import Config, PredictorImporter
+from rorchach.utilities import Config, ModuleImporter
 
 
 def main():
@@ -13,7 +13,7 @@ def main():
 
     if Config.get('predicting.run') and Config.get('predicting.predictor') is not None:
         wrapper = PredictorWrapper()
-        wrapper.predictor = PredictorImporter.load(Config.get('predicting.predictor'))
+        wrapper.predictor = ModuleImporter.load(Config.get('predicting.predictor'))
         wrapper.run()
 
 

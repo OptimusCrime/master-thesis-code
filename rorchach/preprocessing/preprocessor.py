@@ -20,7 +20,7 @@ class Preprocessor:
 
     def run(self):
         if Config.get('preprocessing.run') and Config.get('preprocessing.wipe'):
-            self.wipe_data()
+            Preprocessor.wipe_data()
 
         if Config.get('preprocessing.run'):
             self.create_sets()
@@ -30,7 +30,8 @@ class Preprocessor:
 
         self.save_sets()
 
-    def wipe_data(self):
+    @staticmethod
+    def wipe_data():
         data_path = Filesystem.get_root_path('data/')
         dir_content = os.listdir(data_path)
 
@@ -62,7 +63,7 @@ class Preprocessor:
 
         # Check if we should run just the phrase instead of creating a whole new data set
         if Config.get('preprocessing.new-phrase-run'):
-            return self.phrase_differs()
+            return Preprocessor.phrase_differs()
 
     def create_phrase(self):
         # Create the phrase
@@ -71,7 +72,8 @@ class Preprocessor:
         self.phrase.terms.append(Config.get('general.phrase'))
         self.phrase.create()
 
-    def phrase_differs(self):
+    @staticmethod
+    def phrase_differs():
         # If we have phrase file we have to create one either way
         phrase_file = Filesystem.get_root_path('data/phrase.pickl')
         if not os.path.isfile(phrase_file):

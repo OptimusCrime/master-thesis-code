@@ -86,7 +86,10 @@ transformation:
 
     # List of transformations to apply, in order
     transformations:
-    - TODO
+    - rorchach.transformation.handlers.BinaryTranslationHandler
+    - rorchach.transformation.handlers.ConcatenateHandler
+    - rorchach.transformation.handlers.SequenceHandler
+    - rorchach.transformation.handlers.LabelUniqueHandler
 
 ##################################################################
 #                         Predicting                             #
@@ -98,4 +101,4 @@ predicting:
     batch_size: 20
 
     # Class to lazy load for the prediction
-    predictor: nets.recurrent.sequence.SequencePredictor
+    predictor: rorchach.nets.recurrent.sequence.SequencePredictor
