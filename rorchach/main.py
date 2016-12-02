@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from rorchach.common import PredictorWrapper
+from rorchach.prediction import PredictorWrapper
 from rorchach.preprocessing import Preprocessor
 from rorchach.utilities import Config, PredictorImporter
 
@@ -15,6 +15,7 @@ def main():
         wrapper = PredictorWrapper()
         wrapper.predictor = PredictorImporter.load(Config.get('predicting.predictor'))
         wrapper.run()
+
 
 if __name__ == '__main__':
     main()
