@@ -1,5 +1,7 @@
 language: python
 
+sudo: required
+
 python:
   - 3.5
 
@@ -12,5 +14,5 @@ notifications:
 
 install:
   - pip install tox
-  - apt-get install graphviz
+  - sudo apt-get install graphviz
   - tox
