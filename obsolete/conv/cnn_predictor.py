@@ -8,7 +8,7 @@ from keras.models import Model
 from keras.optimizers import SGD
 from keras.utils.visualize_util import plot
 
-from rorchach.nets.base import BasePredictor
+from rorchach.prediction.base import BasePredictor
 from rorchach.preprocessing.shifter import DatasetShifter
 from rorchach.utilities import Config, CharacterHandling
 

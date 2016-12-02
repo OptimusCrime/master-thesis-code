@@ -6,12 +6,8 @@ from rorchach.utilities import Filesystem, pickle_data
 
 class ConstraintHandler:
     def __init__(self):
-        self._constraints = {
-            'left': None,
-            'right': None,
-            'top': None,
-            'bottom': None
-        }
+        self._constraints = None
+        self.reset()
 
     @property
     def constraints(self):
@@ -20,6 +16,14 @@ class ConstraintHandler:
             'right': self._constraints['right'] + 1,
             'top': self._constraints['top'],
             'bottom': self._constraints['bottom'],
+        }
+
+    def reset(self):
+        self._constraints = {
+            'left': None,
+            'right': None,
+            'top': None,
+            'bottom': None
         }
 
     def save(self):

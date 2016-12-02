@@ -72,7 +72,7 @@ preprocessing:
 
     # Specific settings for the word mode (if chosen)
     word:
-        number: 2
+        number: 4
 
         # Avoid random words, use this hardcoded word instead. Leave empty to skip
         hardcoded:
@@ -98,4 +98,4 @@ predicting:
     batch_size: 20
 
     # Class to lazy load for the prediction
-    predictor: nets.recurrent.RNNPredictor
+    predictor: nets.recurrent.sequence.SequencePredictor

@@ -10,7 +10,7 @@ import seq2seq
 from seq2seq.models import SimpleSeq2Seq, Seq2Seq, AttentionSeq2Seq
 
 
-from rorchach.nets.base import BasePredictor
+from rorchach.prediction.base import BasePredictor
 from rorchach.utilities import Config, LoggerWrapper, MatrixDim
 
 

@@ -8,7 +8,7 @@ from keras.layers import LSTM, SimpleRNN, GRU, Reshape, Activation, Embedding, T
 from keras.optimizers import SGD
 from keras.utils.visualize_util import plot
 
-from rorchach.nets.base import BasePredictor
+from rorchach.prediction.base import BasePredictor
 from rorchach.utilities import Config, LoggerWrapper, MatrixDim
 
 

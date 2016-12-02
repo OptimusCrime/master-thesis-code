@@ -8,11 +8,11 @@ from keras.layers.convolutional import AveragePooling1D
 from keras.models import Sequential
 from keras.utils.visualize_util import plot
 
-from rorchach.nets.base import BasePredictor
+from rorchach.prediction.base import BasePredictor
 from rorchach.utilities import Config, LoggerWrapper, Filesystem, unpickle_data  # isort:skip
 
 
-class SequencePredictor3(BasePredictor):
+class SequencePredictor(BasePredictor):
 
     def __init__(self):
         super().__init__()

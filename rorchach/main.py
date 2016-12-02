@@ -16,10 +16,5 @@ def main():
         wrapper.predictor = PredictorImporter.load(Config.get('predicting.predictor'))
         wrapper.run()
 
-    # word_builder = WordBuilder()
-    # word_builder.build()
-    # word_builder.calculate(predictor.predictions)
-
-
 if __name__ == '__main__':
     main()

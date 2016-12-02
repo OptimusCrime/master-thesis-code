@@ -26,8 +26,6 @@ class TermCreator(AbstractCreator):
             phrase_arr = np.fromiter(list(phrase_image.getdata()), dtype="int").reshape((phrase_image.height,
                                                                                          phrase_image.width))
 
-            self.constraint_handler.calculate(phrase_arr)
-
             self.contents.append({
                 'text': self.terms[i],
                 'matrix': phrase_arr
@@ -42,9 +40,12 @@ class TermCreator(AbstractCreator):
         # Load the constraints for upper/lower lines
         char_constraints = unpickle_data(constraints_file)
 
-        # Word constraint
-        term_constraints = self.constraint_handler.constraints
         for i in range(len(self.contents)):
+            # Calculate constraints for THIS unique term
+            self.constraint_handler.reset()
+            self.constraint_handler.calculate(self.contents[i]['matrix'])
+
             self.contents[i]['matrix'] = self.contents[i]['matrix'][
                                          char_constraints['top']:char_constraints['bottom'],
-                                         term_constraints['left']:term_constraints['right']]
+                                         self.constraint_handler.constraints['left']:
+                                         self.constraint_handler.constraints['right']]

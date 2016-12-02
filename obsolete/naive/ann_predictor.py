@@ -4,7 +4,7 @@
 import numpy as np
 import tensorflow as tf
 
-from rorchach.nets.base import BasePredictor
+from rorchach.prediction.base import BasePredictor
 from rorchach.utilities import Config, CharacterHandling
 
 
