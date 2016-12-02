@@ -27,9 +27,6 @@ class SequencePredictor(BasePredictor):
         self.embedding_nums = set()
         self.translations = {}
         self.voc_size = None
-        self.training_images_transformed = None
-        self.training_labels_transformed = None
-        self.phrase_transformed = None
         self.pooling_factor = None
         self.labels_width = None
 

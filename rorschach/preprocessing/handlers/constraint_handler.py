@@ -5,6 +5,7 @@ from rorschach.utilities import Filesystem, pickle_data
 
 
 class ConstraintHandler:
+
     def __init__(self):
         self._constraints = None
         self.reset()

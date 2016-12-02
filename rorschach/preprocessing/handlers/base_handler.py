@@ -4,10 +4,6 @@
 
 class BaseHandler:
 
-    DATA_SET = 0
-    PHRASE = 1
-    WORD_SET = 2
-
     def __init__(self):
         self.set_list = []
 

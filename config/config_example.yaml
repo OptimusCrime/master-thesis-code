@@ -85,11 +85,18 @@ transformation:
     run: true
 
     # List of transformations to apply, in order
-    transformations:
-    - rorchach.transformation.handlers.BinaryTranslationHandler
-    - rorchach.transformation.handlers.ConcatenateHandler
-    - rorchach.transformation.handlers.SequenceHandler
-    - rorchach.transformation.handlers.LabelUniqueHandler
+    handlers:
+        # Translate individual bits to number representations
+        - transformation.handlers.input.ConcatenateBinaryDataHandler
+
+        # Translate vector of number represenations to a sequence
+        - transformation.handlers.input.SequenceHandler
+
+        # Pad the sequence to fit the longest sequence
+        - transformation.handlers.input.PadHandler
+
+        # Generate the label
+        - transformation.handlers.output.LabelUniqueHandler
 
 ##################################################################
 #                         Predicting                             #
@@ -101,4 +108,4 @@ predicting:
     batch_size: 20
 
     # Class to lazy load for the prediction
-    predictor: rorchach.nets.recurrent.sequence.SequencePredictor
+    predictor: prediction.recurrent.sequence.SequencePredictor

@@ -9,6 +9,11 @@ class BasePredictor:
         self.phrase = None
         self.predictions = []
 
+        self.training_images_transformed = None
+        self.training_labels_transformed = None
+        self.predicting_image_transformed = None
+        self.predicting_label_transformed = None
+
     def preprocess(self):
         pass
 
