@@ -10,8 +10,8 @@ from keras.utils.visualize_util import plot
 
 from seq2seq.models import SimpleSeq2Seq, Seq2Seq, AttentionSeq2Seq
 
-from rorchach.prediction.base import BasePredictor
-from rorchach.utilities import Config, LoggerWrapper, MatrixDim, Filesystem, unpickle_data
+from rorschach.prediction.base import BasePredictor
+from rorschach.utilities import Config, LoggerWrapper, MatrixDim, Filesystem, unpickle_data
 
 
 class SequencePredictor(BasePredictor):

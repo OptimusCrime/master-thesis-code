@@ -1,28 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import math
-import sys
 import numpy as np
-from keras.models import Sequential
-from keras.layers import LSTM, SimpleRNN, GRU, Reshape, Activation, Embedding, TimeDistributed, Dense, Dropout, Masking, Bidirectional
+from keras.layers import (GRU, Activation, Dense, Dropout, Masking, Merge,
+                          TimeDistributed)
 from keras.layers.convolutional import AveragePooling1D
-from keras.optimizers import SGD
+from keras.models import Sequential
 from keras.utils.visualize_util import plot
 
-from seq2seq.models import SimpleSeq2Seq, Seq2Seq, AttentionSeq2Seq
-
 from rorschach.prediction.base import BasePredictor
-from rorschach.utilities import Config, LoggerWrapper, MatrixDim, Filesystem, unpickle_data
+from rorschach.utilities import Config, LoggerWrapper, Filesystem, unpickle_data  # isort:skip
 
 
-from keras.engine.topology import Layer, InputSpec
-from theano import tensor as T
-import theano
-import numpy as np
-
-
-class SequencePredictor2(BasePredictor):
+class SequencePredictor(BasePredictor):
 
     def __init__(self):
         super().__init__()
@@ -60,7 +50,7 @@ class SequencePredictor2(BasePredictor):
         print(self.embedding_values)
 
         for key in self.embedding_values:
-            #self.embedding_values[key] += 0
+            # self.embedding_values[key] += 0
             self.embedding_values[key] += 1
 
         print('self.embedding_values 2')
@@ -105,11 +95,10 @@ class SequencePredictor2(BasePredictor):
         # access complexity of O(1) which is what we want in the next step.
         for i in range(len(sorted_uniques_values)):
             self.translations[sorted_uniques_values[i]] = i + 1
-            #self.translations[sorted_uniques_values[i]] = i
+            # self.translations[sorted_uniques_values[i]] = i
 
         print('self.translations')
         print(self.translations)
-
 
     def transform_data_set(self):
         for sets in [self.data_set, self.phrase]:
@@ -118,11 +107,11 @@ class SequencePredictor2(BasePredictor):
                     self.widest = len(data['embedding_raw'])
 
         self.training_images_transformed = self.transform_set(self.data_set)
-        #self.training_labels_transformed = np.zeros((len(self.data_set), self.widest, len(self.embedding_nums)),
-        #                                            dtype=np.float32)
-        #print(self.training_labels_transformed.shape)
-        #self.training_labels_transformed = np.zeros((len(self.data_set), self.widest, len(self.embedding_nums) + 1),
-        #                                            dtype=np.float32)
+        # self.training_labels_transformed = np.zeros((len(self.data_set), self.widest, len(self.embedding_nums)),
+        #                                             dtype=np.float32)
+        # print(self.training_labels_transformed.shape)
+        # self.training_labels_transformed = np.zeros((len(self.data_set), self.widest, len(self.embedding_nums) + 1),
+        #                                             dtype=np.float32)
 
         longest_word = None
         for i in range(len(self.data_set)):
@@ -153,24 +142,25 @@ class SequencePredictor2(BasePredictor):
         self.labels_width = smallest_factor
 
         print('pooling_factor', self.pooling_factor)
-        print('labels_width' ,self.labels_width)
+        print('labels_width', self.labels_width)
 
-        self.training_labels_transformed = np.zeros((len(self.data_set), self.labels_width, len(self.embedding_nums) + 1),
+        self.training_labels_transformed = np.zeros((len(self.data_set),
+                                                     self.labels_width,
+                                                     len(self.embedding_nums) + 1),
                                                     dtype=np.float32)
 
         for i in range(len(self.data_set)):
             for j in range(self.labels_width):
                 if j < len(self.data_set[i]['text']):
                     char = self.data_set[i]['text'][j]
-                    #print(char)
-                    #print(self.embedding_values[char])
+                    # print(char)
+                    # print(self.embedding_values[char])
                     self.training_labels_transformed[i][j][self.embedding_values[char]] = 1.
                 else:
                     self.training_labels_transformed[i][j][0] = 1.
 
-        #for i in range(len(self.training_labels_transformed)):
-        #    print(self.training_labels_transformed[i])
-
+        # for i in range(len(self.training_labels_transformed)):
+        #     print(self.training_labels_transformed[i])
 
     def transform_phrase(self):
         self.phrase_transformed = self.transform_set(self.phrase)
@@ -187,80 +177,59 @@ class SequencePredictor2(BasePredictor):
         return transform_set
 
     def keras_setup(self):
-        #print(self.embedding_values_translated)
-        '''print(self.training_images_transformed.shape)
+        # print(self.embedding_values_translated)
+        # print(self.training_images_transformed.shape)
+        # self.model.add(LSTM(len(self.embedding_nums), return_sequences=True, stateful=True,
+        #               batch_input_shape=(Config.get('predicting.batch_size'), 1, self.widest)))
+        # self.model.add(LSTM(32, return_sequences=True, stateful=True))
+        # self.model.add(AttentionSeq2Seq(output_dim=len(self.embedding_nums),
+        #                                     hidden_dim=len(self.embedding_nums),
+        #                      input_dim=self.widest,
+        #                      output_length=self.widest,
+        #                      depth=4
+        #                      ))
 
+        left = Sequential()
+        left.add(Masking(mask_value=0.,
+                         input_shape=(self.widest, 1)))
+        left.add(GRU(output_dim=256,
+                     activation='sigmoid',
+                     inner_activation='hard_sigmoid',
+                     return_sequences=True))
 
-
-        self.model.add(LSTM(len(self.embedding_nums), return_sequences=True, stateful=True,
-                       batch_input_shape=(Config.get('predicting.batch_size'), 1, self.widest)))
-        #self.model.add(LSTM(32, return_sequences=True, stateful=True))
-        '''
-
-        #self.model.add(AttentionSeq2Seq(output_dim=len(self.embedding_nums),
-        #                                    hidden_dim=len(self.embedding_nums),
-        #                     input_dim=self.widest,
-        #                     output_length=self.widest,
-        #                     depth=4
-        #                     ))
-
-        '''
-        FOR NON SIMPLE:
-        self.model.add(SimpleSeq2Seq(output_dim=len(self.embedding_nums),
-                             hidden_dim=500,
-                             input_dim=self.widest,
-                             output_length=self.widest,
-                             depth=4
-                             ))
-
-        '''
-
-        # Working seq2seq with terrible results goes here
-        #self.model = Sequential()
-        #self.model.add(Seq2Seq(output_dim=len(self.embedding_nums) + 1,
-        #        hidden_dim=500,
-        #        input_dim=1,
-        #        output_length=self.widest,
-        #        depth=4
-        #        ))
-        #
-        #self.model.add(Activation('softmax',
-        #                          name="activation_1"))
-
-        print(len(self.embedding_nums) + 1)
+        right = Sequential()
+        right.add(Masking(mask_value=0.,
+                          input_shape=(self.widest, 1)))
+        right.add(GRU(output_dim=256,
+                      activation='sigmoid',
+                      inner_activation='hard_sigmoid',
+                      return_sequences=True))
 
         self.model = Sequential()
-        #self.model.add(Embedding(self.voc_size + 1,
-        #                         256,
-        #                         input_length=self.widest))
-        self.model.add(Masking(mask_value=0., input_shape=(self.widest, 1)))
-        #self.model.add(Masking(mask_value=0., input_shape=(self.widest, 1)))
-        self.model.add(GRU(output_dim=256,
-                            activation='sigmoid',
-                            inner_activation='hard_sigmoid',
-                            return_sequences=True))
+        self.model.add(Merge([left, right],
+                             mode='concat'))
+
+        # self.model.add(Embedding(self.voc_size + 1,
+        #                          256,
+        #                          input_length=self.widest))
+        # self.model.add(Masking(mask_value=0., input_shape=(self.widest, 1)))
+        # self.model.add(Masking(mask_value=0., input_shape=(self.widest, 1)))
+        # self.model.add(GRU(output_dim=256,
+        #                     activation='sigmoid',
+        #                     inner_activation='hard_sigmoid',
+        #                     return_sequences=True))
+
         self.model.add((GRU(256,
-                                          return_sequences=True)))
+                            return_sequences=True)))
         self.model.add((GRU(128,
-                                          return_sequences=True)))
+                            return_sequences=True)))
         self.model.add(Dropout(0.2))
         self.model.add(TimeDistributed(Dense(len(self.embedding_nums) + 1)))
         self.model.add(AveragePooling1D(pool_length=self.pooling_factor))
-        #self.model.add(AveragePooling1D(pool_length=self.pooling_factor))
-        #self.model.add(TimeDistributed(Dense(len(self.embedding_nums))))
+        # self.model.add(TimeDistributed(Dense(len(self.embedding_nums))))
         self.model.add(Activation('softmax'))
 
-        # self.model.add(TimeDistributed(Dense(1, activation='softmax')))
-
-        # Compile with sgd
-        #sgd = SGD(lr=0.01, decay=1e-6, momentum=0.5, nesterov=True)
-        #self.model.compile(loss='mse', optimizer='rmsprop', metrics=['accuracy'])
-        #self.model.compile(loss='mse', optimizer='rmsprop')
-
-        sgd = SGD(lr=0.01, decay=1e-6, momentum=0.5, nesterov=True)
         self.model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
-        #self.model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
-        #self.model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
         self.model.summary()
 
@@ -271,7 +240,9 @@ class SequencePredictor2(BasePredictor):
         print(self.training_images_transformed.shape)
         print(self.training_labels_transformed.shape)
 
-        self.model.fit(self.training_images_transformed,
+        self.model.fit([self.training_images_transformed,
+                        self.training_images_transformed
+                        ],
                        self.training_labels_transformed,
                        nb_epoch=Config.get('predicting.epochs'),
                        verbose=1,
@@ -299,7 +270,4 @@ class SequencePredictor2(BasePredictor):
             print(self.embedding_values_translated[idx])
             print('----')
 
-
         self.log.info('Finished')
-
-

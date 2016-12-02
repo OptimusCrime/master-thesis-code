@@ -10,8 +10,8 @@ import seq2seq
 from seq2seq.models import SimpleSeq2Seq, Seq2Seq
 
 
-from rorchach.prediction.base import BasePredictor
-from rorchach.utilities import Config, LoggerWrapper, MatrixDim
+from rorschach.prediction.base import BasePredictor
+from rorschach.utilities import Config, LoggerWrapper, MatrixDim
 
 
 class Seq2SeqPredictor(BasePredictor):

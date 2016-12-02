@@ -4,8 +4,8 @@
 import numpy as np
 import tensorflow as tf
 
-from rorchach.prediction.base import BasePredictor
-from rorchach.utilities import Config, CharacterHandling
+from rorschach.prediction.base import BasePredictor
+from rorschach.utilities import Config, CharacterHandling
 
 
 class ANNPredictor(BasePredictor):
