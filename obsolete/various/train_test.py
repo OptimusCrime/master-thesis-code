@@ -1,12 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import numpy as np
 import tensorflow as tf
-from tensorflow.python.ops import rnn_cell
-from tensorflow.python.ops import seq2seq
 
-from various import Model, TextLoader
+from obsolete.various import Model, TextLoader
 
 
 seq_length = 20

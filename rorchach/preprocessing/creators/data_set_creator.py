@@ -3,10 +3,10 @@
 
 import numpy as np
 
-from preprocessing.creators import AbstractCreator
-from preprocessing.handlers import TextCreator
-from preprocessing.savers import MatrixSaver
-from utilities import Config, Filesystem, pickle_data
+from rorchach.preprocessing.creators import AbstractCreator
+from rorchach.preprocessing.handlers import TextCreator
+from rorchach.preprocessing.savers import MatrixSaver
+from rorchach.utilities import Config, Filesystem, pickle_data
 
 
 class DataSetCreator(AbstractCreator):
@@ -63,7 +63,7 @@ class DataSetCreator(AbstractCreator):
 
             # We slice the matrix here. We do not care about the upper/lower bounds, only the horizontal ones. Note
             # that we had, for some reason, to add + 1 on the right edge. ??? Magic
-            self.contents[i]['matrix'] = self.contents[i]['matrix'][::,edge_left:edge_right + 1]
+            self.contents[i]['matrix'] = self.contents[i]['matrix'][::, edge_left:edge_right + 1]
 
     def save(self):
         # Save signature letters

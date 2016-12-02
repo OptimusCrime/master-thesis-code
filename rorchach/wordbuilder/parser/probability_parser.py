@@ -3,8 +3,8 @@
 
 import numpy as np
 
-from utilities import Config
-from wordbuilder.parser import ListParser
+from rorchach.utilities import Config
+from rorchach.wordbuilder.parser import ListParser
 
 
 class ProbabilityParser:

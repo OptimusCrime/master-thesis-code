@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from utilities import Config, Filesystem
-
-# noinspection PyPackageRequirements
-from PIL import Image
 import numpy as np
+from PIL import Image
+
+from rorchach.utilities import Config, Filesystem
 
 
 class SignatureHandler:

@@ -8,9 +8,9 @@ from keras.models import Model
 from keras.optimizers import SGD
 from keras.utils.visualize_util import plot
 
-from nets.base import BasePredictor
-from preprocessing.shifter import DatasetShifter
-from utilities import Config, CharacterHandling
+from rorchach.nets.base import BasePredictor
+from rorchach.preprocessing.shifter import DatasetShifter
+from rorchach.utilities import Config, CharacterHandling
 
 
 class CNNPredictor(BasePredictor):

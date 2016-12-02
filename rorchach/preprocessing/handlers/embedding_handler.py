@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys
+from rorchach.preprocessing.handlers import BaseHandler
 
-from preprocessing.handlers import BaseHandler
 
 class EmbeddingHandler(BaseHandler):
 
@@ -49,10 +48,8 @@ class EmbeddingHandler(BaseHandler):
         if identifier != BaseHandler.DATA_SET:
             expression.append('0')
 
-        #new_expression = expression
-
-
-        #This code is used to concatinate one white and one black expression
+        # new_expression = expression
+        # This code is used to concatinate one white and one black expression
         new_expression = []
         for i in range(1, len(expression) - 1):
             new_expression.append(
@@ -88,8 +85,8 @@ class EmbeddingHandler(BaseHandler):
             letter_matrix = self.letter_embedded[letter]
 
             for i in range(current_offset, len(obj['embedding_raw'])):
-                if EmbeddingHandler.is_sublist(obj['embedding_raw'][i : ], letter_matrix):
-                    contracted.append(''.join(obj['embedding_raw'][i : i + len(letter_matrix)]) + 'L')
+                if EmbeddingHandler.is_sublist(obj['embedding_raw'][i:], letter_matrix):
+                    contracted.append(''.join(obj['embedding_raw'][i:i + len(letter_matrix)]) + 'L')
                     current_offset += len(letter_matrix)
                     labels.append(letter)
                     break
@@ -100,7 +97,7 @@ class EmbeddingHandler(BaseHandler):
 
         # Add potential left over characters
         if current_offset != len(obj['embedding_raw']):
-            contracted.extend(obj['embedding_raw'][current_offset : ])
+            contracted.extend(obj['embedding_raw'][current_offset:])
 
             # Can I has the awesome programmer that wrote this nice code?!
             labels.extend([None] * (len(obj['embedding_raw']) - current_offset))
@@ -114,4 +111,4 @@ class EmbeddingHandler(BaseHandler):
             return False
 
         # I am a genious
-        return original[0 : len(sub)] == sub
+        return original[0:len(sub)] == sub

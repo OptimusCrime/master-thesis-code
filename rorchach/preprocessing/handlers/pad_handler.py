@@ -3,7 +3,7 @@
 
 import numpy as np
 
-from preprocessing.handlers import BaseHandler
+from rorchach.preprocessing.handlers import BaseHandler
 
 
 class PadHandler(BaseHandler):

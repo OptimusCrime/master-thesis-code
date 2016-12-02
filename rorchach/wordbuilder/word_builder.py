@@ -3,8 +3,8 @@
 
 import numpy as np
 
-from utilities import Config
-from wordbuilder.parser import ProbabilityParser
+from rorchach.utilities import Config
+from rorchach.wordbuilder.parser import ProbabilityParser
 
 
 class WordBuilder:
@@ -61,8 +61,9 @@ class WordBuilder:
         initial_probability = self.probability_parser.prob_initial
 
         # Matrix multiplication
-        self.predictions[0]['values'] = WordBuilder.matrix_mul(initial_prediction[0], initial_probability,
-                                                        lambda x, y: (x * 1) + (y * 0))
+        self.predictions[0]['values'] = WordBuilder.matrix_mul(initial_prediction[0],
+                                                               initial_probability,
+                                                               lambda x, y: (x * 1) + (y * 0))
 
     @staticmethod
     def sort_prabilities(matrix, keyword='value'):

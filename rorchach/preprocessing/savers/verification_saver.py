@@ -5,7 +5,7 @@ import numpy as np
 # noinspection PyPackageRequirements
 from PIL import Image
 
-from utilities import Filesystem
+from rorchach.utilities import Filesystem
 
 
 class VerificationSaver:

@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from utilities import Filesystem
-
-# noinspection PyPackageRequirements
 from PIL import Image
+
+from rorchach.utilities import Filesystem
+
 
 class MatrixSaver:
 

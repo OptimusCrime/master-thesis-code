@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from utilities import Config, Filesystem, unpickle_data
+from rorchach.utilities import Config, Filesystem, unpickle_data
 
 
 class MatrixDim:

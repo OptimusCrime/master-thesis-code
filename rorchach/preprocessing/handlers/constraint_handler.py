@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from utilities import Filesystem, pickle_data
+from rorchach.utilities import Filesystem, pickle_data
 
 
 class ConstraintHandler:

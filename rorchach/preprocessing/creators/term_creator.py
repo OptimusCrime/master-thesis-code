@@ -3,9 +3,9 @@
 
 import numpy as np
 
-from preprocessing.creators import AbstractCreator
-from preprocessing.handlers import TextCreator
-from utilities import Config, Filesystem, unpickle_data
+from rorchach.preprocessing.creators import AbstractCreator
+from rorchach.preprocessing.handlers import TextCreator
+from rorchach.utilities import Config, Filesystem, unpickle_data
 
 
 class TermCreator(AbstractCreator):

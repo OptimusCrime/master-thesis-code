@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from preprocessing.creators import DataSetCreator, PhraseCreator, WordSetCreator
-from preprocessing.handlers import BaseHandler, EmbeddingHandler, PadEmbeddingHandler, PadHandler
-from utilities import Config, LoggerWrapper
+from rorchach.preprocessing.creators import (DataSetCreator, PhraseCreator,
+                                             WordSetCreator)
+from rorchach.preprocessing.handlers import (BaseHandler, EmbeddingHandler,
+                                             PadEmbeddingHandler, PadHandler)
+from rorchach.utilities import Config, LoggerWrapper
 
 
 class Preprocessor:

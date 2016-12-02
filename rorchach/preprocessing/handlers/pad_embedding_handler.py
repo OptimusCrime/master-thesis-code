@@ -3,7 +3,7 @@
 
 import numpy as np
 
-from preprocessing.handlers import PadHandler
+from rorchach.preprocessing.handlers import PadHandler
 
 
 class PadEmbeddingHandler(PadHandler):

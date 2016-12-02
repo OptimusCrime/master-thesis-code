@@ -10,8 +10,8 @@ import seq2seq
 from seq2seq.models import SimpleSeq2Seq, Seq2Seq
 
 
-from nets.base import BasePredictor
-from utilities import Config, LoggerWrapper, MatrixDim
+from rorchach.nets.base import BasePredictor
+from rorchach.utilities import Config, LoggerWrapper, MatrixDim
 
 
 class Seq2SeqPredictor(BasePredictor):

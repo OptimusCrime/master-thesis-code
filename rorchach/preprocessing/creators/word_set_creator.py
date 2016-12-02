@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import numpy as np
 import sys
+import numpy as np
 
-from preprocessing.creators import TermCreator
-from preprocessing.savers import MatrixSaver, VerificationSaver
-from utilities import Config, CharacterHandling, Filesystem, MatrixDim, pickle_data
-from wordbuilder.parser import ListParser
+from rorchach.preprocessing.creators import TermCreator
+from rorchach.preprocessing.savers import MatrixSaver, VerificationSaver
+from rorchach.utilities import (CharacterHandling, Config, Filesystem,
+                                MatrixDim, pickle_data)
+from rorchach.wordbuilder.parser import ListParser
 
 
 class WordSetCreator(TermCreator):
@@ -27,8 +28,8 @@ class WordSetCreator(TermCreator):
 
     def generate_random_words(self):
         for i in range(Config.get('preprocessing.word.number')):
-            if Config.get('preprocessing.word.hardcoded') is not None \
-                and len(Config.get('preprocessing.word.hardcoded')) > 0:
+            if Config.get('preprocessing.word.hardcoded') is not None and \
+                    len(Config.get('preprocessing.word.hardcoded')) > 0:
                 self.terms.append(Config.get('preprocessing.word.hardcoded'))
             else:
                 # Get a random word from our word set

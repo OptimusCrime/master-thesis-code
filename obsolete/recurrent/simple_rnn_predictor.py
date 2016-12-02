@@ -9,8 +9,8 @@ from keras.layers.wrappers import Bidirectional
 from keras.optimizers import SGD
 from keras.utils.visualize_util import plot
 
-from nets.base import BasePredictor
-from utilities import Config, LoggerWrapper, MatrixDim
+from rorchach.nets.base import BasePredictor
+from rorchach.utilities import Config, LoggerWrapper, MatrixDim
 
 
 class SimpleRNNPredictor(BasePredictor):

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from utilities import Filesystem, unpickle_data
+from rorchach.utilities import Filesystem, unpickle_data
 
 file_name = input('File name: ')
 

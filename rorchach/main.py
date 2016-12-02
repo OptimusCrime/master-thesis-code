@@ -1,12 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
-
-from common import PredictorWrapper
-from nets.recurrent import RNNPredictor
-from preprocessing import Preprocessor
-from utilities import Config, Filesystem, PredictorImporter
+from rorchach.common import PredictorWrapper
+from rorchach.preprocessing import Preprocessor
+from rorchach.utilities import Config, PredictorImporter
 
 
 def main():

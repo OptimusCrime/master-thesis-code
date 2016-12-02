@@ -3,10 +3,8 @@
 
 from abc import ABCMeta
 
-import numpy as np
-
-from preprocessing.handlers import ConstraintHandler
-from utilities import Config, LoggerWrapper
+from rorchach.preprocessing.handlers import ConstraintHandler
+from rorchach.utilities import Config, LoggerWrapper
 
 
 class AbstractCreator:

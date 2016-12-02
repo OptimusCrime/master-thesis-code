@@ -1,3 +1,1 @@
-from .sequence_predictor import SequencePredictor
-from .sequence_predictor2 import SequencePredictor2
 from .sequence_predictor3 import SequencePredictor3

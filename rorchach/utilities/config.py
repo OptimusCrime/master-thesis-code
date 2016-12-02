@@ -6,7 +6,7 @@ import sys
 # noinspection PyPackageRequirements
 import yaml
 
-from . import Filesystem
+from rorchach.utilities import Filesystem
 
 
 class Config:

@@ -4,7 +4,7 @@
 import os
 import random
 
-from utilities import Filesystem
+from rorchach.utilities import Filesystem
 
 
 class ListParser:

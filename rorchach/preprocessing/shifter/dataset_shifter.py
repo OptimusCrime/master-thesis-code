@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from utilities import CharacterHandling, Config, LoggerWrapper
-
 import numpy as np
+
+from rorchach.utilities import CharacterHandling, Config, LoggerWrapper
 
 
 class DatasetShifter:

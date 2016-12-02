@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from preprocessing.creators import TermCreator
-from preprocessing.savers import MatrixSaver
-from utilities import Config, Filesystem, pickle_data
+from rorchach.preprocessing.creators import TermCreator
+from rorchach.preprocessing.savers import MatrixSaver
+from rorchach.utilities import Config, Filesystem, pickle_data
 
 
 class PhraseCreator(TermCreator):
