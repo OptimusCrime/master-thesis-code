@@ -6,7 +6,8 @@ import shutil
 
 from rorschach.preprocessing.creators import (DataSetCreator, PhraseCreator,
                                               WordSetCreator)
-from rorschach.utilities import Config, Filesystem, LoggerWrapper, unpickle_data
+from rorschach.utilities import (Config, Filesystem, LoggerWrapper,
+                                 unpickle_data)
 
 
 class Preprocessor:
