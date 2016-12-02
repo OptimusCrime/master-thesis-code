@@ -16,7 +16,7 @@ class Filesystem:
         # Current directory of THIS file (utilities)
         utilities_path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
-        # Go one directory up (the src directory)
+        # Go one directory up (the rorchach directory)
         return os.path.dirname(utilities_path)
 
     @staticmethod
