@@ -49,6 +49,10 @@ class EmbeddingHandler(BaseHandler):
         if identifier != BaseHandler.DATA_SET:
             expression.append('0')
 
+        #new_expression = expression
+
+
+        #This code is used to concatinate one white and one black expression
         new_expression = []
         for i in range(1, len(expression) - 1):
             new_expression.append(

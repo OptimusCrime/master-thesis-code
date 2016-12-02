@@ -5,7 +5,8 @@ import math
 import sys
 import numpy as np
 from keras.models import Sequential
-from keras.layers import LSTM, SimpleRNN, GRU, Reshape, Activation, Embedding, TimeDistributed, Dense, Dropout, Masking, Bidirectional
+from keras.layers import LSTM, SimpleRNN, GRU, Reshape, Activation, Embedding, TimeDistributed, Dense, Dropout, \
+    Masking, Bidirectional, Merge
 from keras.layers.convolutional import AveragePooling1D
 from keras.optimizers import SGD
 from keras.utils.visualize_util import plot
@@ -22,7 +23,7 @@ import theano
 import numpy as np
 
 
-class SequencePredictor2(BasePredictor):
+class SequencePredictor3(BasePredictor):
 
     def __init__(self):
         super().__init__()
@@ -229,24 +230,39 @@ class SequencePredictor2(BasePredictor):
 
         print(len(self.embedding_nums) + 1)
 
+        left = Sequential()
+        left.add(Masking(mask_value=0., input_shape=(self.widest, 1)))
+        left.add(GRU(output_dim=256,
+                           activation='sigmoid',
+                           inner_activation='hard_sigmoid',
+                           return_sequences=True))
+
+        right = Sequential()
+        right.add(Masking(mask_value=0., input_shape=(self.widest, 1)))
+        right.add(GRU(output_dim=256,
+                     activation='sigmoid',
+                     inner_activation='hard_sigmoid',
+                     return_sequences=True))
+
         self.model = Sequential()
+        self.model.add(Merge([left, right], mode='concat'))
         #self.model.add(Embedding(self.voc_size + 1,
         #                         256,
         #                         input_length=self.widest))
-        self.model.add(Masking(mask_value=0., input_shape=(self.widest, 1)))
         #self.model.add(Masking(mask_value=0., input_shape=(self.widest, 1)))
-        self.model.add(GRU(output_dim=256,
-                            activation='sigmoid',
-                            inner_activation='hard_sigmoid',
-                            return_sequences=True))
+        #self.model.add(Masking(mask_value=0., input_shape=(self.widest, 1)))
+        #self.model.add(GRU(output_dim=256,
+        #                    activation='sigmoid',
+        #                    inner_activation='hard_sigmoid',
+        #                    return_sequences=True))
         self.model.add((GRU(256,
                                           return_sequences=True)))
         self.model.add((GRU(128,
                                           return_sequences=True)))
         self.model.add(Dropout(0.2))
         self.model.add(TimeDistributed(Dense(len(self.embedding_nums) + 1)))
-        self.model.add(AveragePooling1D(pool_length=self.pooling_factor))
         #self.model.add(AveragePooling1D(pool_length=self.pooling_factor))
+        self.model.add(AveragePooling1D(pool_length=self.pooling_factor))
         #self.model.add(TimeDistributed(Dense(len(self.embedding_nums))))
         self.model.add(Activation('softmax'))
 
@@ -271,7 +287,9 @@ class SequencePredictor2(BasePredictor):
         print(self.training_images_transformed.shape)
         print(self.training_labels_transformed.shape)
 
-        self.model.fit(self.training_images_transformed,
+        self.model.fit([self.training_images_transformed,
+                        self.training_images_transformed
+                        ],
                        self.training_labels_transformed,
                        nb_epoch=Config.get('predicting.epochs'),
                        verbose=1,
