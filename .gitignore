@@ -1,7 +1,9 @@
 .idea
 .DS_Store
-*.ttf
-__pycache__
+.cache
 .tox
+__pycache__
+
+*.ttf
 *.whl
 *.jar
