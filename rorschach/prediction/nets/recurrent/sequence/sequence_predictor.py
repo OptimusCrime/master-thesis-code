@@ -2,13 +2,14 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+import sys
 from keras.layers import (GRU, Activation, Dense, Dropout, Masking, Merge,
                           TimeDistributed)
 from keras.layers.convolutional import AveragePooling1D
 from keras.models import Sequential
 from keras.utils.visualize_util import plot
 
-from rorschach.prediction.base import BasePredictor
+from rorschach.prediction.nets import BasePredictor
 from rorschach.utilities import Config, LoggerWrapper, Filesystem, unpickle_data  # isort:skip
 
 
@@ -31,6 +32,7 @@ class SequencePredictor(BasePredictor):
         self.labels_width = None
 
     def preprocess(self):
+        sys.exit()
         print(self.data_set)
         self.embedding_stuff()
         self.embedding_counts()

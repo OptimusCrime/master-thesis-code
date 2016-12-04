@@ -28,7 +28,7 @@ class PredictorWrapper:
     def transform(self):
         transformator = Transformator()
 
-        transformator.data_lists = [{
+        transformator.construct_lists([{
             'set': self.predictor.data_set,
             'type': DataSetTypes.DATA_SET
         }, {
@@ -37,7 +37,7 @@ class PredictorWrapper:
         }, {
             'set': self.predictor.phrase,
             'type': DataSetTypes.PHRASE
-        }]
+        }])
 
         transformator.run()
 

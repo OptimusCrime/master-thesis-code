@@ -98,6 +98,9 @@ transformation:
         # Generate the label
         - transformation.handlers.output.LabelUniqueHandler
 
+        # Reshape the input data
+        - transformation.handlers.reshape.Derp
+
 ##################################################################
 #                         Predicting                             #
 ##################################################################
@@ -108,4 +111,4 @@ predicting:
     batch_size: 20
 
     # Class to lazy load for the prediction
-    predictor: prediction.recurrent.sequence.SequencePredictor
+    predictor: prediction.nets.recurrent.sequence.SequencePredictor

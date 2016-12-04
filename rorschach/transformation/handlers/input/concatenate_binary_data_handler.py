@@ -1,20 +1,28 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from rorschach.common import DataSetTypes
+from rorschach.transformation.handlers import BaseHandler
 
-class ConcatenateBinaryDataHandler:
+
+class ConcatenateBinaryDataHandler(BaseHandler):
 
     def __init__(self):
-        pass
+        super().__init__()
 
-    @staticmethod
-    def run(input_lists):
-        for data_list in input_lists:
-            for obj in data_list['set']:
-                ConcatenateBinaryDataHandler.concatenate_binary(obj)
+    def run(self, input_lists):
+        super().run(input_lists)
 
-    @staticmethod
-    def concatenate_binary(obj):
+        return input_lists
+
+    def list_handler(self, input_list, key):
+        if key == DataSetTypes.DATA_SET:
+            return
+
+        for obj in input_list['images']:
+            self.obj_handler(obj)
+
+    def obj_handler(self, obj):
         expression = []
         current_offset = 0
         current_type = None
