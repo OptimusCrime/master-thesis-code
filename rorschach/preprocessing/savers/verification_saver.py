@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-# noinspection PyPackageRequirements
 from PIL import Image
 
 from rorschach.utilities import Filesystem

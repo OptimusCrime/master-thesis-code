@@ -3,7 +3,7 @@
 
 import os
 import sys
-# noinspection PyPackageRequirements
+
 import yaml
 
 from rorschach.utilities import Filesystem

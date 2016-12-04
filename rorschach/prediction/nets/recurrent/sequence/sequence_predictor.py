@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import numpy as np
 import sys
+import numpy as np
+
 from keras.layers import (GRU, Activation, Dense, Dropout, Masking, Merge,
                           TimeDistributed)
 from keras.layers.convolutional import AveragePooling1D
