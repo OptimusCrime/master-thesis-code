@@ -41,9 +41,9 @@ class PredictorWrapper:
 
         transformator.run()
 
-        self.training_images_transformed, self.training_labels_transformed = \
+        self.predictor.training_images_transformed, self.predictor.training_labels_transformed = \
             transformator.get_data_set(DataSetTypes.DATA_SET)
-        self.predicting_image_transformed, self.predicting_label_transformed = \
+        self.predictor.predicting_image_transformed, self.predictor.predicting_label_transformed = \
             transformator.get_data_set(DataSetTypes.PHRASE)
 
     @property

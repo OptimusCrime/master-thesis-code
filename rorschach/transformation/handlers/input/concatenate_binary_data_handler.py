@@ -8,8 +8,8 @@ class ConcatenateBinaryDataHandler:
         pass
 
     @staticmethod
-    def run(data_lists, data_list_transformed):
-        for data_list in data_lists:
+    def run(input_lists):
+        for data_list in input_lists:
             for obj in data_list['set']:
                 ConcatenateBinaryDataHandler.concatenate_binary(obj)
 
