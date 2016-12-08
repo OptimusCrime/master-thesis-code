@@ -86,20 +86,26 @@ transformation:
 
     # List of transformations to apply, in order
     handlers:
+        # initialize the labels
+        - transformation.handlers.initializers.LabelInitializeHandler
+
         # Translate individual bits to number representations
         - transformation.handlers.input.ConcatenateBinaryDataHandler
 
-        # Translate vector of number represenations to a sequence
+        # Translate vector of number representations to a sequence
         - transformation.handlers.input.SequenceHandler
 
         # Pad the sequence to fit the longest sequence
         - transformation.handlers.input.PadHandler
 
+        # Embedding
+        - transformation.handlers.input.EmbeddingHandler
+
         # Generate the label
         - transformation.handlers.output.LabelUniqueHandler
 
         # Reshape the input data
-        - transformation.handlers.reshape.Derp
+        - transformation.handlers.reshape.Reshape3DHandler
 
 ##################################################################
 #                         Predicting                             #

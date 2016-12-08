@@ -32,7 +32,7 @@ class PredictorWrapper:
             'set': self.predictor.data_set,
             'type': DataSetTypes.DATA_SET
         }, {
-            'set': self.predictor.data_set,
+            'set': self.predictor.word_set,
             'type': DataSetTypes.WORD_SET
         }, {
             'set': self.predictor.phrase,
@@ -41,10 +41,11 @@ class PredictorWrapper:
 
         transformator.run()
 
-        self.predictor.training_images_transformed, self.predictor.training_labels_transformed = \
-            transformator.get_data_set(DataSetTypes.DATA_SET)
-        self.predictor.predicting_image_transformed, self.predictor.predicting_label_transformed = \
-            transformator.get_data_set(DataSetTypes.PHRASE)
+        self.predictor.training_images_transformed, \
+        self.predictor.training_labels_transformed = transformator.data_set(DataSetTypes.WORD_SET)
+
+        self.predictor.predicting_image_transformed, \
+        self.predictor.predicting_label_transformed = transformator.data_set(DataSetTypes.PHRASE)
 
     @property
     def predictions(self):

@@ -8,5 +8,8 @@ class DataSetTypes:
     PHRASE = 1
     WORD_SET = 2
 
+    LABELS = 'labels'
+    IMAGES = 'images'
+
     def __init__(self):
         pass

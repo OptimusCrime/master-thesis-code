@@ -3,12 +3,15 @@
 
 import copy
 
-from rorschach.utilities import Config, ModuleImporter
+from rorschach.common import DataSetTypes
+from rorschach.utilities import Config, LoggerWrapper, ModuleImporter
 
 
 class Transformator:
 
     def __init__(self):
+        self.log = LoggerWrapper.load(__name__)
+
         self.original_lists = []
         self.transformed_lists = {}
 
@@ -20,8 +23,8 @@ class Transformator:
 
         for data_list in self.original_lists:
             self.transformed_lists[data_list['type']] = {
-                'images': data_list['set'],
-                'labels': []
+                DataSetTypes.IMAGES: data_list['set'],
+                DataSetTypes.LABELS: []
             }
 
     def get_handlers(self):
@@ -33,17 +36,15 @@ class Transformator:
             handler_module = ModuleImporter.load(handler_module_path)
 
             if handler_module is not None:
-                current_input = handler_module.run(copy.deepcopy(current_input))
+                self.log.info('Running transformator %s', handler_module_path)
 
-        # TODO add current input lists to output lists
-        print(current_input)
-        print('------')
+                current_input = handler_module.run(copy.deepcopy(current_input))
 
         self.transformed_lists = current_input
 
-    def get_data_set(self, set_type):
+    def data_set(self, set_type):
         if set_type not in self.transformed_lists:
             return [], []
 
         data_list = self.transformed_lists[set_type]
-        return data_list['images'], data_list['labels']
+        return data_list[DataSetTypes.IMAGES], data_list[DataSetTypes.LABELS]

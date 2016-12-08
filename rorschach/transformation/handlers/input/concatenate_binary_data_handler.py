@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from rorschach.common import DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
 
 
@@ -16,19 +15,16 @@ class ConcatenateBinaryDataHandler(BaseHandler):
         return input_lists
 
     def list_handler(self, input_list, key):
-        if key == DataSetTypes.DATA_SET:
-            return
-
         for obj in input_list['images']:
-            self.obj_handler(obj)
+            self.obj_handler(obj, None)
 
-    def obj_handler(self, obj):
+    def obj_handler(self, ipt, label):
         expression = []
         current_offset = 0
         current_type = None
         current_length = 0
 
-        matrix = obj['matrix'][0]
+        matrix = ipt['matrix'][0]
 
         for i in range(len(matrix)):
             if current_type is None:
@@ -47,4 +43,4 @@ class ConcatenateBinaryDataHandler(BaseHandler):
 
         expression.append(str(current_length) + ('B' if current_type == 0 else 'W'))
 
-        obj['concatenated_binary'] = expression
+        ipt['concatenated_binary'] = expression
