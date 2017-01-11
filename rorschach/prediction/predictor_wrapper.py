@@ -42,10 +42,10 @@ class PredictorWrapper:
         transformator.run()
 
         self.predictor.training_images_transformed, \
-        self.predictor.training_labels_transformed = transformator.data_set(DataSetTypes.WORD_SET)
+            self.predictor.training_labels_transformed = transformator.data_set(DataSetTypes.WORD_SET)
 
         self.predictor.predicting_image_transformed, \
-        self.predictor.predicting_label_transformed = transformator.data_set(DataSetTypes.PHRASE)
+            self.predictor.predicting_label_transformed = transformator.data_set(DataSetTypes.PHRASE)
 
     @property
     def predictions(self):

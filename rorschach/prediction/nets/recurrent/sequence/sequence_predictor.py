@@ -9,9 +9,11 @@ from keras.layers.convolutional import AveragePooling1D
 from keras.models import Sequential
 from keras.utils.visualize_util import plot
 
+from rorschach.prediction.helpers import (EmbeddingCalculator,
+                                          PoolingFactorCalculator,
+                                          WidthCalculator)
 from rorschach.prediction.nets import BasePredictor
-from rorschach.prediction.helpers import EmbeddingCalculator, PoolingFactorCalculator, WidthCalculator
-from rorschach.utilities import Config, LoggerWrapper # isort:skip
+from rorschach.utilities import Config, LoggerWrapper  # isort:skip
 
 
 class SequencePredictor(BasePredictor):
@@ -25,7 +27,7 @@ class SequencePredictor(BasePredictor):
     def preprocess(self):
         self.widest = WidthCalculator.calc(self.training_images_transformed)
         self.pooling_factor = PoolingFactorCalculator.calc(self.training_images_transformed,
-                                                          self.training_labels_transformed)
+                                                           self.training_labels_transformed)
         self.embeddings = EmbeddingCalculator.calc(self.training_labels_transformed)
 
         self.keras_setup()

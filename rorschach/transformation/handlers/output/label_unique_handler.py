@@ -4,8 +4,8 @@
 import numpy as np
 
 from rorschach.common import DataSetTypes
-from rorschach.transformation.handlers import BaseHandler
 from rorschach.prediction.helpers import PoolingFactorCalculator
+from rorschach.transformation.handlers import BaseHandler
 
 
 class LabelUniqueHandler(BaseHandler):
