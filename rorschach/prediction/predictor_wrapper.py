@@ -14,14 +14,13 @@ class PredictorWrapper:
     def run(self):
         assert(self.predictor is not None)
 
-        self.predictor.data_set = unpickle_data(Filesystem.get_root_path('data/data_set.pickl'))
-        self.predictor.word_set = unpickle_data(Filesystem.get_root_path('data/word_set.pickl'))
-        self.predictor.phrase = unpickle_data(Filesystem.get_root_path('data/phrase.pickl'))
+        self.predictor.training_set = unpickle_data(Filesystem.get_root_path('data/training_set.pickl'))
+        self.predictor.test_set = unpickle_data(Filesystem.get_root_path('data/test_set.pickl'))
 
         if Config.get('transformation.run'):
             self.transform()
 
-        self.predictor.preprocess()
+        self.predictor.prepare()
         self.predictor.train()
         self.predictor.predict()
 
@@ -29,24 +28,20 @@ class PredictorWrapper:
         transformator = Transformator()
 
         transformator.construct_lists([{
-            'set': self.predictor.data_set,
-            'type': DataSetTypes.DATA_SET
+            'set': unpickle_data(Filesystem.get_root_path('data/letter_set.pickl')),
+            'type': DataSetTypes.LETTER_SET
         }, {
-            'set': self.predictor.word_set,
-            'type': DataSetTypes.WORD_SET
+            'set': self.predictor.training_set,
+            'type': DataSetTypes.TRAINING_SET
         }, {
-            'set': self.predictor.phrase,
-            'type': DataSetTypes.PHRASE
+            'set': self.predictor.test_set,
+            'type': DataSetTypes.TEST_SET
         }])
 
         transformator.run()
 
         self.predictor.training_images_transformed, \
-            self.predictor.training_labels_transformed = transformator.data_set(DataSetTypes.WORD_SET)
+            self.predictor.training_labels_transformed = transformator.data_set(DataSetTypes.TRAINING_SET)
 
-        self.predictor.predicting_image_transformed, \
-            self.predictor.predicting_label_transformed = transformator.data_set(DataSetTypes.PHRASE)
-
-    @property
-    def predictions(self):
-        return self.predictor.predictions
+        self.predictor.test_images_transformed, \
+            self.predictor.test_labels_transformed = transformator.data_set(DataSetTypes.TEST_SET)

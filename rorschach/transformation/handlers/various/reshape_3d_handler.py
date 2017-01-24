@@ -18,7 +18,7 @@ class Reshape3DHandler(BaseHandler):
         return input_lists
 
     def list_handler(self, input_list, key):
-        if key == DataSetTypes.DATA_SET:
+        if key == DataSetTypes.LETTER_SET:
             return
 
         input_list[DataSetTypes.IMAGES] = self.reshape_input(input_list[DataSetTypes.IMAGES])

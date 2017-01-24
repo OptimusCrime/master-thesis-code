@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 from keras.layers import (GRU, Activation, Dense, Dropout, Masking, Merge,
                           TimeDistributed)
@@ -9,11 +10,11 @@ from keras.layers.convolutional import AveragePooling1D
 from keras.models import Sequential
 from keras.utils.visualize_util import plot
 
+from rorschach.prediction.callbacks import PlotCallback
 from rorschach.prediction.helpers import (EmbeddingCalculator,
-                                          PoolingFactorCalculator,
                                           WidthCalculator)
 from rorschach.prediction.nets import BasePredictor
-from rorschach.utilities import Config, LoggerWrapper  # isort:skip
+from rorschach.utilities import Config, Filesystem, LoggerWrapper, unpickle_data  # isort:skip
 
 
 class SequencePredictor(BasePredictor):
@@ -23,16 +24,20 @@ class SequencePredictor(BasePredictor):
 
         self.log = LoggerWrapper.load(__name__)
         self.model = None
+        self.callback = None
 
-    def preprocess(self):
+    def prepare(self):
         self.widest = WidthCalculator.calc(self.training_images_transformed)
-        self.pooling_factor = PoolingFactorCalculator.calc(self.training_images_transformed,
-                                                           self.training_labels_transformed)
         self.embeddings = EmbeddingCalculator.calc(self.training_labels_transformed)
+        self.pooling_factor = unpickle_data(Filesystem.get_root_path('data/pooling.pickl'))['factor']
 
         self.keras_setup()
 
     def keras_setup(self):
+        self.callback = PlotCallback()
+        self.callback.epochs = Config.get('predicting.epochs')
+
+
         # print(self.embedding_values_translated)
         # print(self.training_images_transformed.shape)
         # self.model.add(LSTM(len(self.embedding_nums), return_sequences=True, stateful=True,
@@ -104,26 +109,13 @@ class SequencePredictor(BasePredictor):
                        verbose=1,
                        batch_size=Config.get('predicting.batch_size'),
                        validation_split=0.2,
-                       shuffle=True
+                       shuffle=True,
+                       callbacks=[self.callback]
                        )
 
         self.log.info('Finished training')
 
     def predict(self):
         self.log.info('Begin predicting')
-
-        print(self.phrase_transformed)
-
-        predictions = self.model.predict(self.phrase_transformed)
-
-        print(predictions)
-        print(predictions.shape)
-        for line in predictions[0]:
-            idx = np.argmax(line)
-            print(line)
-            print(idx)
-            print(line[idx])
-            print(self.embedding_values_translated[idx])
-            print('----')
 
         self.log.info('Finished')

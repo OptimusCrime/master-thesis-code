@@ -5,16 +5,15 @@
 class BasePredictor:
 
     def __init__(self):
-        self.data_set = None
-        self.phrase = None
-        self.predictions = []
+        self.training_set = None
+        self.test_set = None
 
         self.training_images_transformed = None
         self.training_labels_transformed = None
-        self.predicting_image_transformed = None
-        self.predicting_label_transformed = None
+        self.test_images_transformed = None
+        self.test_labels_transformed = None
 
-    def preprocess(self):
+    def prepare(self):
         pass
 
     def train(self):

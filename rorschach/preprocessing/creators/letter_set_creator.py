@@ -9,7 +9,7 @@ from rorschach.preprocessing.savers import MatrixSaver
 from rorschach.utilities import Config, Filesystem, pickle_data
 
 
-class DataSetCreator(AbstractCreator):
+class LetterSetCreator(AbstractCreator):
 
     def create_sets(self):
         for character in Config.get('general.characters'):
@@ -70,4 +70,4 @@ class DataSetCreator(AbstractCreator):
         if Config.get('preprocessing.save.letters-signatures'):
             MatrixSaver.save('data/letters-signatures', self.contents)
 
-        pickle_data(self.contents, Filesystem.get_root_path('data/data_set.pickl'))
+        pickle_data(self.contents, Filesystem.get_root_path('data/letter_set.pickl'))

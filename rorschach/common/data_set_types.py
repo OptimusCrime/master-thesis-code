@@ -4,9 +4,9 @@
 
 class DataSetTypes:
 
-    DATA_SET = 0
-    PHRASE = 1
-    WORD_SET = 2
+    LETTER_SET = 0
+    TEST_SET = 1
+    TRAINING_SET = 2
 
     LABELS = 'labels'
     IMAGES = 'images'

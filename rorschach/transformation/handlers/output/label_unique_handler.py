@@ -32,7 +32,7 @@ class LabelUniqueHandler(BaseHandler):
 
     def list_handler(self, input_list, key):
         # Ignore the data set
-        if key == DataSetTypes.DATA_SET:
+        if key == DataSetTypes.LETTER_SET:
             return
 
         # Require the text and input key
@@ -54,20 +54,28 @@ class LabelUniqueHandler(BaseHandler):
             self.longest_label = length
 
     def apply_labels(self, ipt, label):
-        label_matrix = np.zeros((self.label_width, self.label_depth))
+        label_matrix = np.zeros((self.label_width, self.label_depth + 1))
+        for i in range(len(label_matrix)):
+            label_matrix[i][0] = 1.
+
         for i in range(len(ipt['text'])):
             current_char = ipt['text'][i]
             char_index = self.label_lookup[current_char]
-            label_matrix[i][char_index] = 1.
+            label_matrix[i][0] = 0.
+            label_matrix[i][char_index + 1] = 1.
 
         label['value'] = label_matrix
 
     def calculate_label_width(self):
         results = PoolingFactorCalculator.run(self.widest_input, self.longest_label)
-        self.label_width = results['label_width']
+        self.label_width = results['width_label']
+
+        # TODO SUCH A HACK!!!
+        self.label_width = 10
 
     def calculate_label_depth(self):
-        characters_set = self.input_lists[DataSetTypes.DATA_SET][DataSetTypes.IMAGES]
+        characters_set = self.input_lists[DataSetTypes.LETTER_SET][DataSetTypes.IMAGES]
+
         label_uniques = self.find_label_uniques(characters_set)
         self.create_label_lookup_set(characters_set, label_uniques)
 

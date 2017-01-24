@@ -3,6 +3,7 @@
 .cache
 .tox
 __pycache__
+tests/.cache
 
 *.ttf
 *.whl

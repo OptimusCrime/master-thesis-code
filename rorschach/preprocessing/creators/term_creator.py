@@ -41,7 +41,11 @@ class TermCreator(AbstractCreator):
         # Load the constraints for upper/lower lines
         char_constraints = unpickle_data(constraints_file)
 
-        for i in range(len(self.contents)):
+        data_set_size = len(self.contents)
+        for i in range(data_set_size):
+            if (i + 1) % Config.get('logging.batch_reporting') == 0:
+                self.log.info('Applying constraints for image %s/%s.', i + 1, data_set_size)
+
             # Calculate constraints for THIS unique term
             self.constraint_handler.reset()
             self.constraint_handler.calculate(self.contents[i]['matrix'])

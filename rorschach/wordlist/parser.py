@@ -7,12 +7,15 @@ import random
 from rorschach.utilities import Filesystem
 
 
-class ListParser:
+class WordListParser:
 
     def __init__(self):
         self._words = set()
 
-    def random_word(self):
+    def random_word(self, length=None):
+        if len(self._words) == 0:
+            self.run(length)
+
         return random.choice(tuple(self.words))
 
     @property
@@ -22,9 +25,9 @@ class ListParser:
 
         return self._words
 
-    def run(self):
-        files = ListParser.get_word_files()
-        self.get_words(files)
+    def run(self, length=None):
+        files = WordListParser.get_word_files()
+        self.get_words(files, length)
 
     @staticmethod
     def get_word_files():
@@ -37,15 +40,16 @@ class ListParser:
 
         return files
 
-    def get_words(self, files):
+    def get_words(self, files, length=None):
         for file in files:
-            self.get_words_from_file(file)
+            self.get_words_from_file(file, length)
 
-    def get_words_from_file(self, file):
+    def get_words_from_file(self, file, length=None):
         lines = [line.rstrip('\n') for line in open(file)]
         for line in lines:
-            self.validate_string(line)
+            self.validate_string(line, length)
 
-    def validate_string(self, line):
+    def validate_string(self, line, length=None):
         if line.isalpha() and len(line) > 1:
-            self._words.add(line.upper())
+            if length is None or len(line) <= length:
+                self._words.add(line.upper())

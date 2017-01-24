@@ -25,7 +25,7 @@ class EmbeddingHandler(BaseHandler):
 
     def list_handler(self, input_list, key):
         # Ignore the data set
-        if key == DataSetTypes.DATA_SET:
+        if key == DataSetTypes.LETTER_SET:
             return
 
         # Require the input key

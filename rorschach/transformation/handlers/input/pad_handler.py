@@ -13,7 +13,8 @@ class PadHandler(BaseHandler):
         super().__init__()
 
         self.pad = False
-        self.widest = None
+        self.widest_sequence = None
+        self.widest_label = None
 
     def run(self, input_lists):
         super().run(input_lists)
@@ -26,7 +27,7 @@ class PadHandler(BaseHandler):
 
     def list_handler(self, input_list, key):
         # Ignore the data set
-        if key == DataSetTypes.DATA_SET:
+        if key == DataSetTypes.LETTER_SET:
             return
 
         # Require the sequence key
@@ -39,12 +40,12 @@ class PadHandler(BaseHandler):
         if self.pad:
             return self.pad_input(ipt)
 
-        width = len(ipt['sequence'])
-        if self.widest is None or width > self.widest:
-            self.widest = width
+        width_sequence = len(ipt['sequence'])
+        if self.widest_sequence is None or width_sequence > self.widest_sequence:
+            self.widest_sequence = width_sequence
 
     def pad_input(self, obj):
-        new_matrix = np.full(self.widest, 0, dtype=(np.str, 35))
+        new_matrix = np.full(self.widest_sequence, 0, dtype=(np.str, 35))
         for v in range(len(obj['sequence'])):
             new_matrix[v] = obj['sequence'][v]
 
