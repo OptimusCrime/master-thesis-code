@@ -10,12 +10,22 @@ from rorschach.utilities import Filesystem
 
 class PlotCallback(Callback):
 
+    EPOCH = 0
+    BATCH = 1
+
     def __init__(self):
         super().__init__()
 
         self.epochs = None
 
-        self.data = {
+        self.data_epoch = {
+            'loss': [0],
+            'val_loss': [0],
+            'acc': [0],
+            'val_acc': [0]
+        }
+
+        self.data_batch = {
             'loss': [0],
             'val_loss': [0],
             'acc': [0],
@@ -32,12 +42,12 @@ class PlotCallback(Callback):
         return
 
     def on_epoch_end(self, epoch, logs={}):
-        self.data['loss'].append(logs.get('loss'))
-        self.data['val_loss'].append(logs.get('val_loss'))
-        self.data['acc'].append(logs.get('acc'))
-        self.data['val_acc'].append(logs.get('val_acc'))
+        self.data_epoch['loss'].append(logs.get('loss'))
+        self.data_epoch['val_loss'].append(logs.get('val_loss'))
+        self.data_epoch['acc'].append(logs.get('acc'))
+        self.data_epoch['val_acc'].append(logs.get('val_acc'))
 
-        self.update_graph()
+        self.update_graph(PlotCallback.EPOCH)
 
         return
 
@@ -45,9 +55,19 @@ class PlotCallback(Callback):
         return
 
     def on_batch_end(self, batch, logs={}):
-        return
+        self.data_batch['loss'].append(logs.get('loss'))
+        self.data_batch['val_loss'].append(logs.get('val_loss'))
+        self.data_batch['acc'].append(logs.get('acc'))
+        self.data_batch['val_acc'].append(logs.get('val_acc'))
 
-    def update_graph(self):
+        self.update_graph(PlotCallback.BATCH)
+
+    def update_graph(self, type):
+        data = self.data_epoch
+
+        if type == PlotCallback.BATCH:
+            data = self.data_batch
+
         fig = plt.figure(figsize=(16, 6), dpi=80)
 
         # Subplots
@@ -55,11 +75,11 @@ class PlotCallback(Callback):
         ax_acc = fig.add_subplot(122)
 
         # Add plots
-        ax_loss.plot(self.data['loss'], label="loss")
-        ax_loss.plot(self.data['val_loss'], label="val_loss")
+        ax_loss.plot(data['loss'], label="loss")
+        ax_loss.plot(data['val_loss'], label="val_loss")
 
-        ax_acc.plot(self.data['acc'], label="acc")
-        ax_acc.plot(self.data['val_acc'], label="val_acc")
+        ax_acc.plot(data['acc'], label="acc")
+        ax_acc.plot(data['val_acc'], label="val_acc")
 
         # Set labels and titles
         ax_loss.set_title('loss')
@@ -70,6 +90,10 @@ class PlotCallback(Callback):
         ax_acc.set_ylabel('accuracy')
         ax_acc.set_xlabel('epochs')
 
+        if type == PlotCallback.BATCH:
+            ax_loss.set_xlabel('batch')
+            ax_acc.set_xlabel('batch')
+
         # Ticks
         ax_loss.minorticks_on()
         ax_loss.tick_params(labeltop=False, labelright=True)
@@ -78,11 +102,14 @@ class PlotCallback(Callback):
         ax_acc.tick_params(labeltop=False, labelright=True)
 
         # Set x limit and ticks
-        ax_loss.set_xlim(1, self.epochs)
-        ax_loss.set_xticks(np.arange(1, self.epochs + 1))
+        if type == PlotCallback.EPOCH:
+            ax_loss.set_xlim(1, self.epochs)
+            ax_loss.set_xticks(np.arange(1, self.epochs + 1))
 
-        ax_acc.set_xlim(1, self.epochs)
-        ax_acc.set_xticks(np.arange(1, self.epochs + 1))
+            ax_acc.set_xlim(1, self.epochs)
+            ax_acc.set_xticks(np.arange(1, self.epochs + 1))
+
+        # Static y max/min on accuracy
         ax_acc.set_ylim(0., 1.)
         ax_acc.set_yticks(np.arange(0., 1.1, 0.1))
 
@@ -105,4 +132,8 @@ class PlotCallback(Callback):
         ax_acc.legend(loc='upper center', bbox_to_anchor=(0.5, -0.13),
                       fancybox=True, shadow=True, ncol=5)
 
-        fig.savefig(Filesystem.get_root_path('data/plot.png'))
+        file_name = 'plot_epoch'
+        if type == PlotCallback.BATCH:
+            file_name = 'plot_batch'
+
+        fig.savefig(Filesystem.get_root_path('data/' + file_name + '.png'))
