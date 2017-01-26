@@ -27,6 +27,8 @@ class TermCreator(AbstractCreator):
             phrase_arr = np.fromiter(list(phrase_image.getdata()), dtype="int").reshape((phrase_image.height,
                                                                                          phrase_image.width))
 
+            phrase_image.close()
+
             self.contents.append({
                 'text': self.terms[i],
                 'matrix': phrase_arr

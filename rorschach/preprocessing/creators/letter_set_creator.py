@@ -17,6 +17,8 @@ class LetterSetCreator(AbstractCreator):
             character_arr = np.fromiter(list(character_image.getdata()), dtype="int").reshape((character_image.height,
                                                                                                character_image.width))
 
+            character_image.close()
+
             self.constraint_handler.calculate(character_arr)
 
             self.contents.append({
