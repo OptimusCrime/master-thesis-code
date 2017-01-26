@@ -41,12 +41,12 @@ class SequenceTimePredictor(BasePredictor):
                                           b_regularizer=ActivityRegularizer(l1=0.01, l2=0.01)),
                                      input_shape=(30, 4)))
 
-        self.model.add(Dropout(0.2))
+        self.model.add(Dropout(0.4))
         self.model.add(Bidirectional(LSTM(128,
                                           return_sequences=True,
                                           W_regularizer=WeightRegularizer(l1=0.01, l2=0.01),
                                           b_regularizer=ActivityRegularizer(l1=0.01, l2=0.01))))
-        self.model.add(Dropout(0.2))
+        self.model.add(Dropout(0.4))
 
         self.model.add(TimeDistributed(Dense(output_dim=19)))
 
