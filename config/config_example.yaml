@@ -1,4 +1,7 @@
-# General settings
+##################################################################
+#                          General                               #
+##################################################################
+
 general:
     # List of characters to include in our dataset (the phrase CAN NOT use characters that are not defined here).
     # Separate each character with a comma with no ending comma present
@@ -7,26 +10,25 @@ general:
     # The phrase we're trying to predict
     phrase: HELLO
 
+##################################################################
+#                          Logging                               #
+##################################################################
 
-# Settings for preprocessing
+logging:
+    batch_reporting: 10
+
+##################################################################
+#                       Preprocessing                            #
+##################################################################
+
 preprocessing:
     run: true
-    shift: false
-    pad: false
-    embedding: false
 
-    # Set to true to delete everyone once started
-    # TODO
+    # Remove all earlier data on each run
     wipe: true
 
     # Turn on to handle identical signatures as one
     unique-signatures: true
-
-    # Embedding settings
-    embedding:
-        # Unique black/white patterns
-        # TODO
-        unique-patterns: false
 
     # Saves
     save:
@@ -36,19 +38,15 @@ preprocessing:
         # Save letters
         letters: true
         letters-signatures: true
-
-        # Save letters with highlighed signature
-        # TODO
         letters-illustration: true
 
-        # Save phrase
-        phrase: true
-        phrase-signatures: true
+        # Training set
+        training: true
+        training-signtures: true
 
-        # Save words
-        words: true
-        words-signtures: true
-        words-verification: true
+        # Test set
+        test: true
+        test-signatures: true
 
     # Settings for text
     text:
@@ -65,27 +63,60 @@ preprocessing:
         height: 1
         position: 14
 
-    # Mode to produce data set. Either normal (single chars), or words (generate using the word list)
-    mode: words
+    # Various settings for the input
+    input:
+        # Maximum length of a word to classify
+        max-length: 10
 
-    # Specific settings for the word mode (if chosen)
-    word:
-        number: 2
+    # Training set
+    training-set:
+        size: 4000
 
-        # Avoid random words, use this hardcoded word instead. Leave empty to skip
-        hardcoded: HE
+    # Test set
+    test-set:
+        size: 400
 
+##################################################################
+#                       Transformation                           #
+##################################################################
 
-# Logging
-logging:
-    batch_reporting: 10
+transformation:
+    run: true
 
+    # List of transformations to apply, in order
+    handlers:
+        # initialize the labels
+        - transformation.handlers.initializers.LabelInitializeHandler
 
-# Settings for predicting
+        # Translate individual bits to number representations
+        - transformation.handlers.input.ConcatenateBinaryDataHandler
+
+        # Translate vector of number representations to a sequence
+        - transformation.handlers.input.SequenceHandler
+
+        # Pad the sequence to fit the longest sequence
+        - transformation.handlers.input.PadHandler
+
+        # Embedding
+        - transformation.handlers.input.EmbeddingHandler
+
+        # Pooling adjust
+        - transformation.handlers.various.PoolingAdjustmentHandler
+
+        # Generate the label
+        - transformation.handlers.output.LabelUniqueHandler
+
+        # Reshape the input data
+        - transformation.handlers.various.Reshape3DHandler
+
+##################################################################
+#                         Predicting                             #
+##################################################################
+
 predicting:
     run: true
     epochs: 10
     batch_size: 20
 
     # Class to lazy load for the prediction
-    predictor: nets.recurrent.RNNPredictor
+    predictor: prediction.nets.recurrent.sequence.SequencePredictor

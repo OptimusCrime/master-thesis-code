@@ -1,5 +1,7 @@
 language: python
 
+sudo: required
+
 python:
   - 3.5
 
@@ -11,6 +13,8 @@ notifications:
     on_failure: never
 
 install:
-  - pip install -r requirements.txt
-  - pip install --upgrade https://storage.googleapis.com/tensorflow/mac/cpu/tensorflow-0.10.0-py3-none-any.whl
-  - apt-get install graphviz
+  - pip install tox
+  - sudo apt-get install graphviz
+
+script:
+  - tox
