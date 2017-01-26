@@ -36,16 +36,20 @@ class ReshapeTimeHandler(BaseHandler):
         return np_array
 
     def reshape_actual_input(self, ipt):
-        raw_array = np.zeros((15, 8), dtype=np.int32)
+        DERP = 30
+        WIDTH = 4
+        OFFSET_INCREASE = 2
+
+        raw_array = np.zeros((DERP, WIDTH), dtype=np.int32)
         offset = 0
-        for i in range(10):
-            for j in range(8):
+        for i in range(DERP):
+            for j in range(WIDTH):
                 if (j + offset) >= len(ipt):
                     break
 
                 raw_array[i][j] = ipt[j + offset]
 
-            offset += 4
+            offset += OFFSET_INCREASE
 
         return raw_array
 

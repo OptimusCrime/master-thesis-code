@@ -5,8 +5,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from keras.layers import (GRU, Activation, Dense, Dropout, Masking, Merge,
-                          TimeDistributed, LSTM, Permute)
+                          TimeDistributed, LSTM, Permute, Bidirectional)
 from keras.layers.convolutional import AveragePooling1D
+from keras.regularizers import WeightRegularizer, ActivityRegularizer
 from keras.models import Sequential
 from keras.utils.visualize_util import plot
 
@@ -34,25 +35,24 @@ class SequenceTimePredictor(BasePredictor):
         self.callback.epochs = Config.get('predicting.epochs')
 
         self.model = Sequential()
-        self.model.add(LSTM(input_shape=(15, 8),
-                       output_dim=256,
-                       activation='sigmoid',
-                       inner_activation='hard_sigmoid',
-                       return_sequences=True))
+        self.model.add(Bidirectional(LSTM(output_dim=256,
+                                          return_sequences=True,
+                                          W_regularizer=WeightRegularizer(l1=0.01, l2=0.01),
+                                          b_regularizer=ActivityRegularizer(l1=0.01, l2=0.01)),
+                                     input_shape=(30, 4)))
 
-        self.model.add((LSTM(256, return_sequences=True)))
-        self.model.add((LSTM(128, return_sequences=True)))
+        self.model.add(Dropout(0.2))
+        self.model.add(Bidirectional(LSTM(128,
+                                          return_sequences=True,
+                                          W_regularizer=WeightRegularizer(l1=0.01, l2=0.01),
+                                          b_regularizer=ActivityRegularizer(l1=0.01, l2=0.01))))
         self.model.add(Dropout(0.2))
 
-        self.model.add(Dense(output_dim=19))
-
-        self.model.add(Permute((2, 1), input_shape=(15, 19)))
-        self.model.add(Dense(output_dim=10))
-        self.model.add(Permute((2, 1), input_shape=(10, 19)))
+        self.model.add(TimeDistributed(Dense(output_dim=19)))
 
         self.model.add(Activation('softmax'))
 
-        self.model.compile(loss='categorical_crossentropy', optimizer='sgd', metrics=['accuracy'])
+        self.model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
 
         self.model.summary()
 
@@ -60,15 +60,6 @@ class SequenceTimePredictor(BasePredictor):
 
     def train(self):
         self.log.info('Begin training')
-        print(self.training_images_transformed.shape)
-        print(self.training_labels_transformed.shape)
-
-        print(self.training_set[0])
-        print(list(self.training_images_transformed[0]))
-        print(list(self.training_labels_transformed[0]))
-
-        print(self.test_images_transformed)
-
         self.model.fit(self.training_images_transformed,
                        self.training_labels_transformed,
                        nb_epoch=Config.get('predicting.epochs'),
@@ -84,7 +75,5 @@ class SequenceTimePredictor(BasePredictor):
         self.log.info('Begin predicting')
 
         derp = self.model.predict(self.training_images_transformed)[0]
-        print(list(derp[0:5]))
-
-        print(derp)
+        print(list(derp[0:20]))
 

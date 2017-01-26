@@ -49,29 +49,58 @@ class PlotCallback(Callback):
 
     def update_graph(self):
         fig = plt.figure()
-        ax = fig.add_subplot(111)
 
-        ax.plot(self.data['loss'], label="loss")
-        ax.plot(self.data['val_loss'], label="val_loss")
-        ax.plot(self.data['acc'], label="acc")
-        ax.plot(self.data['val_acc'], label="val_acc")
+        # Subplots
+        ax_loss = fig.add_subplot(121)
+        ax_acc = fig.add_subplot(122)
 
-        ax.set_title('accuracy')
-        ax.set_ylabel('values')
-        ax.set_xlabel('epochs')
+        # Add plots
+        ax_loss.plot(self.data['loss'], label="loss")
+        ax_loss.plot(self.data['val_loss'], label="val_loss")
 
-        ax.minorticks_on()
-        ax.tick_params(axis='x', which='minor', bottom='off', top='off')
+        ax_acc.plot(self.data['acc'], label="acc")
+        ax_acc.plot(self.data['val_acc'], label="val_acc")
 
-        ax.set_xlim(1, self.epochs)
-        ax.set_xticks(np.arange(1, self.epochs + 1))
+        # Set labels and titles
+        ax_loss.set_title('loss')
+        ax_loss.set_ylabel('values')
+        ax_loss.set_xlabel('epochs')
 
-        box = ax.get_position()
-        ax.set_position([box.x0, box.y0 + box.height * 0.1,
-                         box.width, box.height * 0.9])
+        ax_acc.set_title('accuracy')
+        ax_acc.set_ylabel('values')
+        ax_acc.set_xlabel('epochs')
 
-        # Put a legend below current axis
-        ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
-                  fancybox=True, shadow=True, ncol=5)
+        # Ticks
+        ax_loss.minorticks_on()
+        ax_loss.tick_params(labeltop=False, labelright=True)
 
-        fig.savefig(Filesystem.get_root_path('data/accuracy.png'))
+        ax_acc.minorticks_on()
+        ax_acc.tick_params(labeltop=False, labelright=True)
+
+        # Set help lines for the accuracy plot
+        ax_acc.axhline(y=0.5, linewidth=1, color='r')
+        ax_acc.axhline(y=1, linewidth=1, color='b')
+
+        # Set x limit and ticks
+        ax_loss.set_xlim(1, self.epochs)
+        ax_loss.set_xticks(np.arange(1, self.epochs + 1))
+
+        ax_acc.set_xlim(1, self.epochs)
+        ax_acc.set_xticks(np.arange(1, self.epochs + 1))
+
+        # Fix legend below the graph
+        box_loss = ax_loss.get_position()
+        ax_loss.set_position([box_loss.x0, box_loss.y0 + box_loss.height * 0.1,
+                              box_loss.width, box_loss.height * 0.9])
+
+        box_acc = ax_acc.get_position()
+        ax_acc.set_position([box_acc.x0, box_acc.y0 + box_acc.height * 0.1,
+                             box_acc.width, box_acc.height * 0.9])
+
+        ax_loss.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15),
+                       fancybox=True, shadow=True, ncol=5)
+
+        ax_acc.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15),
+                      fancybox=True, shadow=True, ncol=5)
+
+        fig.savefig(Filesystem.get_root_path('data/plot.png'))
