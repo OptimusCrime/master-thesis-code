@@ -26,10 +26,10 @@ class PlotCallback(Callback):
         }
 
         self.data_batch = {
-            'loss': [0],
-            'val_loss': [0],
-            'acc': [0],
-            'val_acc': [0]
+            'loss': [],
+            'val_loss': [],
+            'acc': [],
+            'val_acc': []
         }
 
     def on_train_begin(self, logs={}):
