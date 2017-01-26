@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-
-import numpy as np
+import gc
 
 from rorschach.preprocessing.creators import AbstractCreator
 from rorschach.preprocessing.handlers import TextCreator
@@ -18,21 +17,24 @@ class TermCreator(AbstractCreator):
         self.terms = []
 
     def create_sets(self):
+        contents = []
+
         data_set_size = len(self.terms)
         for i in range(data_set_size):
             if (i + 1) % Config.get('logging.batch_reporting') == 0:
                 self.log.info('Constructing image %s/%s.', i + 1, data_set_size)
 
-            phrase_image = TextCreator.write(self.terms[i])
-            phrase_arr = np.fromiter(list(phrase_image.getdata()), dtype="int").reshape((phrase_image.height,
-                                                                                         phrase_image.width))
+            phrase_arr = TextCreator.write(self.terms[i])
 
-            phrase_image.close()
-
-            self.contents.append({
+            contents.append({
                 'text': self.terms[i],
                 'matrix': phrase_arr
             })
+
+            if i != 0 and i % 1000 == 0:
+                gc.collect()
+
+        return contents
 
     def apply_constraints(self):
         constraints_file = Filesystem.get_root_path('data/constraints.pickl')

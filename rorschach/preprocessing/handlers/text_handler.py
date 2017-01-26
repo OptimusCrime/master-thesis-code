@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
 from rorschach.utilities import Config, Filesystem
@@ -24,4 +25,13 @@ class TextCreator:
             Filesystem.create('data/raw')
             im.save(Filesystem.get_root_path('data/raw/' + text + '.png'))
 
-        return im
+        arr = np.fromiter(list(im.getdata()), dtype="bool").reshape((im.height,
+                                                                    im.width))
+
+        im.close()
+
+        del im
+        del draw
+        del font_object
+
+        return arr

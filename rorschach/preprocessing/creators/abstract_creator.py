@@ -17,7 +17,7 @@ class AbstractCreator:
         self.constraint_handler = ConstraintHandler()
 
     def create(self):
-        self.create_sets()
+        self.contents = self.create_sets()
         self.apply_constraints()
         self.apply_signature()
 

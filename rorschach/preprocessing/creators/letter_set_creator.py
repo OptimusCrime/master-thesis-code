@@ -12,16 +12,13 @@ from rorschach.utilities import Config, Filesystem, pickle_data
 class LetterSetCreator(AbstractCreator):
 
     def create_sets(self):
+        contents = []
         for character in Config.get('general.characters'):
-            character_image = TextCreator.write(character)
-            character_arr = np.fromiter(list(character_image.getdata()), dtype="int").reshape((character_image.height,
-                                                                                               character_image.width))
-
-            character_image.close()
+            character_arr = TextCreator.write(character)
 
             self.constraint_handler.calculate(character_arr)
 
-            self.contents.append({
+            contents.append({
                 'text': character,
                 'matrix': character_arr
             })
@@ -29,6 +26,8 @@ class LetterSetCreator(AbstractCreator):
         # We save the constraints for the letters here. This constraint is used to calculate the upper and lower
         # cutoffs for the phrase and the word set
         self.constraint_handler.save()
+
+        return contents
 
     def apply_constraints(self):
         for i in range(len(self.contents)):
