@@ -63,25 +63,26 @@ class PlotCallback(Callback):
 
         self.update_graph(PlotCallback.BATCH)
 
-    def update_graph(self, type):
-        data = self.graph_data(type)
+    def update_graph(self, plot_type):
+        data = self.graph_data(plot_type)
 
         fig, ax_loss, ax_acc = self.build_axes()
 
-        self.add_plots(data, ax_loss, ax_acc, type)
-        self.add_labels(ax_loss, ax_acc, type)
-        self.set_ticks(data, ax_loss, ax_acc, type)
-        self.adjust_legend(ax_loss, ax_acc)
+        PlotCallback.add_plots(data, ax_loss, ax_acc, plot_type)
+        PlotCallback.add_labels(ax_loss, ax_acc, plot_type)
+        self.set_ticks(data, ax_loss, ax_acc, plot_type)
+        PlotCallback.adjust_legend(ax_loss, ax_acc)
 
-        self.save_plot(fig, type)
+        self.save_plot(fig, plot_type)
 
-    def graph_data(self, type):
-        if type == PlotCallback.EPOCH:
+    def graph_data(self, plot_type):
+        if plot_type == PlotCallback.EPOCH:
             return self.data_epoch
 
         return self.data_batch
 
-    def build_axes(self):
+    @staticmethod
+    def build_axes():
         fig = plt.figure(figsize=(16, 6), dpi=80)
 
         # Subplots
@@ -90,19 +91,21 @@ class PlotCallback(Callback):
 
         return fig, ax_loss, ax_acc
 
-    def add_plots(self, data, loss, acc, type):
+    @staticmethod
+    def add_plots(data, loss, acc, plot_type):
         # Add plots
         loss.plot(data['loss'], label="loss")
 
-        if type == PlotCallback.EPOCH:
+        if plot_type == PlotCallback.EPOCH:
             loss.plot(data['val_loss'], label="val_loss")
 
         acc.plot(data['acc'], label="acc")
 
-        if type == PlotCallback.EPOCH:
+        if plot_type == PlotCallback.EPOCH:
             acc.plot(data['val_acc'], label="val_acc")
 
-    def add_labels(self, loss, acc, type):
+    @staticmethod
+    def add_labels(loss, acc, plot_type):
         # Set labels and titles
         loss.set_title('loss')
         loss.set_ylabel('loss')
@@ -112,11 +115,11 @@ class PlotCallback(Callback):
         acc.set_ylabel('accuracy')
         acc.set_xlabel('epochs')
 
-        if type == PlotCallback.BATCH:
+        if plot_type == PlotCallback.BATCH:
             loss.set_xlabel('batch')
             acc.set_xlabel('batch')
 
-    def set_ticks(self, data, loss, acc, type):
+    def set_ticks(self, data, loss, acc, plot_type):
         loss.minorticks_on()
         loss.tick_params(axis='x', which='major', labeltop=False, labelright=False, top=False)
         loss.tick_params(axis='x', which='minor', labeltop=False, labelright=False, top=False, bottom=False)
@@ -130,13 +133,13 @@ class PlotCallback(Callback):
         acc.tick_params(axis='y', which='minor', labeltop=False, labelright=True, right=True)
 
         # Set x limit and ticks
-        loss.set_xlim(xmin=0, xmax=len(data['loss']))
-        acc.set_xlim(xmin=0, xmax=len(data['loss']))
+        loss.set_xlim(xmin=0, xmax=len(data['loss']) - 1)
+        acc.set_xlim(xmin=0, xmax=len(data['loss']) - 1)
 
         loss.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
         acc.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
 
-        if type == PlotCallback.EPOCH:
+        if plot_type == PlotCallback.EPOCH:
             loss.set_xlim(1, self.epochs)
             loss.set_xticks(np.arange(1, self.epochs + 1))
 
@@ -147,29 +150,32 @@ class PlotCallback(Callback):
         acc.set_ylim(0., 1.)
         acc.set_yticks(np.arange(0., 1.1, 0.1))
 
-    def adjust_legend(self, loss, acc):
+    @staticmethod
+    def adjust_legend(loss, acc):
         # Fix legend below the graph
         box_loss = loss.get_position()
         loss.set_position([box_loss.x0 - box_loss.width * 0.12,  # Move to the left
-                              box_loss.y0 + box_loss.height * 0.12,
-                              box_loss.width,
-                              box_loss.height * 0.88])
+                           box_loss.y0 + box_loss.height * 0.12,
+                           box_loss.width,
+                           box_loss.height * 0.88])
 
         box_acc = acc.get_position()
         acc.set_position([box_acc.x0 + box_acc.width * 0.1,  # Move to the right
-                             box_acc.y0 + box_acc.height * 0.12,
-                             box_acc.width,
-                             box_acc.height * 0.88])
+                          box_acc.y0 + box_acc.height * 0.12,
+                          box_acc.width,
+                          box_acc.height * 0.88])
 
         loss.legend(loc='upper center', bbox_to_anchor=(0.5, -0.13),
-                       fancybox=True, shadow=True, ncol=5)
+                    fancybox=True, shadow=True, ncol=5)
 
         acc.legend(loc='upper center', bbox_to_anchor=(0.5, -0.13),
-                      fancybox=True, shadow=True, ncol=5)
+                   fancybox=True, shadow=True, ncol=5)
 
-    def save_plot(self, fig, type):
+    @staticmethod
+    def save_plot(fig, plot_type):
         file_name = 'plot_epoch'
-        if type == PlotCallback.BATCH:
+        if plot_type == PlotCallback.BATCH:
             file_name = 'plot_batch'
 
         fig.savefig(Filesystem.get_root_path('data/' + file_name + '.png'))
+        plt.close()
