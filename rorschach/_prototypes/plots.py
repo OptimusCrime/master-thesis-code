@@ -40,7 +40,8 @@ ax_loss.minorticks_on()
 ax_loss.tick_params(labeltop=False, labelright=True)
 
 ax_acc.minorticks_on()
-ax_acc.tick_params(labeltop=False, labelright=True)
+#ax_acc.tick_params(labeltop=False, labelright=True)
+ax_acc.tick_params(labeltop=False, labelright=True, right=True)
 
 # Set x limit and ticks
 ax_loss.set_xlim(1, epochs)

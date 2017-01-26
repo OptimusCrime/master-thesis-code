@@ -117,12 +117,15 @@ class PlotCallback(Callback):
 
     def set_ticks(self, loss, acc, type):
         loss.minorticks_on()
-        loss.tick_params(labeltop=False, labelright=True)
+        loss.tick_params(labeltop=False, labelright=True, right=True)
 
         acc.minorticks_on()
-        acc.tick_params(labeltop=False, labelright=True)
+        acc.tick_params(labeltop=False, labelright=True, right=True)
 
         # Set x limit and ticks
+        loss.set_xlim(xmin=0)
+        acc.set_xlim(xmin=0)
+
         if type == PlotCallback.EPOCH:
             loss.set_xlim(1, self.epochs)
             loss.set_xticks(np.arange(1, self.epochs + 1))
