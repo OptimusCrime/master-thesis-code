@@ -3,6 +3,7 @@
 
 import numpy as np
 from matplotlib import pyplot as plt
+from matplotlib import ticker as ticker
 from keras.callbacks import Callback
 
 from rorschach.utilities import Filesystem
@@ -69,7 +70,7 @@ class PlotCallback(Callback):
 
         self.add_plots(data, ax_loss, ax_acc, type)
         self.add_labels(ax_loss, ax_acc, type)
-        self.set_ticks(ax_loss, ax_acc, type)
+        self.set_ticks(data, ax_loss, ax_acc, type)
         self.adjust_legend(ax_loss, ax_acc)
 
         self.save_plot(fig, type)
@@ -115,16 +116,25 @@ class PlotCallback(Callback):
             loss.set_xlabel('batch')
             acc.set_xlabel('batch')
 
-    def set_ticks(self, loss, acc, type):
+    def set_ticks(self, data, loss, acc, type):
         loss.minorticks_on()
-        loss.tick_params(labeltop=False, labelright=True, right=True)
+        loss.tick_params(axis='x', which='major', labeltop=False, labelright=False, top=False)
+        loss.tick_params(axis='x', which='minor', labeltop=False, labelright=False, top=False, bottom=False)
+        loss.tick_params(axis='y', which='major', labeltop=False, labelright=True, right=True)
+        loss.tick_params(axis='y', which='minor', labeltop=False, labelright=True, right=True)
 
         acc.minorticks_on()
-        acc.tick_params(labeltop=False, labelright=True, right=True)
+        acc.tick_params(axis='x', which='major', labeltop=False, labelright=False, top=False)
+        acc.tick_params(axis='x', which='minor', labeltop=False, labelright=False, top=False, bottom=False)
+        acc.tick_params(axis='y', which='major', labeltop=False, labelright=True, right=True)
+        acc.tick_params(axis='y', which='minor', labeltop=False, labelright=True, right=True)
 
         # Set x limit and ticks
-        loss.set_xlim(xmin=0)
-        acc.set_xlim(xmin=0)
+        loss.set_xlim(xmin=0, xmax=len(data['loss']))
+        acc.set_xlim(xmin=0, xmax=len(data['loss']))
+
+        loss.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
+        acc.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
 
         if type == PlotCallback.EPOCH:
             loss.set_xlim(1, self.epochs)
