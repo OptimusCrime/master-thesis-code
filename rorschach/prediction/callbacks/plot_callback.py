@@ -123,14 +123,12 @@ class PlotCallback(Callback):
         loss.minorticks_on()
         loss.tick_params(axis='x', which='major', labeltop=False, labelright=False, top=False)
         loss.tick_params(axis='x', which='minor', labeltop=False, labelright=False, top=False, bottom=False)
-        loss.tick_params(axis='y', which='major', labeltop=False, labelright=True, right=True)
-        loss.tick_params(axis='y', which='minor', labeltop=False, labelright=True, right=True)
+        loss.tick_params(axis='y', which='both', labeltop=False, labelright=True, right=True)
 
         acc.minorticks_on()
         acc.tick_params(axis='x', which='major', labeltop=False, labelright=False, top=False)
         acc.tick_params(axis='x', which='minor', labeltop=False, labelright=False, top=False, bottom=False)
-        acc.tick_params(axis='y', which='major', labeltop=False, labelright=True, right=True)
-        acc.tick_params(axis='y', which='minor', labeltop=False, labelright=True, right=True)
+        acc.tick_params(axis='y', which='both', labeltop=False, labelright=True, right=True)
 
         # Set x limit and ticks
         loss.set_xlim(xmin=0, xmax=len(data['loss']) - 1)
