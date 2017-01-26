@@ -83,6 +83,8 @@ class PlotCallback(Callback):
 
         ax_acc.set_xlim(1, self.epochs)
         ax_acc.set_xticks(np.arange(1, self.epochs + 1))
+        ax_acc.set_ylim(0., 1.)
+        ax_acc.set_yticks(np.arange(0., 1.1, 0.1))
 
         # Fix legend below the graph
         box_loss = ax_loss.get_position()

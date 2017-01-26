@@ -48,6 +48,8 @@ ax_loss.set_xticks(np.arange(1, epochs + 1))
 
 ax_acc.set_xlim(1, epochs)
 ax_acc.set_xticks(np.arange(1, epochs + 1))
+ax_acc.set_ylim(0., 1.)
+ax_acc.set_yticks(np.arange(0., 1.1, 0.1))
 
 # Fix legend below the graph
 box_loss = ax_loss.get_position()
