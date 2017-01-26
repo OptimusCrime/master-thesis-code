@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-import random
+from random import randrange
 
 from rorschach.utilities import Filesystem
 
@@ -10,24 +10,33 @@ from rorschach.utilities import Filesystem
 class WordListParser:
 
     def __init__(self):
-        self._words = set()
+        self._words = None
+        self.list_length = None
 
     def random_word(self, length=None):
-        if len(self._words) == 0:
+        if self.list_length is None:
             self.run(length)
 
-        return random.choice(tuple(self.words))
+        return self.words[randrange(0, self.list_length)]
 
     @property
     def words(self):
-        if len(self._words) == 0:
+        if self.list_length is None:
             self.run()
 
         return self._words
 
     def run(self, length=None):
+        # Create first _words as a set to avoid duplicate entries
+        self._words = set()
+
         files = WordListParser.get_word_files()
         self.get_words(files, length)
+
+        # Change the set to a list to allow index lookup used by the randomizer
+        self._words = list(self._words)
+
+        self.list_length = len(self._words)
 
     @staticmethod
     def get_word_files():
