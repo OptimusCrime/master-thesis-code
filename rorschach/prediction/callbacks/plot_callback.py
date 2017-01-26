@@ -48,7 +48,7 @@ class PlotCallback(Callback):
         return
 
     def update_graph(self):
-        fig = plt.figure()
+        fig = plt.figure(figsize=(16, 6), dpi=80)
 
         # Subplots
         ax_loss = fig.add_subplot(121)
@@ -63,11 +63,11 @@ class PlotCallback(Callback):
 
         # Set labels and titles
         ax_loss.set_title('loss')
-        ax_loss.set_ylabel('values')
+        ax_loss.set_ylabel('loss')
         ax_loss.set_xlabel('epochs')
 
         ax_acc.set_title('accuracy')
-        ax_acc.set_ylabel('values')
+        ax_acc.set_ylabel('accuracy')
         ax_acc.set_xlabel('epochs')
 
         # Ticks
@@ -76,10 +76,6 @@ class PlotCallback(Callback):
 
         ax_acc.minorticks_on()
         ax_acc.tick_params(labeltop=False, labelright=True)
-
-        # Set help lines for the accuracy plot
-        ax_acc.axhline(y=0.5, linewidth=1, color='r')
-        ax_acc.axhline(y=1, linewidth=1, color='b')
 
         # Set x limit and ticks
         ax_loss.set_xlim(1, self.epochs)
@@ -90,17 +86,21 @@ class PlotCallback(Callback):
 
         # Fix legend below the graph
         box_loss = ax_loss.get_position()
-        ax_loss.set_position([box_loss.x0, box_loss.y0 + box_loss.height * 0.1,
-                              box_loss.width, box_loss.height * 0.9])
+        ax_loss.set_position([box_loss.x0 - box_loss.width * 0.12,  # Move to the left
+                              box_loss.y0 + box_loss.height * 0.12,
+                              box_loss.width,
+                              box_loss.height * 0.88])
 
         box_acc = ax_acc.get_position()
-        ax_acc.set_position([box_acc.x0, box_acc.y0 + box_acc.height * 0.1,
-                             box_acc.width, box_acc.height * 0.9])
+        ax_acc.set_position([box_acc.x0 + box_acc.width * 0.1,  # Move to the right
+                             box_acc.y0 + box_acc.height * 0.12,
+                             box_acc.width,
+                             box_acc.height * 0.88])
 
-        ax_loss.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15),
+        ax_loss.legend(loc='upper center', bbox_to_anchor=(0.5, -0.13),
                        fancybox=True, shadow=True, ncol=5)
 
-        ax_acc.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15),
+        ax_acc.legend(loc='upper center', bbox_to_anchor=(0.5, -0.13),
                       fancybox=True, shadow=True, ncol=5)
 
         fig.savefig(Filesystem.get_root_path('data/plot.png'))
