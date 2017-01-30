@@ -13,7 +13,6 @@ class PredictorWrapper:
         self.predictor = None
 
     def run(self):
-        self.predictor = SequenceTimePredictor()
         assert(self.predictor is not None)
 
         self.predictor.training_set = unpickle_data(Filesystem.get_root_path('data/training_set.pickl'))
