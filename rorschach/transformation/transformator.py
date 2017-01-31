@@ -22,10 +22,7 @@ class Transformator:
         self.original_lists = original_lists
 
         for data_list in self.original_lists:
-            self.transformed_lists[data_list['type']] = {
-                DataSetTypes.IMAGES: data_list['set'],
-                DataSetTypes.LABELS: []
-            }
+            self.transformed_lists[data_list['type']] = data_list['set']
 
     def get_handlers(self):
         handlers = Config.get('transformation.handlers')

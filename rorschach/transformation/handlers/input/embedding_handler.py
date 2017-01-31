@@ -28,17 +28,15 @@ class EmbeddingHandler(BaseHandler):
         if key == DataSetTypes.LETTER_SET:
             return
 
-        # Require the input key
-        if len(input_list[DataSetTypes.IMAGES]) > 0:
-            assert 'input' in input_list[DataSetTypes.IMAGES][0]
-
         super().list_handler(input_list, key)
 
-    def obj_handler(self, ipt, label):
-        if self.embedding_lookup is not None:
-            return self.apply_embedding(ipt)
+        return input_list
 
-        for val in ipt['input']:
+    def obj_handler(self, obj):
+        if self.embedding_lookup is not None:
+            return self.apply_embedding(obj)
+
+        for val in obj[DataSetTypes.IMAGES]['input']:
             if val == '0':
                 continue
 
@@ -46,6 +44,8 @@ class EmbeddingHandler(BaseHandler):
                 self.uniques[val] += 1
             else:
                 self.uniques[val] = 1
+
+        return obj
 
     def create_embedding_set(self):
         # We are now sorting the values descending by their popularity
@@ -58,11 +58,13 @@ class EmbeddingHandler(BaseHandler):
             self.embedding_lookup[sorted_uniques_values[i]] = i + 1
 
     def apply_embedding(self, ipt):
-        new_matrix = np.zeros(ipt['input'].shape, dtype=np.int64)
-        for v in range(len(ipt['input'])):
-            if ipt['input'][v] != '0':
-                new_matrix[v] = self.embedding_lookup[ipt['input'][v]]
+        new_matrix = np.zeros(ipt[DataSetTypes.IMAGES]['input'].shape, dtype=np.int64)
+        for v in range(len(ipt[DataSetTypes.IMAGES]['input'])):
+            if ipt[DataSetTypes.IMAGES]['input'][v] != '0':
+                new_matrix[v] = self.embedding_lookup[ipt[DataSetTypes.IMAGES]['input'][v]]
 
         # Swap array
-        ipt['input_str'] = ipt['input']
-        ipt['input'] = new_matrix
+        ipt[DataSetTypes.IMAGES]['input_str'] = ipt[DataSetTypes.IMAGES]['input']
+        ipt[DataSetTypes.IMAGES]['input'] = new_matrix
+
+        return ipt

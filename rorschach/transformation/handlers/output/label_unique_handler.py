@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+import sys
 
 from rorschach.common import DataSetTypes
 from rorschach.prediction.helpers import PoolingFactorCalculator
@@ -35,36 +36,37 @@ class LabelUniqueHandler(BaseHandler):
         if key == DataSetTypes.LETTER_SET:
             return
 
-        # Require the text and input key
-        if len(self.label_lookup) == 0 and len(input_list[DataSetTypes.IMAGES]) > 0:
-            assert 'text' in input_list[DataSetTypes.IMAGES][0]
-            assert 'input' in input_list[DataSetTypes.IMAGES][0]
-
         super().list_handler(input_list, key)
 
-    def obj_handler(self, ipt, label):
+        return input_list
+
+    def obj_handler(self, obj):
         if len(self.label_lookup) > 0:
-            return self.apply_labels(ipt, label)
+            return self.apply_labels(obj)
 
         if self.widest_input is None:
-            self.widest_input = len(ipt['input'])
+            self.widest_input = len(obj[DataSetTypes.IMAGES]['input'])
 
-        length = len(ipt['text'])
+        length = len(obj[DataSetTypes.IMAGES]['text'])
         if self.longest_label is None or length > self.longest_label:
             self.longest_label = length
 
-    def apply_labels(self, ipt, label):
+        return obj
+
+    def apply_labels(self, obj):
         label_matrix = np.zeros((self.label_width, self.label_depth + 1))
         for i in range(len(label_matrix)):
             label_matrix[i][0] = 1.
 
-        for i in range(len(ipt['text'])):
-            current_char = ipt['text'][i]
+        for i in range(len(obj[DataSetTypes.IMAGES]['text'])):
+            current_char = obj[DataSetTypes.IMAGES]['text'][i]
             char_index = self.label_lookup[current_char]
             label_matrix[i][0] = 0.
             label_matrix[i][char_index + 1] = 1.
 
-        label['value'] = label_matrix
+        obj[DataSetTypes.LABELS]['value'] = label_matrix
+
+        return obj
 
     def calculate_label_width(self):
         results = PoolingFactorCalculator.run(self.widest_input, self.longest_label)
@@ -74,7 +76,9 @@ class LabelUniqueHandler(BaseHandler):
         self.label_width = 10
 
     def calculate_label_depth(self):
-        characters_set = self.input_lists[DataSetTypes.LETTER_SET][DataSetTypes.IMAGES]
+        characters_set = []
+        for obj in self.input_lists[DataSetTypes.LETTER_SET]:
+            characters_set.append(obj[DataSetTypes.IMAGES])
 
         label_uniques = self.find_label_uniques(characters_set)
         self.create_label_lookup_set(characters_set, label_uniques)

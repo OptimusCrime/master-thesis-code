@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from rorschach.common import DataSetTypes
-
 
 class BaseHandler:
 
@@ -13,16 +11,21 @@ class BaseHandler:
         self.input_lists = input_lists
 
         for key in input_lists:
-            self.list_handler(input_lists[key], key)
+            adjusted_list = self.list_handler(input_lists[key], key)
+
+            if adjusted_list is not None:
+                input_lists[key] = adjusted_list
+
+        return input_lists
 
     def list_handler(self, input_list, key):
-        if not input_list[DataSetTypes.IMAGES]:
+        if not input_list:
             return
 
-        for i in range(len(input_list[DataSetTypes.IMAGES])):
-            ipt = input_list[DataSetTypes.IMAGES][i]
-            label = input_list[DataSetTypes.LABELS][i]
-            self.obj_handler(ipt, label)
+        for i in range(len(input_list)):
+            input_list[i] = self.obj_handler(input_list[i])
 
-    def obj_handler(self, ipt, label):
-        pass
+        return input_list
+
+    def obj_handler(self, obj):
+        return obj

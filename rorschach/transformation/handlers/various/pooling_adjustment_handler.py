@@ -50,31 +50,39 @@ class PoolingAdjustmentHandler(BaseHandler):
 
         super().list_handler(input_list, key)
 
-    def obj_handler(self, ipt, label):
+        return input_list
+
+    def obj_handler(self, obj):
         if not self.calculated:
-            return self.evaluate_lengths(ipt)
+            return self.evaluate_lengths(obj)
 
         if self.adjust_sequence is not None:
-            self.do_adjust_sequence(ipt)
+            obj = self.do_adjust_sequence(obj)
 
-        if self.adjust_label is not None:
-            self.do_adjust_label(ipt)
+        #if self.adjust_label is not None:
+        #    self.do_adjust_label(obj)
+
+        return obj
 
     def evaluate_lengths(self, obj):
-        width_sequence = len(obj['input'])
+        width_sequence = len(obj[DataSetTypes.IMAGES]['input'])
         if self.widest_sequence is None or width_sequence > self.widest_sequence:
             self.widest_sequence = width_sequence
 
-        width_label = len(obj['text'])
+        width_label = len(obj[DataSetTypes.IMAGES]['text'])
         if self.widest_label is None or width_label > self.widest_label:
             self.widest_label = width_label
 
+        return obj
+
     def do_adjust_sequence(self, obj):
         new_matrix = np.full(self.adjust_sequence, 0, dtype=np.int)
-        for v in range(len(obj['input'])):
-            new_matrix[v] = obj['input'][v]
+        for v in range(len(obj[DataSetTypes.IMAGES]['input'])):
+            new_matrix[v] = obj[DataSetTypes.IMAGES]['input'][v]
 
-        obj['input'] = new_matrix
+        obj[DataSetTypes.IMAGES]['input'] = new_matrix
+
+        return obj
 
     def do_adjust_label(self, obj):
         # Do we need to implement this?

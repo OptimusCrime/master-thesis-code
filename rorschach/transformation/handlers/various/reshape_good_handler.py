@@ -22,13 +22,20 @@ class ReshapeGoodHandler(BaseHandler):
         if key == DataSetTypes.LETTER_SET:
             return
 
-        input_list[DataSetTypes.IMAGES] = self.reshape_input(input_list[DataSetTypes.IMAGES])
-        input_list[DataSetTypes.LABELS] = self.reshape_labels(input_list[DataSetTypes.LABELS])
+        new_list = {
+            DataSetTypes.IMAGES: None,
+            DataSetTypes.LABELS: None
+        }
+
+        new_list[DataSetTypes.IMAGES] = self.reshape_input(input_list)
+        new_list[DataSetTypes.LABELS] = self.reshape_labels(input_list)
+
+        return new_list
 
     def reshape_input(self, input_list):
         raw_array = [[] for _ in range(5)]
         for obj in input_list:
-            reshaped = self.reshape_actual_input(obj['input'])
+            reshaped = self.reshape_actual_input(obj[DataSetTypes.IMAGES]['input'])
             for i in range(5):
                 raw_array[i].append(reshaped[i])
 
@@ -54,9 +61,11 @@ class ReshapeGoodHandler(BaseHandler):
 
         for obj in labels_list:
             for i in range(10):
-                raw_array[i].append(obj['value'][i])
+                raw_array[i].append(obj[DataSetTypes.LABELS]['value'][i])
 
         for i in range(10):
             raw_array[i] = np.array(raw_array[i])
+
+        raw_array.reverse()
 
         return raw_array

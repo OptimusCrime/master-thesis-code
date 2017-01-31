@@ -7,16 +7,15 @@ from rorschach.transformation.handlers import BaseHandler
 
 class LabelInitializeHandler(BaseHandler):
 
-    def __init__(self):
-        super().__init__()
-
-    def run(self, input_lists):
-        super().run(input_lists)
-
-        return input_lists
-
     def list_handler(self, input_list, key):
-        input_length = len(input_list[DataSetTypes.IMAGES])
+        new_list = [{}] * len(input_list)
 
-        # Create empty labels for this data set (avoid index out of bounds later)
-        input_list[DataSetTypes.LABELS] = [{}] * input_length
+        for i in range(len(input_list)):
+            new_list[i] = {
+                DataSetTypes.IMAGES: input_list[i],
+                DataSetTypes.LABELS: {
+                    'text': input_list[i]['text']
+                }
+            }
+
+        return new_list

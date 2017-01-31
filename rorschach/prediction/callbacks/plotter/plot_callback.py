@@ -2,11 +2,14 @@
 # -*- coding: utf-8 -*-
 
 from multiprocessing import Process
+import re
+import copy
 
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import ticker as ticker
 
+from rorschach.prediction.callbacks import CallbackWrapper
 from rorschach.utilities import Filesystem
 
 
@@ -18,24 +21,10 @@ class PlotCallback(Process):
     def __init__(self):
         super().__init__()
 
-        self.epochs = None
-
-        self.data_epoch = {
-            'loss': [0],
-            'val_loss': [0],
-            'acc': [0],
-            'val_acc': [0]
-        }
-
-        self.data_batch = {
-            'loss': [],
-            'val_loss': [],
-            'acc': [],
-            'val_acc': []
-        }
+        self.data = {}
 
     def run(self):
-        pass
+        return True
 
     def on_train_begin(self, logs={}):
         return
@@ -47,26 +36,12 @@ class PlotCallback(Process):
         return
 
     def on_epoch_end(self, epoch, logs={}):
-        print('on epoch end', epoch)
-        self.data_epoch['loss'].append(logs.get('loss'))
-        self.data_epoch['val_loss'].append(logs.get('val_loss'))
-        self.data_epoch['acc'].append(logs.get('acc'))
-        self.data_epoch['val_acc'].append(logs.get('val_acc'))
-
         self.update_graph(PlotCallback.EPOCH)
-
-        return
 
     def on_batch_begin(self, batch, logs={}):
         return
 
     def on_batch_end(self, batch, logs={}):
-        print('on on_batch_end end', batch)
-        self.data_batch['loss'].append(logs.get('loss'))
-        self.data_batch['val_loss'].append(logs.get('val_loss'))
-        self.data_batch['acc'].append(logs.get('acc'))
-        self.data_batch['val_acc'].append(logs.get('val_acc'))
-
         self.update_graph(PlotCallback.BATCH)
 
     def update_graph(self, plot_type):
@@ -83,9 +58,9 @@ class PlotCallback(Process):
 
     def graph_data(self, plot_type):
         if plot_type == PlotCallback.EPOCH:
-            return self.data_epoch
+            return self.data[CallbackWrapper.EPOCH]
 
-        return self.data_batch
+        return self.data[CallbackWrapper.BATCH]
 
     @staticmethod
     def build_axes():
@@ -140,15 +115,18 @@ class PlotCallback(Process):
         loss.set_xlim(xmin=0, xmax=len(data['loss']) - 1)
         acc.set_xlim(xmin=0, xmax=len(data['loss']) - 1)
 
+        # Set min for loss
+        loss.set_ylim(ymin=0)
+
         loss.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
         acc.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
 
         if plot_type == PlotCallback.EPOCH:
-            loss.set_xlim(1, self.epochs)
-            loss.set_xticks(np.arange(1, self.epochs + 1))
+            loss.set_xlim(1, self.data['epochs'])
+            loss.set_xticks(np.arange(1, self.data['epochs'] + 1))
 
-            acc.set_xlim(1, self.epochs)
-            acc.set_xticks(np.arange(1, self.epochs + 1))
+            acc.set_xlim(1, self.data['epochs'])
+            acc.set_xticks(np.arange(1, self.data['epochs'] + 1))
 
         # Static y max/min on accuracy
         acc.set_ylim(0., 1.)

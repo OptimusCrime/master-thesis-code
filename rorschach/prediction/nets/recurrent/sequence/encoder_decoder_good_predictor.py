@@ -12,7 +12,8 @@ from keras.optimizers import SGD
 from keras.models import Sequential, Model
 from keras.utils.visualize_util import plot
 
-from rorschach.prediction.callbacks import PlotCallback, ResetStates
+from rorschach.prediction.callbacks import CallbackWrapper
+from rorschach.prediction.callbacks.plotter import PlotCallback
 from rorschach.prediction.helpers import (EmbeddingCalculator,
                                           WidthCalculator)
 from rorschach.prediction.layer import HiddenStateLSTM
@@ -33,9 +34,14 @@ class EncoderDecoderGoodPredictor(BasePredictor):
         self.keras_setup()
 
     def keras_setup(self):
-        self.callback = PlotCallback()
-        self.callback.epochs = Config.get('predicting.epochs')
+        self.callback = CallbackWrapper([PlotCallback])
+        self.callback.data['epochs'] = Config.get('predicting.epochs')
 
+        '''for derp in [self.training_images_transformed, self.training_labels_transformed]:
+            for i in range(len(derp)):
+                print(derp[i][6])
+            print('=====================================================================')
+        '''
         inputs = []
         encoders = []
         hidden = []
@@ -45,26 +51,43 @@ class EncoderDecoderGoodPredictor(BasePredictor):
             embedding_name = 'embedding' + str(i)
             encoder_intermediate = 'encoder' + str(i)
 
-            current_input = Input(shape=(10,), name=name_input)
-            current_embedding = Embedding(300, 19, mask_zero=True, name=embedding_name)(current_input)
+            current_input = Input(
+                shape=(10,),
+                name=name_input)
+            current_embedding = Embedding(300,
+                                          19,
+                                          mask_zero=True,
+                                          name=embedding_name)(current_input)
 
             current_encoder = None
             current_hidden = None
             if i == 0:
                 # First input, has only one input
-                current_encoder, *current_hidden = HiddenStateLSTM(128, dropout_W=0.5,
+                current_encoder, *current_hidden = HiddenStateLSTM(256,
+                                                                   dropout_W=0.5,
+                                                                   dropout_U=0.5,
+                                                                   W_regularizer=WeightRegularizer(l1=0.01, l2=0.01),
+                                                                   b_regularizer=ActivityRegularizer(l1=0.01, l2=0.01),
                                                                    return_sequences=False)(current_embedding)
             else:
                 if i == 4:
                     # Input 5, has two inputs like the rest, but also returns the entire sequence
-                    current_encoder, _, _ = HiddenStateLSTM(128, dropout_W=0.5,
+                    current_encoder, _, _ = HiddenStateLSTM(256,
+                                                            dropout_W=0.5,
+                                                            dropout_U=0.5,
+                                                            W_regularizer=WeightRegularizer(l1=0.01, l2=0.01),
+                                                            b_regularizer=ActivityRegularizer(l1=0.01, l2=0.01),
                                                             return_sequences=True)([current_embedding] + hidden[-1])
 
                 else:
                     # Input 2 - 4 has two inputs, the input and the previous LSTM
-                    current_encoder, *current_hidden = HiddenStateLSTM(128, dropout_W=0.5,
-                                                                       return_sequences=False)(
-                        [current_embedding] + hidden[-1])
+                    current_encoder, *current_hidden = HiddenStateLSTM(
+                        256,
+                        dropout_W=0.5,
+                        dropout_U=0.5,
+                        W_regularizer=WeightRegularizer(l1=0.01, l2=0.01),
+                        b_regularizer=ActivityRegularizer(l1=0.01, l2=0.01),
+                        return_sequences=False)([current_embedding] + hidden[-1])
 
             inputs.append(current_input)
             encoders.append(current_encoder)
@@ -74,23 +97,41 @@ class EncoderDecoderGoodPredictor(BasePredictor):
 
         decoders = []
         decoder_hidden = []
+        decoder_inner = []
         outputs = []
         for i in range(10):
             if i == 0:
                 # Input the output of the encoders
-                current_decoder, *current_decoder_hidden = HiddenStateLSTM(128, dropout_W=0.5,
-                                                                           return_sequences=True)(encoders[-1])
+                current_decoder, *current_decoder_hidden = HiddenStateLSTM(
+                    256,
+                    dropout_W=0.5,
+                    dropout_U=0.5,
+                    W_regularizer=WeightRegularizer(l1=0.01, l2=0.01),
+                    b_regularizer=ActivityRegularizer(l1=0.01, l2=0.01),
+                    return_sequences=True)(encoders[-1])
             else:
-                current_decoder, *current_decoder_hidden = HiddenStateLSTM(128, dropout_W=0.5,
-                                                                           return_sequences=True)(
-                    [decoders[-1]] + decoder_hidden[-1])
+                current_decoder, *current_decoder_hidden = HiddenStateLSTM(
+                    256,
+                    dropout_W=0.5,
+                    dropout_U=0.5,
+                    W_regularizer=WeightRegularizer(l1=0.01, l2=0.01),
+                    b_regularizer=ActivityRegularizer(l1=0.01, l2=0.01),
+                    return_sequences=True)([decoders[-1]] + decoder_hidden[-1])
 
-            current_inner_decoder = LSTM(128, dropout_W=0.5, dropout_U=0.5, return_sequences=False)(current_decoder)
+            current_inner_decoder = LSTM(
+                256,
+                dropout_W=0.5,
+                dropout_U=0.5,
+                W_regularizer=WeightRegularizer(l1=0.01, l2=0.01),
+                b_regularizer=ActivityRegularizer(l1=0.01, l2=0.01),
+                return_sequences=False)(current_decoder)
+
             current_output = Dense(19)(current_inner_decoder)
             current_output = Activation('softmax')(current_output)
 
             decoders.append(current_decoder)
             decoder_hidden.append(current_decoder_hidden)
+            decoder_inner.append(current_inner_decoder)
             outputs.append(current_output)
 
         sgd = SGD(lr=1., decay=1e-6, momentum=0.9, nesterov=True)
@@ -100,33 +141,6 @@ class EncoderDecoderGoodPredictor(BasePredictor):
         self.model.summary()
 
         plot(self.model, to_file='test1232.png', show_shapes=True)
-
-        #
-        #self.model.compile(optimizer=sgd, loss='categorical_crossentropy', metrics=['accuracy'])
-
-        '''self.model = Sequential()
-        self.model.add(InputLayer(batch_input_shape=(Config.get('predicting.batch_size'), 48)))
-        self.model.add(Embedding(300, 19))
-        self.model.add(LSTM(output_dim=256,
-                                          return_sequences=True,
-                                          W_regularizer=WeightRegularizer(l1=0.01, l2=0.01),
-                                          b_regularizer=ActivityRegularizer(l1=0.01, l2=0.01),
-                                          stateful=False,
-
-                                          ),
-                                     )
-
-        self.model.add(Dropout(0.2))
-
-        self.model.add(Dense(output_dim=19))
-
-        self.model.add(Activation('softmax'))
-
-        self.model.compile(loss='mse', optimizer='rmsprop', metrics=['accuracy'])
-        '''
-        self.model.summary()
-
-        plot(self.model, to_file='model_rnn.png', show_shapes=True)
 
     def train(self):
         self.log.info('Begin training')
