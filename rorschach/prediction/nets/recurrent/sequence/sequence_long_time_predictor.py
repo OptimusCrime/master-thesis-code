@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import sys
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -18,7 +20,7 @@ from rorschach.prediction.nets import BasePredictor
 from rorschach.utilities import Config, Filesystem, LoggerWrapper, unpickle_data  # isort:skip
 
 
-class SequenceTimePredictor(BasePredictor):
+class SequenceLongTimePredictor(BasePredictor):
 
     def __init__(self):
         super().__init__()
@@ -28,9 +30,11 @@ class SequenceTimePredictor(BasePredictor):
         self.callback = None
 
     def prepare(self):
+        print('hello1')
         self.keras_setup()
 
     def keras_setup(self):
+        print(self.training_images_transformed.shape)
         self.callback = PlotCallback()
         self.callback.epochs = Config.get('predicting.epochs')
 
@@ -38,16 +42,14 @@ class SequenceTimePredictor(BasePredictor):
         self.model.add(Bidirectional(LSTM(output_dim=256,
                                           return_sequences=True,
                                           W_regularizer=WeightRegularizer(l1=0.01, l2=0.01),
-                                          b_regularizer=ActivityRegularizer(l1=0.01, l2=0.01),
-                                          stateful=True),
-                                     batch_input_shape=(Config.get('predicting.batch_size'), 30, 4)))
+                                          b_regularizer=ActivityRegularizer(l1=0.01, l2=0.01)),
+                                     input_shape=(100, 1)))
 
         self.model.add(Dropout(0.4))
         self.model.add(Bidirectional(LSTM(128,
                                           return_sequences=True,
                                           W_regularizer=WeightRegularizer(l1=0.01, l2=0.01),
-                                          b_regularizer=ActivityRegularizer(l1=0.01, l2=0.01),
-                                          stateful=True)))
+                                          b_regularizer=ActivityRegularizer(l1=0.01, l2=0.01))))
         self.model.add(Dropout(0.4))
 
         self.model.add(TimeDistributed(Dense(output_dim=19)))
@@ -76,6 +78,6 @@ class SequenceTimePredictor(BasePredictor):
     def predict(self):
         self.log.info('Begin predicting')
 
-        derp = self.model.predict(self.training_images_transformed, batch_size=Config.get('predicting.batch_size'))[0]
+        derp = self.model.predict(self.training_images_transformed)[0]
         print(list(derp[0:20]))
 

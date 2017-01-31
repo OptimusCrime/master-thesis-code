@@ -4,7 +4,6 @@
 from rorschach.common import DataSetTypes
 from rorschach.transformation import Transformator
 from rorschach.utilities import Config, Filesystem, unpickle_data
-from rorschach.prediction.nets.recurrent.sequence.sequence_time_predictor import SequenceTimePredictor
 
 
 class PredictorWrapper:
@@ -13,7 +12,6 @@ class PredictorWrapper:
         self.predictor = None
 
     def run(self):
-        self.predictor = SequenceTimePredictor()
         assert(self.predictor is not None)
 
         self.predictor.training_set = unpickle_data(Filesystem.get_root_path('data/training_set.pickl'))
