@@ -8,6 +8,7 @@ from keras.layers import (GRU, Activation, Dense, Dropout, Masking, Merge,
                           TimeDistributed, LSTM, Permute, Bidirectional, Embedding, Input)
 from keras.layers.convolutional import AveragePooling1D
 from keras.regularizers import WeightRegularizer, ActivityRegularizer
+from keras.optimizers import SGD
 from keras.models import Sequential, Model
 from keras.utils.visualize_util import plot
 
@@ -38,20 +39,20 @@ class EncodeDecodePredictor(BasePredictor):
 
         enc_input = Input(shape=(48,), dtype='int32', name='encoder_input')
         enc_layer = Embedding(300, 19, mask_zero=True)(enc_input)
-        enc_layer, *hidden = HiddenStateLSTM(64, dropout_W=0.5, return_sequences=False)(enc_layer)
+        enc_layer, *hidden = HiddenStateLSTM(1024, dropout_W=0.5, dropout_U=0.5, return_sequences=False)(enc_layer)
 
-        ### build decoder
         dec_input = Input(shape=(48,), dtype='int32', name='decoder_input')
         dec_layer = Embedding(300, 19, mask_zero=True)(dec_input)
-        dec_layer, _, _ = HiddenStateLSTM(64, dropout_W=0.5, return_sequences=True)([dec_layer] + hidden)
+        dec_layer, _, _ = HiddenStateLSTM(1024, dropout_W=0.5, dropout_U=0.5, return_sequences=True)([dec_layer] + hidden)
         dec_layer = TimeDistributed(Dense(19))(dec_layer)
 
         dec_output = Dropout(0.2)(dec_layer)
         dec_output = Activation('softmax', name='decoder_output')(dec_output)
 
-        ### build model
         self.model = Model(input=[enc_input, dec_input], output=dec_output)
-        self.model.compile(optimizer='adam', loss='categorical_crossentropy')
+
+        sgd = SGD(lr=1., decay=1e-6, momentum=0.9, nesterov=True)
+        self.model.compile(optimizer=sgd, loss='categorical_crossentropy', metrics=['accuracy'])
 
         '''self.model = Sequential()
         self.model.add(InputLayer(batch_input_shape=(Config.get('predicting.batch_size'), 48)))

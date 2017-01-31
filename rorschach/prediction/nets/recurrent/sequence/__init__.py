@@ -4,6 +4,7 @@ from .attention_layer_sequence_predictor2 import AttentionLayerSequencePredictor
 from .attention_lstm_predictor import AttentionLSTMPredictor
 from .attention_seq2seq_predictor import AttentionSeq2SeqPredictor
 from .correct_sequence_predictor import CorrectSequencePredictor
+from .encoder_decoder_good_predictor import EncoderDecoderGoodPredictor
 from .encoder_decoder_predictor import EncodeDecodePredictor
 from .seq2seq_predictor import Seq2SeqPredictor
 from .sequence_predictor import SequencePredictor
