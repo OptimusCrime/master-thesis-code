@@ -5,23 +5,21 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from keras.layers import (GRU, Activation, Dense, Dropout, Masking, Merge,
-                          TimeDistributed, LSTM, Permute, Bidirectional)
+                          TimeDistributed, LSTM, Permute, Bidirectional, InputLayer, Input)
 from keras.layers.convolutional import AveragePooling1D
 from keras.regularizers import WeightRegularizer, ActivityRegularizer
-from keras.models import Sequential
+from keras.models import Sequential, Model
 from keras.utils.visualize_util import plot
-
-import seq2seq
-from seq2seq.models import SimpleSeq2Seq, Seq2Seq, AttentionSeq2Seq
 
 from rorschach.prediction.callbacks import PlotCallback
 from rorschach.prediction.helpers import (EmbeddingCalculator,
                                           WidthCalculator)
+from rorschach.prediction.layer import Attention, AttentionLSTM
 from rorschach.prediction.nets import BasePredictor
 from rorschach.utilities import Config, Filesystem, LoggerWrapper, unpickle_data  # isort:skip
 
 
-class SimpleSeq2SeqPredictor(BasePredictor):
+class AttentionLayerSequencePredictor2(BasePredictor):
 
     def __init__(self):
         super().__init__()
@@ -34,22 +32,29 @@ class SimpleSeq2SeqPredictor(BasePredictor):
         self.keras_setup()
 
     def keras_setup(self):
-        self.callback = PlotCallback()
-        self.callback.epochs = Config.get('predicting.epochs')
+        #self.callback = PlotCallback()
+        #self.callback.epochs = Config.get('predicting.epochs')
 
-        self.model = SimpleSeq2Seq(input_dim=4,
-                             input_length=30,
-                             hidden_dim=19,
-                             output_length=10,
-                             output_dim=1,
-                             depth=3
-                             )
+        '''
+        self.model = Sequential()
+        self.model.add(InputLayer(input_shape=(30, 4)))
+        self.model.add(Masking(mask_value=0))
+        self.model.add(LSTM(128, return_sequences=True))
+        self.model.add(Attention())
 
-        #self.model.add(TimeDistributed(Dense(output_dim=19)))
+        self.model.add(Dense(output_dim=10))
+        '''
+        input = Input(shape=(30, 4))
+        activations = LSTM(64, return_sequences=True)(input)
+        sentence = Attention()(activations)
 
-        #self.model.add(Activation('softmax'))
+        probabilities = Dense(10,)(sentence)
+        probabilities = Activation('linear')(probabilities)
 
-        self.model.compile(loss='mse', optimizer='rmsprop', metrics=['accuracy'])
+        self.model = Model(input=input, output=probabilities)
+        self.model.compile(optimizer='rmsprop', loss='mse', metrics=['accuracy'])
+
+        #self.model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
 
         self.model.summary()
 
@@ -63,7 +68,7 @@ class SimpleSeq2SeqPredictor(BasePredictor):
                        verbose=1,
                        batch_size=Config.get('predicting.batch_size'),
                        validation_data=(self.test_images_transformed, self.test_labels_transformed),
-                       callbacks=[self.callback]
+                       #callbacks=[self.callback]
                        )
 
         self.log.info('Finished training')

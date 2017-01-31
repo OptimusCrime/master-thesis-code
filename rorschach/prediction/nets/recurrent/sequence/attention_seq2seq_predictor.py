@@ -21,7 +21,7 @@ from rorschach.prediction.nets import BasePredictor
 from rorschach.utilities import Config, Filesystem, LoggerWrapper, unpickle_data  # isort:skip
 
 
-class SimpleSeq2SeqPredictor(BasePredictor):
+class AttentionSeq2SeqPredictor(BasePredictor):
 
     def __init__(self):
         super().__init__()
@@ -37,19 +37,21 @@ class SimpleSeq2SeqPredictor(BasePredictor):
         self.callback = PlotCallback()
         self.callback.epochs = Config.get('predicting.epochs')
 
-        self.model = SimpleSeq2Seq(input_dim=4,
-                             input_length=30,
-                             hidden_dim=19,
-                             output_length=10,
-                             output_dim=1,
-                             depth=3
-                             )
+        self.model = Sequential()
+        self.model.add(AttentionSeq2Seq(
+            input_dim=4,
+            input_length=30,
+            hidden_dim=10,
+            output_length=10,
+            output_dim=19,
+            depth=3,
+        ))
 
         #self.model.add(TimeDistributed(Dense(output_dim=19)))
 
-        #self.model.add(Activation('softmax'))
+        self.model.add(Activation('softmax'))
 
-        self.model.compile(loss='mse', optimizer='rmsprop', metrics=['accuracy'])
+        self.model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
 
         self.model.summary()
 
