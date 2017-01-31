@@ -1,2 +1,3 @@
-from .plot_callback import PlotCallback
+from .callback_wrapper import CallbackWrapper
 from .reset_states import ResetStates
+

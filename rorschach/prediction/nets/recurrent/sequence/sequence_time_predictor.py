@@ -11,7 +11,8 @@ from keras.regularizers import WeightRegularizer, ActivityRegularizer
 from keras.models import Sequential
 from keras.utils.visualize_util import plot
 
-from rorschach.prediction.callbacks import PlotCallback
+from rorschach.prediction.callbacks import CallbackWrapper
+from rorschach.prediction.callbacks.plotter import PlotCallback
 from rorschach.prediction.helpers import (EmbeddingCalculator,
                                           WidthCalculator)
 from rorschach.prediction.nets import BasePredictor

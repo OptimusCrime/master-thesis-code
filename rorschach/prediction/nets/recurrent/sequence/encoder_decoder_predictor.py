@@ -11,7 +11,8 @@ from keras.regularizers import WeightRegularizer, ActivityRegularizer
 from keras.models import Sequential, Model
 from keras.utils.visualize_util import plot
 
-from rorschach.prediction.callbacks import PlotCallback, ResetStates
+from rorschach.prediction.callbacks import CallbackWrapper
+from rorschach.prediction.callbacks.plotter import PlotCallback
 from rorschach.prediction.helpers import (EmbeddingCalculator,
                                           WidthCalculator)
 from rorschach.prediction.layer import HiddenStateLSTM
@@ -32,7 +33,7 @@ class EncodeDecodePredictor(BasePredictor):
         self.keras_setup()
 
     def keras_setup(self):
-        self.callback = PlotCallback()
+        self.callback = CallbackWrapper([PlotCallback])
         self.callback.epochs = Config.get('predicting.epochs')
 
         enc_input = Input(shape=(48,), dtype='int32', name='encoder_input')

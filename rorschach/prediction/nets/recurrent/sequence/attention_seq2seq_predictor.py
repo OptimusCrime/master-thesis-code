@@ -14,7 +14,8 @@ from keras.utils.visualize_util import plot
 import seq2seq
 from seq2seq.models import SimpleSeq2Seq, Seq2Seq, AttentionSeq2Seq
 
-from rorschach.prediction.callbacks import PlotCallback
+from rorschach.prediction.callbacks import CallbackWrapper
+from rorschach.prediction.callbacks.plotter import PlotCallback
 from rorschach.prediction.helpers import (EmbeddingCalculator,
                                           WidthCalculator)
 from rorschach.prediction.nets import BasePredictor

@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from multiprocessing import Process
+
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import ticker as ticker
-from keras.callbacks import Callback
 
 from rorschach.utilities import Filesystem
 
 
-class PlotCallback(Callback):
+class PlotCallback(Process):
 
     EPOCH = 0
     BATCH = 1
@@ -33,6 +34,9 @@ class PlotCallback(Callback):
             'val_acc': []
         }
 
+    def run(self):
+        pass
+
     def on_train_begin(self, logs={}):
         return
 
@@ -43,6 +47,7 @@ class PlotCallback(Callback):
         return
 
     def on_epoch_end(self, epoch, logs={}):
+        print('on epoch end', epoch)
         self.data_epoch['loss'].append(logs.get('loss'))
         self.data_epoch['val_loss'].append(logs.get('val_loss'))
         self.data_epoch['acc'].append(logs.get('acc'))
@@ -56,6 +61,7 @@ class PlotCallback(Callback):
         return
 
     def on_batch_end(self, batch, logs={}):
+        print('on on_batch_end end', batch)
         self.data_batch['loss'].append(logs.get('loss'))
         self.data_batch['val_loss'].append(logs.get('val_loss'))
         self.data_batch['acc'].append(logs.get('acc'))
