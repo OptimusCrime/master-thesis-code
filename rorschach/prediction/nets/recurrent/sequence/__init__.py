@@ -1,3 +1,4 @@
 from .sequence_long_time_predictor import SequenceLongTimePredictor
 from .sequence_predictor import SequencePredictor
 from .sequence_time_predictor import SequenceTimePredictor
+from .simple_seq2seq_predictor import SimpleSeq2SeqPredictor
