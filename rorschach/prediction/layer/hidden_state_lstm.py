@@ -69,7 +69,6 @@ class HiddenStateLSTM(LSTM):
         if self.return_sequences:
             return [outputs] + list(states)
         else:
-            print(last_output)
             return [last_output] + list(states)
 
     def get_output_shape_for(self, input_shape):
