@@ -4,5 +4,6 @@ from .reshape_long_time_handler import ReshapeLongTimeHandler
 from .reshape_best_handler import ReshapeBestHandler
 from .reshape_correct_handler import ReshapeCorrectHandler
 from .reshape_good_handler import ReshapeGoodHandler
+from .reshape_simple_handler import ReshapeSimpleHandler
 from .reshape_time_handler import ReshapeTimeHandler
 from .reshape_time_attention_handler import ReshapeTimeAttentionHandler

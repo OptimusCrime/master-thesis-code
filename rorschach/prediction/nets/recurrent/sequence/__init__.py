@@ -7,6 +7,7 @@ from .correct_sequence_predictor import CorrectSequencePredictor
 from .encoder_decoder_best_predictor import EncoderDecoderBestPredictor
 from .encoder_decoder_good_predictor import EncoderDecoderGoodPredictor
 from .encoder_decoder_predictor import EncodeDecodePredictor
+from .encoder_decoder_simple_predictor import EncoderDecoderSimplePredictor
 from .seq2seq_predictor import Seq2SeqPredictor
 from .sequence_predictor import SequencePredictor
 from .sequence_time_predictor import SequenceTimePredictor

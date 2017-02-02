@@ -69,10 +69,8 @@ class EncoderDecoderBestPredictor(BasePredictor):
 
         context = Reshape((1, 128))(encoder)
 
-        hidden_state1 = copy(encoder_hidden_states[0])
-        hidden_state2 = copy(encoder_hidden_states[1])
-
         outputs = []
+        decoder_hidden = []
         decoders = []
 
         for i in range(10):
@@ -89,31 +87,23 @@ class EncoderDecoderBestPredictor(BasePredictor):
                     W_regularizer=WeightRegularizer(l1=0.01, l2=0.01),
                     b_regularizer=ActivityRegularizer(l1=0.01, l2=0.01),
                     return_sequences=False
-                )([context, hidden_state1, hidden_state2])
+                )([embedding_layer, encoder_hidden_states[0], encoder_hidden_states[1]])
             else:
-                previous_output = Reshape((1, 128))(decoders[-1])
-
-                print('context')
-                print(context)
-                print('previous')
-                print(previous_output)
-
-                ouput_merge = merge([context, previous_output])
-
-                current_decoder, *current_decoder_hidden = HiddenStateLSTM(
+               current_decoder, *current_decoder_hidden = HiddenStateLSTM(
                     128,
                     dropout_W=0.2,
                     dropout_U=0.2,
                     W_regularizer=WeightRegularizer(l1=0.01, l2=0.01),
                     b_regularizer=ActivityRegularizer(l1=0.01, l2=0.01),
                     return_sequences=False
-                )([ouput_merge, hidden_state1, hidden_state2])
+                )([embedding_layer, decoder_hidden[-1][0], decoder_hidden[-1][1]])
 
             # Output
             current_output = Dense(19)(current_decoder)
             current_output = Activation('softmax')(current_output)
 
             decoders.append(current_decoder)
+            decoder_hidden.append(current_decoder_hidden)
             outputs.append(current_output)
 
         # Optimizer
