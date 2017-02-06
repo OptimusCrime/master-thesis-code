@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import sys
 
 from rorschach.common import DataSetTypes
 from rorschach.transformation.handlers import BaseHandler

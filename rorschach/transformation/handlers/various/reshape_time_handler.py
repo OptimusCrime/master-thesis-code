@@ -4,7 +4,6 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import sys
 
 from rorschach.common import DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
@@ -52,7 +51,6 @@ class ReshapeTimeHandler(BaseHandler):
             offset += OFFSET_INCREASE
 
         return raw_array
-
 
     def reshape_labels(self, labels_list):
         raw_array = []

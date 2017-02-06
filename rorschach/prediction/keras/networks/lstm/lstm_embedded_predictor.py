@@ -35,7 +35,7 @@ class LSTMEmbeddedPredictor(BasePredictor):
                             W_regularizer=WeightRegularizer(l1=0.01, l2=0.01),
                             b_regularizer=ActivityRegularizer(l1=0.01, l2=0.01),
                             stateful=False,
-        ))
+                            ))
 
         self.model.add(Dropout(0.2))
 
@@ -67,4 +67,3 @@ class LSTMEmbeddedPredictor(BasePredictor):
 
         derp = self.model.predict(self.test_images_transformed, batch_size=100)
         print(list(derp[0:2]))
-

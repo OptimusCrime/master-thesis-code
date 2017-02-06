@@ -31,11 +31,17 @@ class EncoderDecoderMultiFeedPredictor(BasePredictor):
 
         enc_input = Input(shape=(48,), dtype='int32', name='encoder_input')
         enc_layer = Embedding(300, 19, mask_zero=True)(enc_input)
-        enc_layer, *hidden = HiddenStateLSTM2(1024, dropout_W=0.5, dropout_U=0.5, return_sequences=False)(enc_layer)
+        enc_layer, *hidden = HiddenStateLSTM2(1024,
+                                              dropout_W=0.5,
+                                              dropout_U=0.5,
+                                              return_sequences=False)(enc_layer)
 
         dec_input = Input(shape=(48,), dtype='int32', name='decoder_input')
         dec_layer = Embedding(300, 19, mask_zero=True)(dec_input)
-        dec_layer, _, _ = HiddenStateLSTM2(1024, dropout_W=0.5, dropout_U=0.5, return_sequences=True)([dec_layer] + hidden)
+        dec_layer, _, _ = HiddenStateLSTM2(1024,
+                                           dropout_W=0.5,
+                                           dropout_U=0.5,
+                                           return_sequences=True)([dec_layer] + hidden)
         dec_layer = TimeDistributed(Dense(19))(dec_layer)
 
         dec_output = Dropout(0.2)(dec_layer)
@@ -57,7 +63,9 @@ class EncoderDecoderMultiFeedPredictor(BasePredictor):
                        nb_epoch=Config.get('predicting.epochs'),
                        verbose=1,
                        batch_size=Config.get('predicting.batch_size'),
-                       validation_data=([self.test_images_transformed, self.test_images_transformed], self.test_labels_transformed),
+                       validation_data=(
+                           [self.test_images_transformed, self.test_images_transformed],
+                           self.test_labels_transformed),
                        callbacks=[self.callback]
                        )
 

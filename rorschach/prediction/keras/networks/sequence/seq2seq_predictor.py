@@ -33,7 +33,7 @@ class Seq2SeqPredictor(BasePredictor):
                                output_length=10,
                                output_dim=19,
                                depth=3
-        ))
+                               ))
 
         self.model.add(Activation('softmax'))
 
@@ -61,4 +61,3 @@ class Seq2SeqPredictor(BasePredictor):
 
         derp = self.model.predict(self.test_images_transformed, batch_size=100)
         print(list(derp[0:2]))
-

@@ -90,4 +90,3 @@ class EncoderDecoderSimplePredictor(BasePredictor):
         )
 
         print(list(derp[0:2]))
-

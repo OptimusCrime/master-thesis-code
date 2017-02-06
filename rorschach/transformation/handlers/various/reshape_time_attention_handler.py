@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import sys
 
 from rorschach.common import DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
@@ -35,7 +34,6 @@ class ReshapeTimeAttentionHandler(BaseHandler):
 
     def reshape_actual_input(self, ipt):
         return ipt
-
 
     def reshape_labels(self, labels_list):
         raw_array = []

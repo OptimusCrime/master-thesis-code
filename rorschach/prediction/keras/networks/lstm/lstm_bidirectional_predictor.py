@@ -71,4 +71,3 @@ class LSTMBidirectionalPredictor(BasePredictor):
 
         derp = self.model.predict(self.training_images_transformed, batch_size=Config.get('predicting.batch_size'))[0]
         print(list(derp[0:20]))
-

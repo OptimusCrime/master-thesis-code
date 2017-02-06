@@ -1,6 +1,7 @@
 from keras import backend as K
 from keras.layers.recurrent import LSTM
 
+
 class HiddenStateLSTM2(LSTM):
     """LSTM with input/output capabilities for its hidden state.
     This layers behaves just like an LSTM, except that it accepts further inputs
@@ -13,7 +14,7 @@ class HiddenStateLSTM2(LSTM):
         if isinstance(input_shape, list) and len(input_shape) > 1:
             input_shape, *hidden_shapes = input_shape
             for shape in hidden_shapes:
-                assert shape[0]  == input_shape[0]
+                assert shape[0] == input_shape[0]
                 assert shape[-1] == self.output_dim
         super().build(input_shape)
 
@@ -50,7 +51,7 @@ class HiddenStateLSTM2(LSTM):
 
         if self.stateful:
             initial_states = self.states
-        elif custom_initial: # Hidden
+        elif custom_initial:
             initial_states = custom_initial
         else:
             initial_states = self.get_initial_states(x)

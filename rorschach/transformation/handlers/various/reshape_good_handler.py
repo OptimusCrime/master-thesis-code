@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import sys
 
 from rorschach.common import DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
@@ -22,13 +21,8 @@ class ReshapeGoodHandler(BaseHandler):
         if key == DataSetTypes.LETTER_SET:
             return
 
-        new_list = {
-            DataSetTypes.IMAGES: None,
-            DataSetTypes.LABELS: None
-        }
-
-        new_list[DataSetTypes.IMAGES] = self.reshape_input(input_list)
-        new_list[DataSetTypes.LABELS] = self.reshape_labels(input_list)
+        new_list = {DataSetTypes.IMAGES: self.reshape_input(input_list),
+                    DataSetTypes.LABELS: self.reshape_labels(input_list)}
 
         return new_list
 

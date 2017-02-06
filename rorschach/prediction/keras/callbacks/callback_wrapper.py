@@ -4,12 +4,7 @@
 import copy
 import re
 
-import numpy as np
-from matplotlib import pyplot as plt
-from matplotlib import ticker as ticker
 from keras.callbacks import Callback
-
-from rorschach.utilities import Filesystem
 
 
 class CallbackWrapper(Callback):

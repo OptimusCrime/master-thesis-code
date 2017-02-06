@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import numpy as np
-
 from rorschach.preprocessing.creators import AbstractCreator
 from rorschach.preprocessing.handlers import TextCreator
 from rorschach.preprocessing.savers import MatrixSaver

@@ -8,6 +8,7 @@ from rorschach.common import DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
 from rorschach.utilities import Filesystem, pickle_data
 
+
 class PoolingAdjustmentHandler(BaseHandler):
 
     def __init__(self):
@@ -59,7 +60,7 @@ class PoolingAdjustmentHandler(BaseHandler):
         if self.adjust_sequence is not None:
             obj = self.do_adjust_sequence(obj)
 
-        #if self.adjust_label is not None:
+        # if self.adjust_label is not None:
         #    self.do_adjust_label(obj)
 
         return obj

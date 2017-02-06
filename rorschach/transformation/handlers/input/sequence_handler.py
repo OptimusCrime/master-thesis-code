@@ -13,8 +13,9 @@ class SequenceHandler(BaseHandler):
     def obj_handler(self, obj):
         sequence = []
         for i in range(1, len(obj[DataSetTypes.IMAGES]['concatenated_binary'])):
+            inner_obj = obj[DataSetTypes.IMAGES]['concatenated_binary']
             sequence.append(
-                obj[DataSetTypes.IMAGES]['concatenated_binary'][i - 1] + obj[DataSetTypes.IMAGES]['concatenated_binary'][i]
+                inner_obj[i - 1] + inner_obj[i]
             )
 
         if len(sequence) == 0:
