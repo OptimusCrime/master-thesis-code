@@ -73,7 +73,7 @@ class LabelUniqueHandler(BaseHandler):
         self.label_width = results['width_label']
 
         # TODO SUCH A HACK!!!
-        self.label_width = 10
+        self.label_width = 5
 
     def calculate_label_depth(self):
         characters_set = []
