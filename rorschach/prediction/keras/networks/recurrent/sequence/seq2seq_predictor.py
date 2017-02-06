@@ -1,28 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import numpy as np
-import matplotlib.pyplot as plt
-
-from keras.layers import (GRU, Activation, Dense, Dropout, Masking, Merge,
-                          TimeDistributed, LSTM, Permute, Bidirectional)
-from keras.layers.convolutional import AveragePooling1D
-from keras.regularizers import WeightRegularizer, ActivityRegularizer
+from keras.layers import (Activation)
 from keras.models import Sequential
 from keras.utils.visualize_util import plot
+from seq2seq.models import Seq2Seq
 
-import seq2seq
-from seq2seq.models import SimpleSeq2Seq, Seq2Seq, AttentionSeq2Seq
-
-from rorschach.prediction.callbacks import CallbackWrapper
-from rorschach.prediction.callbacks.plotter import PlotCallback
-from rorschach.prediction.helpers import (EmbeddingCalculator,
-                                          WidthCalculator)
-from rorschach.prediction.nets import BasePredictor
-from rorschach.utilities import Config, Filesystem, LoggerWrapper, unpickle_data  # isort:skip
+from prediction.keras.callbacks.plotter import PlotCallback
+from prediction.keras.networks import BasePredictor
+from rorschach.utilities import Config, LoggerWrapper  # isort:skip
 
 
-class SimpleSeq2SeqPredictor(BasePredictor):
+class Seq2SeqPredictor(BasePredictor):
 
     def __init__(self):
         super().__init__()
@@ -38,19 +27,19 @@ class SimpleSeq2SeqPredictor(BasePredictor):
         self.callback = PlotCallback()
         self.callback.epochs = Config.get('predicting.epochs')
 
-        self.model = SimpleSeq2Seq(input_dim=4,
-                             input_length=30,
+        self.model = Sequential()
+        self.model.add(Seq2Seq(batch_input_shape=(Config.get('predicting.batch_size'), 30, 4),
                              hidden_dim=19,
                              output_length=10,
-                             output_dim=1,
+                             output_dim=19,
                              depth=3
-                             )
+                             ))
 
         #self.model.add(TimeDistributed(Dense(output_dim=19)))
 
-        #self.model.add(Activation('softmax'))
+        self.model.add(Activation('softmax'))
 
-        self.model.compile(loss='mse', optimizer='rmsprop', metrics=['accuracy'])
+        self.model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
 
         self.model.summary()
 
@@ -72,6 +61,6 @@ class SimpleSeq2SeqPredictor(BasePredictor):
     def predict(self):
         self.log.info('Begin predicting')
 
-        derp = self.model.predict(self.training_images_transformed)[0]
-        print(list(derp[0:20]))
+        derp = self.model.predict(self.test_images_transformed, batch_size=100)
+        print(list(derp[0:2]))
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from rorschach.prediction.helpers import PoolingFactorCalculator
+from prediction.common.helpers import PoolingFactorCalculator
 
 class TestPoolingFactorCalculator:
 

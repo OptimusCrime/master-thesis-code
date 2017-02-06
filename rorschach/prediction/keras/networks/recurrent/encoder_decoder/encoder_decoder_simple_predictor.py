@@ -1,26 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from copy import copy
-
-import numpy as np
-import matplotlib.pyplot as plt
-
-from keras.layers import (GRU, Activation, Dense, Dropout, Masking, Merge,
-                          TimeDistributed, LSTM, Permute, Bidirectional, Embedding, Input, Reshape, merge, RepeatVector)
-from keras.layers.convolutional import AveragePooling1D
-from keras.regularizers import WeightRegularizer, ActivityRegularizer
+from keras.layers import (Activation, Dense, TimeDistributed, Input, RepeatVector)
+from keras.models import Model
 from keras.optimizers import SGD
-from keras.models import Sequential, Model
+from keras.regularizers import WeightRegularizer, ActivityRegularizer
 from keras.utils.visualize_util import plot
-
 from rorschach.prediction.callbacks import CallbackWrapper
-from rorschach.prediction.callbacks.plotter import PlotCallback
-from rorschach.prediction.helpers import (EmbeddingCalculator,
-                                          WidthCalculator)
-from rorschach.prediction.layer import HiddenStateLSTM2
-from rorschach.prediction.nets import BasePredictor
-from rorschach.utilities import Config, Filesystem, LoggerWrapper, unpickle_data  # isort:skip
+
+from prediction.keras.callbacks.plotter import PlotCallback
+from prediction.keras.layers import HiddenStateLSTM2
+from prediction.keras.networks import BasePredictor
+from rorschach.utilities import Config, LoggerWrapper  # isort:skip
 
 
 class EncoderDecoderSimplePredictor(BasePredictor):

@@ -3,8 +3,8 @@
 
 import numpy as np
 
+from prediction.common.helpers import PoolingFactorCalculator
 from rorschach.common import DataSetTypes
-from rorschach.prediction.helpers import PoolingFactorCalculator
 from rorschach.transformation.handlers import BaseHandler
 from rorschach.utilities import Filesystem, pickle_data
 

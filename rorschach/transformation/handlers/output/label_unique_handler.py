@@ -2,10 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import sys
 
+from prediction.common.helpers import PoolingFactorCalculator
 from rorschach.common import DataSetTypes
-from rorschach.prediction.helpers import PoolingFactorCalculator
 from rorschach.transformation.handlers import BaseHandler
 
 
