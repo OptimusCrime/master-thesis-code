@@ -1,1 +1,1 @@
-from .label_unique_handler import LabelUniqueHandler
+from .integerify_label_handler import IntegerifyLabelHandler

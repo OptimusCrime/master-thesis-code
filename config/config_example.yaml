@@ -7,9 +7,6 @@ general:
     # Separate each character with a comma with no ending comma present
     characters: A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z
 
-    # The phrase we're trying to predict
-    phrase: HELLO
-
 ##################################################################
 #                          Logging                               #
 ##################################################################
