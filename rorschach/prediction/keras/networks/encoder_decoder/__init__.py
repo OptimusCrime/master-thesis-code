@@ -1,0 +1,2 @@
+from .encoder_decoder_multi_feed_predictor import EncoderDecoderMultiFeedPredictor
+from .encoder_decoder_simple_predictor import EncoderDecoderSimplePredictor

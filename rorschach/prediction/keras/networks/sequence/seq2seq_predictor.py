@@ -1,17 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from keras.layers import (Activation, Dense, Dropout, LSTM, Embedding, InputLayer)
+from keras.layers import (Activation)
 from keras.models import Sequential
-from keras.regularizers import WeightRegularizer, ActivityRegularizer
 from keras.utils.visualize_util import plot
+from seq2seq.models import Seq2Seq
 
-from prediction.keras.callbacks.plotter import PlotCallback
-from prediction.keras.networks import BasePredictor
+from rorschach.prediction.common import BasePredictor
+from rorschach.prediction.keras.callbacks.plotter import PlotCallback
 from rorschach.utilities import Config, LoggerWrapper  # isort:skip
 
 
-class CorrectSequencePredictor(BasePredictor):
+class Seq2SeqPredictor(BasePredictor):
 
     def __init__(self):
         super().__init__()
@@ -28,24 +28,16 @@ class CorrectSequencePredictor(BasePredictor):
         self.callback.epochs = Config.get('predicting.epochs')
 
         self.model = Sequential()
-        self.model.add(InputLayer(batch_input_shape=(Config.get('predicting.batch_size'), 48)))
-        self.model.add(Embedding(300, 19))
-        self.model.add(LSTM(output_dim=256,
-                                          return_sequences=True,
-                                          W_regularizer=WeightRegularizer(l1=0.01, l2=0.01),
-                                          b_regularizer=ActivityRegularizer(l1=0.01, l2=0.01),
-                                          stateful=False,
-
-                                          ),
-                                     )
-
-        self.model.add(Dropout(0.2))
-
-        self.model.add(Dense(output_dim=19))
+        self.model.add(Seq2Seq(batch_input_shape=(Config.get('predicting.batch_size'), 30, 4),
+                               hidden_dim=19,
+                               output_length=10,
+                               output_dim=19,
+                               depth=3
+        ))
 
         self.model.add(Activation('softmax'))
 
-        self.model.compile(loss='mse', optimizer='rmsprop', metrics=['accuracy'])
+        self.model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
 
         self.model.summary()
 

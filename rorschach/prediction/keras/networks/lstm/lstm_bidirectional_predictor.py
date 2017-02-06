@@ -11,7 +11,7 @@ from prediction.keras.networks import BasePredictor
 from rorschach.utilities import Config, LoggerWrapper  # isort:skip
 
 
-class SequenceTimePredictor(BasePredictor):
+class LSTMBidirectionalPredictor(BasePredictor):
 
     def __init__(self):
         super().__init__()

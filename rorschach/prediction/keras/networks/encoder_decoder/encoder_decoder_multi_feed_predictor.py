@@ -5,15 +5,15 @@ from keras.layers import (Activation, Dense, Dropout, TimeDistributed, Embedding
 from keras.models import Model
 from keras.optimizers import SGD
 from keras.utils.visualize_util import plot
-from rorschach.prediction.callbacks import CallbackWrapper
 
-from prediction.keras.callbacks.plotter import PlotCallback
-from prediction.keras.layers import HiddenStateLSTM
-from prediction.keras.networks import BasePredictor
+from rorschach.prediction.keras.callbacks import CallbackWrapper
+from rorschach.prediction.keras.callbacks.plotter import PlotCallback
+from rorschach.prediction.keras.layers import HiddenStateLSTM2
+from rorschach.prediction.common import BasePredictor
 from rorschach.utilities import Config, LoggerWrapper  # isort:skip
 
 
-class EncodeDecodePredictor(BasePredictor):
+class EncoderDecoderMultiFeedPredictor(BasePredictor):
 
     def __init__(self):
         super().__init__()
@@ -31,11 +31,11 @@ class EncodeDecodePredictor(BasePredictor):
 
         enc_input = Input(shape=(48,), dtype='int32', name='encoder_input')
         enc_layer = Embedding(300, 19, mask_zero=True)(enc_input)
-        enc_layer, *hidden = HiddenStateLSTM(1024, dropout_W=0.5, dropout_U=0.5, return_sequences=False)(enc_layer)
+        enc_layer, *hidden = HiddenStateLSTM2(1024, dropout_W=0.5, dropout_U=0.5, return_sequences=False)(enc_layer)
 
         dec_input = Input(shape=(48,), dtype='int32', name='decoder_input')
         dec_layer = Embedding(300, 19, mask_zero=True)(dec_input)
-        dec_layer, _, _ = HiddenStateLSTM(1024, dropout_W=0.5, dropout_U=0.5, return_sequences=True)([dec_layer] + hidden)
+        dec_layer, _, _ = HiddenStateLSTM2(1024, dropout_W=0.5, dropout_U=0.5, return_sequences=True)([dec_layer] + hidden)
         dec_layer = TimeDistributed(Dense(19))(dec_layer)
 
         dec_output = Dropout(0.2)(dec_layer)
@@ -46,26 +46,6 @@ class EncodeDecodePredictor(BasePredictor):
         sgd = SGD(lr=1., decay=1e-6, momentum=0.9, nesterov=True)
         self.model.compile(optimizer=sgd, loss='categorical_crossentropy', metrics=['accuracy'])
 
-        '''self.model = Sequential()
-        self.model.add(InputLayer(batch_input_shape=(Config.get('predicting.batch_size'), 48)))
-        self.model.add(Embedding(300, 19))
-        self.model.add(LSTM(output_dim=256,
-                                          return_sequences=True,
-                                          W_regularizer=WeightRegularizer(l1=0.01, l2=0.01),
-                                          b_regularizer=ActivityRegularizer(l1=0.01, l2=0.01),
-                                          stateful=False,
-
-                                          ),
-                                     )
-
-        self.model.add(Dropout(0.2))
-
-        self.model.add(Dense(output_dim=19))
-
-        self.model.add(Activation('softmax'))
-
-        self.model.compile(loss='mse', optimizer='rmsprop', metrics=['accuracy'])
-        '''
         self.model.summary()
 
         plot(self.model, to_file='model_rnn.png', show_shapes=True)

@@ -6,11 +6,11 @@ from keras.models import Model
 from keras.optimizers import SGD
 from keras.regularizers import WeightRegularizer, ActivityRegularizer
 from keras.utils.visualize_util import plot
-from rorschach.prediction.callbacks import CallbackWrapper
 
-from prediction.keras.callbacks.plotter import PlotCallback
-from prediction.keras.layers import HiddenStateLSTM2
-from prediction.keras.networks import BasePredictor
+from rorschach.prediction.common import BasePredictor
+from rorschach.prediction.keras.callbacks import CallbackWrapper
+from rorschach.prediction.keras.callbacks.plotter import PlotCallback
+from rorschach.prediction.keras.layers import HiddenStateLSTM2
 from rorschach.utilities import Config, LoggerWrapper  # isort:skip
 
 
