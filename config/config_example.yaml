@@ -82,29 +82,23 @@ transformation:
 
     # List of transformations to apply, in order
     handlers:
-        # initialize the labels
+        # Initialize the labels
         - transformation.handlers.initializers.LabelInitializeHandler
 
-        # Translate individual bits to number representations
+        # Translate individual bits to string representations
         - transformation.handlers.input.ConcatenateBinaryDataHandler
 
-        # Translate vector of number representations to a sequence
-        - transformation.handlers.input.SequenceHandler
-
-        # Pad the sequence to fit the longest sequence
+        # Pad the input sequence to fit the longest sequence
         - transformation.handlers.input.PadHandler
 
-        # Embedding
-        - transformation.handlers.input.EmbeddingHandler
+        # Translate text sequences into integers (B -> 0, 6W -> 5, ...)
+        - transformation.handlers.input.IntegerifyStringSequenceHandler
 
-        # Pooling adjust
-        - transformation.handlers.various.PoolingAdjustmentHandler
+        # Translate the label text to corresponding integer ids (A -> 1, D -> 4, ...)
+        - transformation.handlers.output.IntegerifyLabelHandler
 
-        # Generate the label
-        - transformation.handlers.output.LabelUniqueHandler
-
-        # Reshape the input data
-        - transformation.handlers.various.Reshape3DHandler
+        # Swap inputs and labels
+        - transformation.handlers.finalize.SwapHandler
 
 ##################################################################
 #                         Predicting                             #
@@ -116,4 +110,4 @@ predicting:
     batch_size: 20
 
     # Class to lazy load for the prediction
-    predictor: prediction.nets.recurrent.sequence.SequencePredictor
+    predictor: prediction.tensorflow.networks.sequence.EmbeddingRNNSeq2SeqPredictor
