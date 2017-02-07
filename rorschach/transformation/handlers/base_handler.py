@@ -6,6 +6,7 @@ class BaseHandler:
 
     def __init__(self):
         self.input_lists = None
+        self.data = {}
 
     def run(self, input_lists):
         self.input_lists = input_lists

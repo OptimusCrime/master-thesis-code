@@ -12,6 +12,7 @@ class Transformator:
     def __init__(self):
         self.log = LoggerWrapper.load(__name__)
 
+        self.data = {}
         self.original_lists = []
         self.transformed_lists = {}
 
@@ -35,6 +36,10 @@ class Transformator:
             if handler_module is not None:
                 self.log.info('Running transformator %s', handler_module_path)
 
+                # Set data
+                handler_module.data = self.data
+
+                # Run the handler
                 current_input = handler_module.run(copy.deepcopy(current_input))
 
         self.transformed_lists = current_input

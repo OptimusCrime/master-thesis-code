@@ -27,12 +27,11 @@ class SwapHandler(BaseHandler):
 
         new_list = {
             DataSetTypes.IMAGES: inputs,
-            DataSetTypes.LABELS: labels,
-            'voc_size_labels': len(Config.get('general.characters')) + 1,
-            'voc_size_input': SwapHandler.calculate_voc_size(inputs)
+            DataSetTypes.LABELS: labels
         }
 
-        print(new_list)
+        self.data['voc_size_labels'] = len(Config.get('general.characters')) + 1
+        self.data['voc_size_input'] = SwapHandler.calculate_voc_size(inputs)
 
         return new_list
 

@@ -5,6 +5,8 @@
 class BasePredictor:
 
     def __init__(self):
+        self.data = {}
+
         self.training_set = None
         self.test_set = None
 
