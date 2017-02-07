@@ -71,6 +71,9 @@ class Seq2Seq(object):
             # train op to minimize the loss
             self.train_op = tf.train.AdamOptimizer(learning_rate=lr).minimize(self.loss)
 
+            # correct_pred = tf.equal(pred_val, correct)
+            # self.accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
+
         sys.stdout.write('<log> Building Graph ')
         # build comput graph
         __graph__()
@@ -95,7 +98,6 @@ class Seq2Seq(object):
         # build feed
         feed_dict = self.get_feed(batchX, batchY, keep_prob=0.5)
         _, loss_v = sess.run([self.train_op, self.loss], feed_dict)
-        print(_)
         print(loss_v)
         return loss_v
 
@@ -108,30 +110,24 @@ class Seq2Seq(object):
         # dec_op_v is a list; also need to transpose 0,1 indices
         #  (interchange batch_size and timesteps dimensions
         dec_op_v = np.array(dec_op_v).transpose([1, 0, 2])
+        correct = np.array(batchY).transpose([1, 0])
 
-        # thoas gautvedt
-        # the thing above is correct, dec_op_v is originally (5, 100, 19) -> (100, 5, 19)
-        # do argmax on that (axis 2(?)) and we have the highest ranked ones for each letter
-        # then compare to batchY (this is also on format 5, 100) so need transpose!
+        pred_val = np.argmax(dec_op_v, axis=2)
+        correct_pred = np.equal(pred_val, correct)
 
-        pred = np.argmax(dec_op_v, axis=2)
+        accuracy = np.sum(correct_pred) / float(correct_pred.shape[0] * correct_pred.shape[1])
 
-        # dec_op_v is a list; also need to transpose 0,1 indices
-        #  (interchange batch_size and timesteps dimensions
-        # dec_op_v2 = np.array(dec_op_v2).transpose([1, 0, 2])
-        # return the index of item with highest probability
-        # print(list(np.argmax(dec_op_v2, axis=1)))
-        print('^^^^^^')
-
-        return loss_v, dec_op_v, batchX, batchY
+        return loss_v, accuracy
 
     # evaluate 'num_batches' batches
     def eval_batches(self, sess, eval_batch_gen, num_batches):
         losses = []
+        accuracyies = []
         for i in range(num_batches):
-            loss_v, dec_op_v, batchX, batchY = self.eval_step(sess, eval_batch_gen)
+            loss_v, accuracy = self.eval_step(sess, eval_batch_gen)
             losses.append(loss_v)
-        return np.mean(losses)
+            accuracyies.append(accuracy)
+        return np.mean(losses), np.mean(accuracyies)
 
     # finally the train function that
     #  runs the train_op in a session
@@ -155,14 +151,15 @@ class Seq2Seq(object):
             print('Epoch', i)
             try:
                 self.train_batch(sess, train_set)
-                if i % 5 == 0:  # TODO : make this tunable by the user
+                if i > 0 and i % 5 == 0:  # TODO : make this tunable by the user
                     # save model to disk
                     # saver.save(sess, self.ckpt_path + self.model_name + '.ckpt', global_step=i)
                     # evaluate to get validation loss
-                    val_loss = self.eval_batches(sess, valid_set, 16)  # TODO : and this
+                    val_loss, acc = self.eval_batches(sess, valid_set, 16)  # TODO : and this
                     # print stats
                     print('\nModel saved to disk at iteration #{}'.format(i))
-                    print('val   loss : {0:.6f}'.format(val_loss))
+                    print('loss: {0:.6f}'.format(val_loss))
+                    print('acc: {0:.6f}'.format(acc))
                     sys.stdout.flush()
             except KeyboardInterrupt:  # this will most definitely happen, so handle it
                 print('Interrupted by user at iteration {}'.format(i))
