@@ -4,7 +4,7 @@
 .tox
 __pycache__
 tests/.cache
-data_*
+data_*/
 
 *.ttf
 *.whl
