@@ -1,11 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from keras.layers import (Activation)
-from keras.models import Sequential
-from keras.utils.visualize_util import plot
-from seq2seq.models import Seq2Seq
-
 from rorschach.prediction.common import BasePredictor
 from rorschach.prediction.tensorflow.layers import Seq2Seq
 from rorschach.prediction.tensorflow.tools import rand_batch_gen
@@ -49,7 +44,6 @@ class EmbeddingRNNSeq2SeqPredictor(BasePredictor):
             yseq_len=self.training_labels_transformed.shape[-1],
             xvocab_size=self.data['voc_size_input'],
             yvocab_size=self.data['voc_size_labels'],
-            ckpt_path='ckpt/twitter/', # <- TODO REMOVE
             emb_dim=1024,
             num_layers=3
         )
