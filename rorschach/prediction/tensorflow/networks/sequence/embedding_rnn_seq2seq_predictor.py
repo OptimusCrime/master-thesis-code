@@ -27,17 +27,24 @@ class EmbeddingRNNSeq2SeqPredictor(BasePredictor):
         self.train_batch_gen = rand_batch_gen(
             self.training_images_transformed,
             self.training_labels_transformed,
-            Config.get('predicting.batch_size')
+            Config.get('predicting.batch-size')
         )
 
-        self.val_batch_gen = rand_batch_gen(
+        self.test_batch_gen = rand_batch_gen(
             self.test_images_transformed,
             self.test_labels_transformed,
-            Config.get('predicting.batch_size')
+            Config.get('predicting.batch-size')
         )
 
+        # TODO
+        # self.validation_batch_gen = rand_batch_gen(
+        #    self.test_images_transformed,
+        #    self.test_labels_transformed,
+        #    Config.get('predicting.batch-size')
+        # )
+
     def build_model(self):
-        self.log.info('Begin build model')
+        self.log.info('Building model')
 
         self.model = Seq2Seq(
             xseq_len=self.training_images_transformed.shape[-1],
@@ -48,6 +55,12 @@ class EmbeddingRNNSeq2SeqPredictor(BasePredictor):
             num_layers=3
         )
 
+        self.model.training_set = self.train_batch_gen
+        self.model.test_set = self.test_batch_gen
+        # self.model.validation_set = self.validation_batch_gen
+
+        self.model.build_graph()
+
         self.log.info('Finished building model')
 
     def train(self):
@@ -55,7 +68,7 @@ class EmbeddingRNNSeq2SeqPredictor(BasePredictor):
 
         # sess = self.model.restore_last_session()
 
-        sess = self.model.train(self.train_batch_gen, self.val_batch_gen)
+        self.model.train()
 
         self.log.info('Finished training')
 
