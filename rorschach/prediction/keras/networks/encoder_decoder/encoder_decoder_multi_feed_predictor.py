@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from keras.layers import (Activation, Dense, Dropout, TimeDistributed, Embedding, Input)
+from keras.layers import Activation, Dense, Dropout, Embedding, Input, TimeDistributed
 from keras.models import Model
 from keras.optimizers import SGD
 from keras.utils.visualize_util import plot
 
+from rorschach.prediction.common import BasePredictor
 from rorschach.prediction.keras.callbacks import CallbackWrapper
 from rorschach.prediction.keras.callbacks.plotter import PlotCallback
 from rorschach.prediction.keras.layers import HiddenStateLSTM2
-from rorschach.prediction.common import BasePredictor
+
 from rorschach.utilities import Config, LoggerWrapper  # isort:skip
 
 
@@ -76,4 +77,3 @@ class EncoderDecoderMultiFeedPredictor(BasePredictor):
 
         derp = self.model.predict(self.test_images_transformed, batch_size=100)
         print(list(derp[0:2]))
-

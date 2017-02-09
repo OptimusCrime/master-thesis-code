@@ -1,8 +1,9 @@
 # !/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import numpy as np
 import sys
+
+import numpy as np
 
 from rorschach.common import DataSetTypes
 from rorschach.transformation.handlers import BaseHandler

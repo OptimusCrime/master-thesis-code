@@ -6,8 +6,8 @@ from multiprocessing import Process
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import ticker as ticker
-
 from prediction.keras.callbacks import CallbackWrapper
+
 from rorschach.utilities import Filesystem
 
 

@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from keras.layers import (Activation, Dense, Dropout, TimeDistributed, LSTM, Bidirectional)
+from keras.layers import LSTM, Activation, Bidirectional, Dense, Dropout, TimeDistributed
 from keras.models import Sequential
-from keras.regularizers import WeightRegularizer, ActivityRegularizer
+from keras.regularizers import ActivityRegularizer, WeightRegularizer
 from keras.utils.visualize_util import plot
-
 from prediction.keras.callbacks.plotter import PlotCallback
 from prediction.keras.networks import BasePredictor
+
 from rorschach.utilities import Config, LoggerWrapper  # isort:skip
 
 

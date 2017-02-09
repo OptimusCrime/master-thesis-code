@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-
 from prediction.common.helpers import PoolingFactorCalculator
+
 from rorschach.common import DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
 

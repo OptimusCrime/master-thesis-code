@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import tensorflow as tf
 import numpy as np
+import tensorflow as tf
 
 from rorschach.prediction.tensorflow.callbacks import CallbackRunner
 from rorschach.utilities import Config, LoggerWrapper

@@ -6,6 +6,7 @@ from rorschach.prediction.tensorflow.callbacks import CallbackRunner
 from rorschach.prediction.tensorflow.callbacks.plotter import CallbackPlotter
 from rorschach.prediction.tensorflow.layers import Seq2Seq
 from rorschach.prediction.tensorflow.tools import rand_batch_gen
+
 from rorschach.utilities import Config, LoggerWrapper  # isort:skip
 
 

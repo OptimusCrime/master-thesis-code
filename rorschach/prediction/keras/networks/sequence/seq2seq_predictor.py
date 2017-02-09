@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from keras.layers import (Activation)
+from keras.layers import Activation
 from keras.models import Sequential
 from keras.utils.visualize_util import plot
 from seq2seq.models import Seq2Seq
 
 from rorschach.prediction.common import BasePredictor
 from rorschach.prediction.keras.callbacks.plotter import PlotCallback
+
 from rorschach.utilities import Config, LoggerWrapper  # isort:skip
 
 

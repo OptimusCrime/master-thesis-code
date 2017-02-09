@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
 import gc
+import os
 
 from rorschach.preprocessing.creators import AbstractCreator
 from rorschach.preprocessing.handlers import TextCreator

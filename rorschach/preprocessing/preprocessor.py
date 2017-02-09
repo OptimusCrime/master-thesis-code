@@ -6,7 +6,7 @@ import shutil
 
 from rorschach.common import DataSetTypes
 from rorschach.preprocessing.creators import InputSetCreator, LetterSetCreator
-from rorschach.utilities import (Config, Filesystem, LoggerWrapper)
+from rorschach.utilities import Config, Filesystem, LoggerWrapper
 
 
 class Preprocessor:
