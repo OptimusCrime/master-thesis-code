@@ -210,7 +210,7 @@ class Seq2Seq(object):
 
             self.train_batch()
 
-            if epoch > 0 and epoch % Config.get('predicting.test-interval') == 0:
+            if epoch > 0 and (epoch + 1) % Config.get('predicting.test-interval') == 0:
                 # TODO
                 # save model to disk
                 # saver.save(sess, self.ckpt_path + self.model_name + '.ckpt', global_step=i)
