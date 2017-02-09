@@ -1,4 +1,5 @@
-from threading import Thread
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -8,7 +9,7 @@ from rorschach.prediction.tensorflow.callbacks import CallbackRunner
 from rorschach.utilities import Filesystem
 
 
-class CallbackPlotter(Thread):
+class CallbackPlotter():
 
     def __init__(self):
         super().__init__()

@@ -35,4 +35,4 @@ class CallbackRunner():
             thread = callback()
             thread.data = self.data
             thread.callback_type = callback_type
-            thread.start()
+            thread.run()
