@@ -108,15 +108,18 @@ class CallbackPlotter(Thread):
     def adjust_legend(self, loss, acc):
         # Fix legend below the graph
         box_loss = loss.get_position()
-        loss.set_position([box_loss.x0 - box_loss.width * 0.12,  # Move to the left
-                           box_loss.y0 + box_loss.height * 0.12,
-                           box_loss.width,
-                           box_loss.height * 0.88])
 
-        loss.legend(loc='upper center', bbox_to_anchor=(0.5, -0.13),
-                    fancybox=True, shadow=True, ncol=5)
+        if self.callback_type == CallbackRunner.TRAINING:
+            loss.set_position([box_loss.x0,
+                               box_loss.y0 + box_loss.height * 0.12,
+                               box_loss.width,
+                               box_loss.height * 0.88])
+        else:
+            loss.set_position([box_loss.x0 - box_loss.width * 0.12,  # Move to the left
+                              box_loss.y0 + box_loss.height * 0.12,
+                              box_loss.width,
+                              box_loss.height * 0.88])
 
-        if self.callback_type == CallbackRunner.TEST:
             box_acc = acc.get_position()
             acc.set_position([box_acc.x0 + box_acc.width * 0.1,  # Move to the right
                               box_acc.y0 + box_acc.height * 0.12,
@@ -125,6 +128,9 @@ class CallbackPlotter(Thread):
 
             acc.legend(loc='upper center', bbox_to_anchor=(0.5, -0.13),
                        fancybox=True, shadow=True, ncol=5)
+
+        loss.legend(loc='upper center', bbox_to_anchor=(0.5, -0.13),
+                    fancybox=True, shadow=True, ncol=5)
 
     def save_plot(self, fig):
         file_name = 'plot_test'
