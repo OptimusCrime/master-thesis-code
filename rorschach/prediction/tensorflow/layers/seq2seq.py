@@ -19,7 +19,7 @@ class Seq2Seq(object):
         num_layers
     ):
 
-        self.log = LoggerWrapper.load(__name__)
+        self.log = LoggerWrapper.load(__name__, LoggerWrapper.SIMPLE)
         self.session = None
         self.callback = None
 
