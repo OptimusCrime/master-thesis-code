@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from rorschach.prediction.common import BasePredictor
+from rorschach.prediction.tensorflow.callbacks import CallbackRunner
+from rorschach.prediction.tensorflow.callbacks.plotter import CallbackPlotter
 from rorschach.prediction.tensorflow.layers import Seq2Seq
 from rorschach.prediction.tensorflow.tools import rand_batch_gen
 from rorschach.utilities import Config, LoggerWrapper  # isort:skip
@@ -58,6 +60,10 @@ class EmbeddingRNNSeq2SeqPredictor(BasePredictor):
         self.model.training_set = self.train_batch_gen
         self.model.test_set = self.test_batch_gen
         # self.model.validation_set = self.validation_batch_gen
+
+        self.model.callback = CallbackRunner([
+            CallbackPlotter
+        ])
 
         self.model.build_graph()
 

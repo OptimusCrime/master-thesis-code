@@ -4,6 +4,7 @@
 import tensorflow as tf
 import numpy as np
 
+from rorschach.prediction.tensorflow.callbacks import CallbackRunner
 from rorschach.utilities import Config, LoggerWrapper
 
 
@@ -20,6 +21,7 @@ class Seq2Seq(object):
 
         self.log = LoggerWrapper.load(__name__)
         self.session = None
+        self.callback = None
 
         # Settings
         self.xseq_len = xseq_len
@@ -148,6 +150,11 @@ class Seq2Seq(object):
 
         _, loss_v = self.session.run([self.train_op, self.loss], feed_dict)
 
+        if self.callback is not None:
+            self.callback.run({
+                'loss': loss_v
+            }, CallbackRunner.TRAINING)
+
         self.log.info('Loss %s', loss_v)
 
         return loss_v
@@ -217,6 +224,12 @@ class Seq2Seq(object):
 
                 # Test
                 test_loss, test_accuracy = self.test()
+
+                if self.callback is not None:
+                    self.callback.run({
+                        'test_loss': test_loss,
+                        'test_accuracy': test_accuracy
+                    }, CallbackRunner.TEST)
 
                 # Output debug
                 self.log.info('Test loss: %s', test_loss)
