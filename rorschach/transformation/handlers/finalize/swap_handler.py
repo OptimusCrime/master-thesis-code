@@ -53,10 +53,14 @@ class SwapHandler(BaseHandler):
 
     @staticmethod
     def calculate_voc_size(input_list):
-        voc_size = 0
+        voc_lower = 0
+        voc_upper = 0
         for seq in input_list:
             for val in seq:
-                if val > voc_size:
-                    voc_size = val
+                if val < voc_lower:
+                    voc_lower = val
 
-        return voc_size + 1
+                if val > voc_upper:
+                    voc_upper = val
+
+        return abs(voc_lower) + voc_upper + 1
