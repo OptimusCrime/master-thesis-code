@@ -86,7 +86,7 @@ class Seq2Seq(object):
 
         # Sharing of parameters between training and testing models
         with tf.variable_scope('decoder') as scope:
-            self.decode_outputs, self.decode_states = tf.nn.seq2seq.embedding_rnn_seq2seq(
+            self.decode_outputs, self.decode_states = tf.nn.seq2seq.embedding_attention_seq2seq(
                 self.encoder_input_placeholders,
                 self.decoder_input_placeholders,
                 stacked_lstms,
@@ -98,7 +98,7 @@ class Seq2Seq(object):
             scope.reuse_variables()
 
             # Testing model. Here the output from the previous timestep is fed as input to the next timestep
-            self.decode_outputs_test, self.decode_states_test = tf.nn.seq2seq.embedding_rnn_seq2seq(
+            self.decode_outputs_test, self.decode_states_test = tf.nn.seq2seq.embedding_attention_seq2seq(
                 self.encoder_input_placeholders,
                 self.decoder_input_placeholders,
                 stacked_lstms,
