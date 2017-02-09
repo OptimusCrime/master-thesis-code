@@ -17,7 +17,7 @@ class IntegerifyLabelHandler(BaseHandler):
         self.label_lookup = {}
 
     def run(self, input_lists):
-        self.calculate_label_length(input_lists)
+        self.label_length = IntegerifyLabelHandler.calculate_label_length(input_lists)
         self.build_lookup_table()
 
         super().run(input_lists)
@@ -33,10 +33,10 @@ class IntegerifyLabelHandler(BaseHandler):
 
         return input_list
 
-    def calculate_label_length(self, input_lists):
+    @staticmethod
+    def calculate_label_length(input_lists):
         if Config.get('preprocessing.input.max-length') is not None:
-            self.label_length = Config.get('preprocessing.input.max-length')
-            return
+            return Config.get('preprocessing.input.max-length')
 
         raise NotImplementedError("Damnit")
 
