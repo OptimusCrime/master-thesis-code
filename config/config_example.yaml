@@ -95,7 +95,7 @@ transformation:
         - transformation.handlers.input.IntegerifyStringSequenceHandler
 
         # Translate the label text to corresponding integer ids (A -> 1, D -> 4, ...)
-        - transformation.handlers.output.IntegerifyLabelHandler
+        - transformation.handlers.output.IntegerifyUniqueLabelHandler
 
         # Swap inputs and labels
         - transformation.handlers.finalize.SwapHandler
@@ -107,7 +107,9 @@ transformation:
 predicting:
     run: true
     epochs: 10
-    batch_size: 20
+    batch-size: 10
+    learning-rate: 0.0001
+    test-interval: 2
 
     # Class to lazy load for the prediction
     predictor: prediction.tensorflow.networks.sequence.EmbeddingRNNSeq2SeqPredictor
