@@ -1,4 +1,4 @@
 *
 !.gitignore
-!config_example.yaml
+!config-default.yaml
 !wordlists/

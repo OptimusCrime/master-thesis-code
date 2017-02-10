@@ -18,17 +18,50 @@ class Config:
 
     @staticmethod
     def load_config():
-        # Fallback to the config example file
-        file = 'config.yaml'
-        if not os.path.exists(Filesystem.get_root_path('config/config.yaml')):
-            file = 'config_example.yaml'
+        Config.CONTENTS = Config.load_config_file('config-default.yaml')
 
-        # Load the contents
-        Config.CONTENTS = yaml.safe_load(open(Filesystem.get_root_path('config/' + file)))
+        override = Config.load_config_file('config.yaml')
+
+        if override:
+            Config.override_config(override)
 
         # Make sure that we found anything, or just quit life
         if Config.CONTENTS is None or Config.CONTENTS == '':
             sys.exit(1)
+
+    @staticmethod
+    def override_config(obj, path=''):
+        for key, value in obj.items():
+            if type(value) is dict:
+                Config.override_config(value, path + '.' + key)
+                continue
+
+            Config.override_config_value(value, path + '.' + key)
+
+    @staticmethod
+    def override_config_value(value, path):
+        # Remove the first part of the path as it is prefixed with '.'
+        path_split = path.split('.')[1:]
+
+        # Loop the current pool (instead of reccursion), begin with the outmost content dict
+        current_pool = Config.CONTENTS
+        for sub_key in path_split:
+            # If we are currently handling the last part of the path we should update the value instead of
+            # overwriting our pool
+            if sub_key == path_split[-1]:
+                if sub_key not in current_pool:
+                    current_pool[sub_key] = None
+                current_pool[sub_key] = value
+                break
+
+            current_pool = current_pool[sub_key]
+
+    @staticmethod
+    def load_config_file(file):
+        if not os.path.exists(Filesystem.get_root_path('config/' + file)):
+            return {}
+
+        return yaml.safe_load(open(Filesystem.get_root_path('config/' + file)))
 
     @staticmethod
     def get(key):
