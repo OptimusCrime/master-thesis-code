@@ -5,6 +5,7 @@ import numpy as np
 import tensorflow as tf
 
 from rorschach.prediction.tensorflow.callbacks import CallbackRunner
+from rorschach.prediction.tensorflow.tools import LogPrettifier
 from rorschach.utilities import Config, LoggerWrapper
 
 
@@ -19,7 +20,7 @@ class Seq2Seq(object):
         num_layers
     ):
 
-        self.log = LoggerWrapper.load(__name__, LoggerWrapper.SIMPLE)
+        self.log = LogPrettifier(LoggerWrapper.load(__name__, LoggerWrapper.SIMPLE))
         self.session = None
         self.callback = None
 
@@ -155,7 +156,7 @@ class Seq2Seq(object):
                 'loss': loss_v
             }, CallbackRunner.TRAINING)
 
-        self.log.info('Loss %s', loss_v)
+        self.log.write('- Loss {:.5f}'.format(loss_v))
 
         return loss_v
 
@@ -213,7 +214,11 @@ class Seq2Seq(object):
 
         # Loop the epochs
         for epoch in range(Config.get('predicting.epochs')):
-            self.log.info('Epoch %s', epoch + 1)
+            log_type = LogPrettifier.EPOCH
+            if epoch == 0:
+                log_type = LogPrettifier.FIRST_EPOCH
+
+            self.log.write('Epoch {:d}'.format(epoch + 1), log_type)
 
             self.train_batch()
 
@@ -232,9 +237,8 @@ class Seq2Seq(object):
                     }, CallbackRunner.TEST)
 
                 # Output debug
-                self.log.info('Test loss: %s', test_loss)
-                self.log.info('Test accuracy: %s', test_accuracy)
-                self.log.info('=============================================')
+                self.log.write('- Test loss: {:.5f}'.format(test_loss))
+                self.log.write('- Test accuracy: {:.5f}'.format(test_accuracy))
 
         # Run final validation
         self.validate()
