@@ -183,21 +183,30 @@ class Seq2Seq(object):
         pred_val = np.argmax(dec_op_v, axis=2)
         correct_pred = np.equal(pred_val, correct)
 
-        accuracy = np.sum(correct_pred) / float(correct_pred.shape[0] * correct_pred.shape[1])
+        classification_correct = np.sum(correct_pred)
+        classification_total = correct_pred.shape[0] * correct_pred.shape[1]
 
-        return loss_v, accuracy
+        accuracy = classification_correct / float(classification_total)
+
+        return loss_v, accuracy, classification_correct, classification_total
 
     # TODO fix fixed number of batches(?)
     def test(self, num_batches=16):
         losses = []
         accuracyies = []
 
+        correct = 0
+        total = 0
+
         for i in range(num_batches):
-            loss_v, accuracy = self.test_batch()
+            loss_v, accuracy, correct_current, total_current = self.test_batch()
             losses.append(loss_v)
             accuracyies.append(accuracy)
 
-        return np.mean(losses), np.mean(accuracyies)
+            correct += correct_current
+            total += total_current
+
+        return np.mean(losses), np.mean(accuracyies), correct, total
 
     def validate(self):
         pass
@@ -228,7 +237,7 @@ class Seq2Seq(object):
                 # saver.save(sess, self.ckpt_path + self.model_name + '.ckpt', global_step=i)
 
                 # Test
-                test_loss, test_accuracy = self.test()
+                test_loss, test_accuracy, test_correct, test_all = self.test()
 
                 if self.callback is not None:
                     self.callback.run({
@@ -239,6 +248,7 @@ class Seq2Seq(object):
                 # Output debug
                 self.log.write('- Test loss: {:.5f}'.format(test_loss))
                 self.log.write('- Test accuracy: {:.5f}'.format(test_accuracy))
+                self.log.write('- Test correct attributes: {:,} / {:,}'.format(test_correct, test_all))
 
         self.log.write('', LogPrettifier.END)
 
