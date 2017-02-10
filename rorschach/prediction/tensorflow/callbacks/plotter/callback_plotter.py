@@ -96,10 +96,6 @@ class CallbackPlotter():
 
             acc.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
 
-            loss.set_xticks(np.arange(0, len(self.data['test_loss']) + 1))
-
-            acc.set_xticks(np.arange(0, len(self.data['test_accuracy']) + 1))
-
             # Static y max/min on accuracy
             acc.set_ylim(0., 1.)
             acc.set_yticks(np.arange(0., 1.1, 0.1))
