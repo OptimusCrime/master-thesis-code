@@ -20,6 +20,11 @@ class CallbackPlotter():
     def run(self):
         data = self.graph_data()
 
+        # Do not produce any figure the first epoch, not enough data
+        for key, value in data.items():
+            if len(value) == 1:
+                return
+
         fig, ax_loss, ax_acc = self.build_axes()
 
         self.add_plots(data, ax_loss, ax_acc)
