@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import math
+
 import numpy as np
 import tensorflow as tf
 
@@ -190,13 +192,15 @@ class Seq2Seq(object):
 
         return loss_v, accuracy, classification_correct, classification_total
 
-    # TODO fix fixed number of batches(?)
-    def test(self, num_batches=16):
+    def test(self):
         losses = []
         accuracyies = []
 
         correct = 0
         total = 0
+
+        # Divide number of words in the training set on batch size
+        num_batches = int(math.ceil(Config.get('preprocessing.test-set.size') / Config.get('predicting.batch-size')))
 
         for i in range(num_batches):
             loss_v, accuracy, correct_current, total_current = self.test_batch()
