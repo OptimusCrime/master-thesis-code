@@ -156,7 +156,7 @@ class Seq2Seq(object):
                 'loss': loss_v
             }, CallbackRunner.TRAINING)
 
-        self.log.write('- Loss {:.5f}'.format(loss_v))
+        self.log.write('- Loss: {:.5f}'.format(loss_v))
 
         return loss_v
 
@@ -239,6 +239,8 @@ class Seq2Seq(object):
                 # Output debug
                 self.log.write('- Test loss: {:.5f}'.format(test_loss))
                 self.log.write('- Test accuracy: {:.5f}'.format(test_accuracy))
+
+        self.log.write('', LogPrettifier.END)
 
         # Run final validation
         self.validate()

@@ -6,6 +6,7 @@ class LogPrettifier:
     FIRST_EPOCH = -1
     EPOCH = 0
     INFO = 1
+    END = 2
 
     LEFT = 0
     CENTER = 1
@@ -14,16 +15,22 @@ class LogPrettifier:
         self.log = log
 
     def write(self, line, line_type=INFO):
+        # Opening/continuing line
         if line_type == LogPrettifier.FIRST_EPOCH:
             self.log.info('╔══════════════════════════════════════════════════════════╗')
         if line_type == LogPrettifier.EPOCH:
             self.log.info('╠══════════════════════════════════════════════════════════╣')
+        if line_type == LogPrettifier.END:
+            self.log.info('╚══════════════════════════════════════════════════════════╝')
 
+        # Spacing
         if line_type == LogPrettifier.FIRST_EPOCH or line_type == LogPrettifier.EPOCH:
             self.log.info('║                                                          ║')
 
+        # Actual line content
         self.log.info(LogPrettifier.construct_output(line, line_type))
 
+        # More spacing
         if line_type == LogPrettifier.FIRST_EPOCH or line_type == LogPrettifier.EPOCH:
             self.log.info('║                                                          ║')
             self.log.info('╠══════════════════════════════════════════════════════════╣')
