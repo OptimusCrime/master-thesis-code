@@ -15,6 +15,20 @@ logging:
     batch_reporting: 10
 
 ##################################################################
+#                           Paths                                #
+##################################################################
+
+paths:
+    # Where to save all the images
+    images: {%project_root%}/data
+
+    # Where to save the data (pickle files and session dumps)
+    data: {%project_root%}/data
+
+    # Where to save the output (logs and images)
+    output: {%project_root}/data
+
+##################################################################
 #                       Preprocessing                            #
 ##################################################################
 
