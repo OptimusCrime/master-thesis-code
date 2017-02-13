@@ -17,6 +17,7 @@ class Preprocessor:
         self.letter_set = None
         self.training_set = None
         self.test_set = None
+        self.verification_set = None
 
     def run(self):
         if Config.get('preprocessing.run') and Config.get('preprocessing.wipe'):
@@ -60,6 +61,13 @@ class Preprocessor:
         self.test_set.generate_random_words()
         self.test_set.letter_matrices = self.letter_set.contents
         self.test_set.create()
+
+        # Create the word set
+        self.log.info('Creating verification set.')
+        self.verification_set = InputSetCreator(DataSetTypes.VERIFICATION_SET)
+        self.verification_set.generate_random_words()
+        self.verification_set.letter_matrices = self.letter_set.contents
+        self.verification_set.create()
 
     def save_sets(self):
         self.letter_set.save()

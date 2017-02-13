@@ -39,12 +39,11 @@ class EmbeddingRNNSeq2SeqPredictor(BasePredictor):
             Config.get('predicting.batch-size')
         )
 
-        # TODO
-        # self.validation_batch_gen = rand_batch_gen(
-        #    self.test_images_transformed,
-        #    self.test_labels_transformed,
-        #    Config.get('predicting.batch-size')
-        # )
+        self.validation_batch_gen = rand_batch_gen(
+            self.verification_images_transformed,
+            self.verification_labels_transformed,
+            Config.get('predicting.batch-size')
+        )
 
     def build_model(self):
         self.log.info('Building model')
@@ -60,7 +59,7 @@ class EmbeddingRNNSeq2SeqPredictor(BasePredictor):
 
         self.model.training_set = self.train_batch_gen
         self.model.test_set = self.test_batch_gen
-        # self.model.validation_set = self.validation_batch_gen
+        self.model.validation_set = self.validation_batch_gen
 
         self.model.callback = CallbackRunner([
             CallbackPlotter
@@ -73,6 +72,7 @@ class EmbeddingRNNSeq2SeqPredictor(BasePredictor):
     def train(self):
         self.log.info('Begin training')
 
+        # TODO
         # sess = self.model.restore_last_session()
 
         self.model.train()

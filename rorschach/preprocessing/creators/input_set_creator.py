@@ -17,10 +17,16 @@ class InputSetCreator(TermCreator):
         self.letter_matrices = []
         self.unique_signatures = None
         self.word_list_parser = WordListParser()
+        self.type_keyword = self.set_type_keyword(self.type)
 
-        self.type_keyword = 'training'
-        if self.type == DataSetTypes.TEST_SET:
-            self.type_keyword = 'test'
+    def set_type_keyword(self, set_type):
+        if set_type == DataSetTypes.TEST_SET:
+            return 'test'
+
+        if set_type == DataSetTypes.TRAINING_SET:
+            return 'training'
+
+        return 'verification'
 
     def apply_constraints(self):
         super().apply_constraints()

@@ -16,6 +16,7 @@ class PredictorWrapper:
 
         self.predictor.training_set = unpickle_data(Filesystem.get_root_path('data/training_set.pickl'))
         self.predictor.test_set = unpickle_data(Filesystem.get_root_path('data/test_set.pickl'))
+        self.predictor.verification_set = unpickle_data(Filesystem.get_root_path('data/verification_set.pickl'))
 
         if Config.get('transformation.run'):
             self.transform()
@@ -36,6 +37,9 @@ class PredictorWrapper:
         }, {
             'set': self.predictor.test_set,
             'type': DataSetTypes.TEST_SET
+        }, {
+            'set': self.predictor.verification_set,
+            'type': DataSetTypes.VERIFICATION_SET
         }])
 
         transformator.run()
@@ -45,5 +49,8 @@ class PredictorWrapper:
 
         self.predictor.test_images_transformed, \
             self.predictor.test_labels_transformed = transformator.data_set(DataSetTypes.TEST_SET)
+
+        self.predictor.verification_images_transformed, \
+        self.predictor.verification_labels_transformed = transformator.data_set(DataSetTypes.VERIFICATION_SET)
 
         self.predictor.data = transformator.data

@@ -9,11 +9,14 @@ class BasePredictor:
 
         self.training_set = None
         self.test_set = None
+        self.verification_set = None
 
         self.training_images_transformed = None
         self.training_labels_transformed = None
         self.test_images_transformed = None
         self.test_labels_transformed = None
+        self.verification_images_transformed = None
+        self.verification_labels_transformed = None
 
     def prepare(self):
         pass
