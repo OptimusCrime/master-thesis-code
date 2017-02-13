@@ -17,23 +17,23 @@ class LogPrettifier:
     def write(self, line, line_type=INFO):
         # Opening/continuing line
         if line_type == LogPrettifier.FIRST_EPOCH:
-            self.log.info('╔══════════════════════════════════════════════════════════╗')
+            self.log.info('|===========================================================================|')
         if line_type == LogPrettifier.EPOCH:
-            self.log.info('╠══════════════════════════════════════════════════════════╣')
+            self.log.info('|===========================================================================|')
         if line_type == LogPrettifier.END:
-            self.log.info('╚══════════════════════════════════════════════════════════╝')
+            self.log.info('|===========================================================================|')
 
         # Spacing
         if line_type == LogPrettifier.FIRST_EPOCH or line_type == LogPrettifier.EPOCH:
-            self.log.info('║                                                          ║')
+            self.log.info('|                                                          |')
 
         # Actual line content
         self.log.info(LogPrettifier.construct_output(line, line_type))
 
         # More spacing
         if line_type == LogPrettifier.FIRST_EPOCH or line_type == LogPrettifier.EPOCH:
-            self.log.info('║                                                          ║')
-            self.log.info('╠══════════════════════════════════════════════════════════╣')
+            self.log.info('|                                                          |')
+            self.log.info('|===========================================================================|')
 
     @staticmethod
     def construct_output(line, line_type):
@@ -42,11 +42,11 @@ class LogPrettifier:
             alignment = LogPrettifier.LEFT
         pad_left, pad_right = LogPrettifier.calculate_padding(line, alignment)
 
-        output_line  = '║'
+        output_line = '|'
         output_line += LogPrettifier.repeat_to_length(' ', pad_left)
         output_line += line
         output_line += LogPrettifier.repeat_to_length(' ', pad_right)
-        output_line += '║'
+        output_line += '|'
 
         return output_line
 
