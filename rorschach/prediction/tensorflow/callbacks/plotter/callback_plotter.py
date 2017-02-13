@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
+
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import ticker as ticker
 
 from rorschach.prediction.tensorflow.callbacks import CallbackRunner
-from rorschach.utilities import Filesystem
+from rorschach.utilities import Config
 
 
 class CallbackPlotter():
@@ -137,5 +139,5 @@ class CallbackPlotter():
         if self.callback_type == CallbackRunner.TRAINING:
             file_name = 'plot_training'
 
-        fig.savefig(Filesystem.get_root_path('data/' + file_name + '.png'))
+        fig.savefig(Config.get_path('path.output', file_name + '.png', fragment=Config.get('uid')))
         plt.close()

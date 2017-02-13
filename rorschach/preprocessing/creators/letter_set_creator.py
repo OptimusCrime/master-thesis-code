@@ -36,7 +36,7 @@ class LetterSetCreator(AbstractCreator):
 
         # Save cropped letters
         if Config.get('preprocessing.save.letters'):
-            MatrixSaver.save('data/letters', self.contents)
+            MatrixSaver.save('letters', self.contents)
 
     def apply_signature(self):
         super().apply_signature()
@@ -67,6 +67,6 @@ class LetterSetCreator(AbstractCreator):
     def save(self):
         # Save signature letters
         if Config.get('preprocessing.save.letters-signatures'):
-            MatrixSaver.save('data/letters-signatures', self.contents)
+            MatrixSaver.save('letters-signatures', self.contents)
 
-        pickle_data(self.contents, Filesystem.get_root_path('data/letter_set.pickl'))
+        pickle_data(self.contents, Filesystem.save(Config.get('path.data'), 'letter_set.pickl'))

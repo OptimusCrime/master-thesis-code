@@ -3,6 +3,7 @@
 
 import os
 import shutil
+import re
 
 from rorschach.common import DataSetTypes
 from rorschach.preprocessing.creators import InputSetCreator, LetterSetCreator
@@ -10,6 +11,8 @@ from rorschach.utilities import Config, Filesystem, LoggerWrapper
 
 
 class Preprocessor:
+
+    OUTPUT_FORMAT = re.compile("^\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}-[a-z]{6}")
 
     def __init__(self):
         self.log = LoggerWrapper.load(__name__)
@@ -30,10 +33,13 @@ class Preprocessor:
 
     @staticmethod
     def wipe_data():
-        data_path = Filesystem.get_root_path('data/')
+        data_path = Filesystem.get_root_path('data')
         dir_content = os.listdir(data_path)
 
         for content in dir_content:
+            if Preprocessor.OUTPUT_FORMAT.match(content):
+                continue
+
             full_path = os.path.join(data_path, content)
             if os.path.isdir(full_path):
                 shutil.rmtree(full_path)
@@ -73,3 +79,4 @@ class Preprocessor:
         self.letter_set.save()
         self.training_set.save()
         self.test_set.save()
+        self.verification_set.save()

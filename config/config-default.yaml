@@ -15,18 +15,18 @@ logging:
     batch_reporting: 10
 
 ##################################################################
-#                           Paths                                #
+#                           Path                                 #
 ##################################################################
 
-paths:
+path:
     # Where to save all the images
-    images: {%project_root%}/data
+    image: PROJECT_ROOT/data
 
     # Where to save the data (pickle files and session dumps)
-    data: {%project_root%}/data
+    data: PROJECT_ROOT/data
 
     # Where to save the output (logs and images)
-    output: {%project_root}/data
+    output: PROJECT_ROOT/data
 
 ##################################################################
 #                       Preprocessing                            #
@@ -86,6 +86,10 @@ preprocessing:
     # Test set
     test-set:
         size: 400
+
+    # Verification set
+    verification-set:
+        size: 20
 
 ##################################################################
 #                       Transformation                           #

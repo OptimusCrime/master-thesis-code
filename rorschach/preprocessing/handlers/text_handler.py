@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
+
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
@@ -22,8 +24,7 @@ class TextCreator:
         draw.text((0, 0), text, font=font_object, fill=0)
 
         if Config.get('preprocessing.save.raw'):
-            Filesystem.create('data/raw')
-            im.save(Filesystem.get_root_path('data/raw/' + text + '.png'))
+            im.save(Filesystem.save(os.path.join(Config.get('path.image'), 'raw'), text + '.png'))
 
         arr = np.fromiter(list(im.getdata()), dtype="bool").reshape((im.height,
                                                                     im.width))

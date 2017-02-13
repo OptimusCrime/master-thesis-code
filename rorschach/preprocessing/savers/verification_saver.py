@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
+
 import numpy as np
 from PIL import Image
 
-from rorschach.utilities import Filesystem
+from rorschach.utilities import Config, Filesystem
 
 
 class VerificationSaver:
@@ -14,7 +16,8 @@ class VerificationSaver:
 
     @staticmethod
     def save(directory, objects):
-        Filesystem.create(directory)
+        Filesystem.create(os.path.join(Config.get('path.image'), directory), outside=True)
+
         for obj in objects:
             VerificationSaver.save_image(obj['matrix'], obj['label'], obj['text'], directory)
 
@@ -41,4 +44,4 @@ class VerificationSaver:
 
             new_img_pixels[x, y + 3] = (0, 0, 0)
 
-        new_img.save(Filesystem.get_root_path(location + '/' + name + '.png'))
+        new_img.save(Filesystem.save(os.path.join(Config.get('path.image'), location), name + '.png'))

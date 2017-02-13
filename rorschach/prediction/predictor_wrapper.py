@@ -3,7 +3,7 @@
 
 from rorschach.common import DataSetTypes
 from rorschach.transformation import Transformator
-from rorschach.utilities import Config, Filesystem, unpickle_data
+from rorschach.utilities import Config, unpickle_data
 
 
 class PredictorWrapper:
@@ -14,9 +14,9 @@ class PredictorWrapper:
     def run(self):
         assert(self.predictor is not None)
 
-        self.predictor.training_set = unpickle_data(Filesystem.get_root_path('data/training_set.pickl'))
-        self.predictor.test_set = unpickle_data(Filesystem.get_root_path('data/test_set.pickl'))
-        self.predictor.verification_set = unpickle_data(Filesystem.get_root_path('data/verification_set.pickl'))
+        self.predictor.training_set = unpickle_data(Config.get_path('path.data', 'training_set.pickl'))
+        self.predictor.test_set = unpickle_data(Config.get_path('path.data', 'test_set.pickl'))
+        self.predictor.verification_set = unpickle_data(Config.get_path('path.data', 'verification_set.pickl'))
 
         if Config.get('transformation.run'):
             self.transform()
@@ -29,7 +29,7 @@ class PredictorWrapper:
         transformator = Transformator()
 
         transformator.construct_lists([{
-            'set': unpickle_data(Filesystem.get_root_path('data/letter_set.pickl')),
+            'set': unpickle_data(Config.get_path('path.data', 'letter_set.pickl')),
             'type': DataSetTypes.LETTER_SET
         }, {
             'set': self.predictor.training_set,

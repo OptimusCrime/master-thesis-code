@@ -37,7 +37,7 @@ class TermCreator(AbstractCreator):
         return contents
 
     def apply_constraints(self):
-        constraints_file = Filesystem.get_root_path('data/constraints.pickl')
+        constraints_file = Config.get_path('path.data', 'constraints.pickl')
 
         # We can not apply constraints unless we have the pickle file
         assert os.path.isfile(constraints_file) is True

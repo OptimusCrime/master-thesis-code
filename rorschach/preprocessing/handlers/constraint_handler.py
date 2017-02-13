@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from rorschach.utilities import Filesystem, pickle_data
+from rorschach.utilities import Config, Filesystem, pickle_data
 
 
 class ConstraintHandler:
@@ -28,7 +28,7 @@ class ConstraintHandler:
         }
 
     def save(self):
-        pickle_data(self.constraints, Filesystem.get_root_path('data/constraints.pickl'))
+        pickle_data(self.constraints, Filesystem.save(Config.get('path.data'), 'constraints.pickl'))
 
     def calculate(self, arr):
         height = len(arr)

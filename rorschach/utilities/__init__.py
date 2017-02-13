@@ -1,8 +1,8 @@
-# Incorrect order due to import conflicts between config, filesystem and matrixdim
+# Incorrect order due to import conflicts between config, filesystem
 from .filesystem import Filesystem
-from .logger import LoggerWrapper
 from .config import Config
+from .uid_generator import UidGenerator
+from .logger import LoggerWrapper
 from .pickler import pickle_data, unpickle_data
-from .matrix_dim import MatrixDim
-from .character_handling import CharacterHandling
+
 from .module_importer import ModuleImporter

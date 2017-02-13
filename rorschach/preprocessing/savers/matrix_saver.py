@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
+
 from PIL import Image
 
-from rorschach.utilities import Filesystem
+from rorschach.utilities import Config, Filesystem
 
 
 class MatrixSaver:
@@ -13,12 +15,13 @@ class MatrixSaver:
 
     @staticmethod
     def save(directory, objects):
-        Filesystem.create(directory)
+        Filesystem.create(os.path.join(Config.get('path.image'), directory), outside=True)
+
         for obj in objects:
             MatrixSaver.save_image(obj['matrix'], obj['text'], directory)
 
     @staticmethod
-    def save_image(matrix, name, location):
+    def save_image(matrix, name, directory):
         # Create new image
         new_img = Image.new('RGB', matrix.shape[::-1], '#fff')
         new_img_pixels = new_img.load()
@@ -29,4 +32,4 @@ class MatrixSaver:
                 if matrix[y][x] == 0:
                     new_img_pixels[x, y] = (0, 0, 0)
 
-        new_img.save(Filesystem.get_root_path(location + '/' + name + '.png'))
+        new_img.save(Filesystem.save(os.path.join(Config.get('path.image'), directory), name + '.png'))

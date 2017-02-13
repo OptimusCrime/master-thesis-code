@@ -3,11 +3,13 @@
 
 from rorschach.prediction import PredictorWrapper
 from rorschach.preprocessing import Preprocessor
-from rorschach.utilities import Config, ModuleImporter
+from rorschach.utilities import Config, ModuleImporter, UidGenerator
 
 
 def main():
-    if Config.get('preprocessing.run') or Config.get('preprocessing.new-phrase-run'):
+    UidGenerator.run()
+
+    if Config.get('preprocessing.run'):
         preprocessor = Preprocessor()
         preprocessor.run()
 

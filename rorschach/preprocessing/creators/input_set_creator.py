@@ -32,7 +32,7 @@ class InputSetCreator(TermCreator):
         super().apply_constraints()
 
         if Config.get('preprocessing.save.' + self.type_keyword):
-            MatrixSaver.save('data/' + self.type_keyword, self.contents)
+            MatrixSaver.save(self.type_keyword, self.contents)
 
     def generate_random_words(self):
         for i in range(Config.get('preprocessing.' + self.type_keyword + '-set.size')):
@@ -41,6 +41,6 @@ class InputSetCreator(TermCreator):
 
     def save(self):
         if Config.get('preprocessing.save.' + self.type_keyword + '-signtures'):
-            MatrixSaver.save('data/' + self.type_keyword + '-signatures', self.contents)
+            MatrixSaver.save(self.type_keyword + '-signatures', self.contents)
 
-        pickle_data(self.contents, Filesystem.get_root_path('data/' + self.type_keyword + '_set.pickl'))
+        pickle_data(self.contents, Filesystem.save(Config.get('path.data'), self.type_keyword + '_set.pickl'))

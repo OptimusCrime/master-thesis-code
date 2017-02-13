@@ -68,6 +68,10 @@ class Config:
         if Config.CONTENTS is None:
             Config.load_config()
 
+        # Paths
+        if '.' in key and key.split('.')[0] == 'path':
+            return Config.parse_path_setting(key.split('.')[1:])
+
         # Special handler for list of acceptable characters
         if key == 'general.characters':
             # Split all characters, strip whitespace, remove empty elements from the list
@@ -84,13 +88,43 @@ class Config:
 
         # If we have no dash in our key we can access it directly
         if '.' not in key:
+            if key not in Config.CONTENTS:
+                return None
             return Config.CONTENTS[key]
 
         # Multilevel key. Traverse the tree
-        return Config.get_nested(key)
+        return Config.nested_key(key)
 
     @staticmethod
-    def get_nested(key):
+    def get_path(path, file, fragment=None):
+        if fragment is not None:
+            path_string = os.path.join(Config.get(path), fragment)
+        else:
+            path_string = Config.get(path)
+
+        # Ensure the locatin exists (for log files)
+        Filesystem.create(path_string, outside=True)
+
+        return os.path.join(path_string, file)
+
+    @staticmethod
+    def set(key, value):
+        Config.override_config_value(value, '.' + key)
+
+    @staticmethod
+    def parse_path_setting(value):
+        if type(value) is list:
+            if len(value) == 1:
+                return Config.parse_path_setting(value[0])
+            return None
+
+        if value not in Config.CONTENTS['path']:
+            return None
+
+        return Config.CONTENTS['path'][value].replace('PROJECT_ROOT', Filesystem.get_root_path())
+
+    @staticmethod
+    def nested_key(key):
         key_split = key.split('.')
         current_pool = Config.CONTENTS
         for sub_key in key_split:
