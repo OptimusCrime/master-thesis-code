@@ -11,9 +11,8 @@ from rorschach.wordlist import WordListParser
 class InputSetCreator(TermCreator):
 
     def __init__(self, type=DataSetTypes.TRAINING_SET):
-        super().__init__()
+        super().__init__(type)
 
-        self.type = type
         self.letter_matrices = []
         self.unique_signatures = None
         self.word_list_parser = WordListParser()

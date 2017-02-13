@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import json
 import os
-import shutil
 import re
+import shutil
 
 from rorschach.common import DataSetTypes
 from rorschach.preprocessing.creators import InputSetCreator, LetterSetCreator
@@ -30,6 +31,7 @@ class Preprocessor:
             self.create_sets()
 
         self.save_sets()
+        self.save_sets_content()
 
     @staticmethod
     def wipe_data():
@@ -51,7 +53,7 @@ class Preprocessor:
     def create_sets(self):
         # Create the data set
         self.log.info('Creating letter set.')
-        self.letter_set = LetterSetCreator()
+        self.letter_set = LetterSetCreator(DataSetTypes.LETTER_SET)
         self.letter_set.create()
 
         # Create the word set
@@ -80,3 +82,21 @@ class Preprocessor:
         self.training_set.save()
         self.test_set.save()
         self.verification_set.save()
+
+    def save_sets_content(self):
+        image_set_list = [self.letter_set, self.training_set, self.test_set, self.verification_set]
+        for image_set in image_set_list:
+            with open(Preprocessor.set_content_file_name(image_set), 'w') as outfile:
+                json.dump(image_set.terms, outfile)
+
+    @staticmethod
+    def set_content_file_name(image_set):
+        file_name = 'verification.json'
+        if image_set.type == DataSetTypes.LETTER_SET:
+            file_name = 'letter.json'
+        if image_set.type == DataSetTypes.TRAINING_SET:
+            file_name = 'training.json'
+        if image_set.type == DataSetTypes.TEST_SET:
+            file_name = 'test.json'
+
+        return Config.get_path('path.output', file_name, fragment=Config.get('uid'))

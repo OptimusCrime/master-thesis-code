@@ -6,15 +6,13 @@ import os
 
 from rorschach.preprocessing.creators import AbstractCreator
 from rorschach.preprocessing.handlers import TextCreator
-from rorschach.utilities import Config, Filesystem, unpickle_data
+from rorschach.utilities import Config, unpickle_data
 
 
 class TermCreator(AbstractCreator):
 
-    def __init__(self):
-        super().__init__()
-
-        self.terms = []
+    def __init__(self, type):
+        super().__init__(type)
 
     def create_sets(self):
         contents = []

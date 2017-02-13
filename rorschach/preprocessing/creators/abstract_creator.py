@@ -10,11 +10,13 @@ from rorschach.utilities import Config, LoggerWrapper
 class AbstractCreator:
     __metaclass__ = ABCMeta
 
-    def __init__(self):
+    def __init__(self, type):
         self.log = LoggerWrapper.load(__name__)
 
+        self.type = type
         self.contents = []
         self.constraint_handler = ConstraintHandler()
+        self.terms = []
 
     def create(self):
         self.contents = self.create_sets()

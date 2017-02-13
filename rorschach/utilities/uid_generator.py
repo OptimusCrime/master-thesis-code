@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import datetime
-import string
 import random
+import string
 
 from rorschach.utilities import Config
 

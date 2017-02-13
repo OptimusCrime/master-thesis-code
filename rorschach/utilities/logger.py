@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import os
 from logging.config import dictConfig
 
 from rorschach.utilities import Config, UidGenerator
@@ -90,5 +89,3 @@ class LoggerWrapper:
         dictConfig(LoggerWrapper.LOG_CONFIGS[logger_type])
 
         return logging.getLogger(name)
-
-

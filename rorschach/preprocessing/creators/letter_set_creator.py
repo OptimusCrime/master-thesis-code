@@ -9,6 +9,11 @@ from rorschach.utilities import Config, Filesystem, pickle_data
 
 class LetterSetCreator(AbstractCreator):
 
+    def __init__(self, type):
+        super().__init__(type)
+
+        self.terms = Config.get('general.characters')
+
     def create_sets(self):
         contents = []
         for character in Config.get('general.characters'):

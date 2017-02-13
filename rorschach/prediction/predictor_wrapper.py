@@ -51,6 +51,6 @@ class PredictorWrapper:
             self.predictor.test_labels_transformed = transformator.data_set(DataSetTypes.TEST_SET)
 
         self.predictor.verification_images_transformed, \
-        self.predictor.verification_labels_transformed = transformator.data_set(DataSetTypes.VERIFICATION_SET)
+            self.predictor.verification_labels_transformed = transformator.data_set(DataSetTypes.VERIFICATION_SET)
 
         self.predictor.data = transformator.data
