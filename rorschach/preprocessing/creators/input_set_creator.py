@@ -25,7 +25,7 @@ class InputSetCreator(TermCreator):
         if set_type == DataSetTypes.TRAINING_SET:
             return 'training'
 
-        return 'verification'
+        return 'validate'
 
     def apply_constraints(self):
         super().apply_constraints()

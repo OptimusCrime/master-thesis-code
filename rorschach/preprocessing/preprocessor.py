@@ -20,7 +20,7 @@ class Preprocessor:
 
         self.letter_set = None
         self.training_set = None
-        self.verification_set = None
+        self.validate_set = None
         self.test_set = None
 
     def run(self):
@@ -64,11 +64,11 @@ class Preprocessor:
         self.training_set.create()
 
         # Create the verification set
-        self.log.info('Creating verification set.')
-        self.verification_set = InputSetCreator(DataSetTypes.VERIFICATION_SET)
-        self.verification_set.generate_random_words()
-        self.verification_set.letter_matrices = self.letter_set.contents
-        self.verification_set.create()
+        self.log.info('Creating validate set.')
+        self.validate_set = InputSetCreator(DataSetTypes.VALIDATE_SET)
+        self.validate_set.generate_random_words()
+        self.validate_set.letter_matrices = self.letter_set.contents
+        self.validate_set.create()
 
         # Create the test set
         self.log.info('Creating test set.')
@@ -81,17 +81,17 @@ class Preprocessor:
         self.letter_set.save()
         self.training_set.save()
         self.test_set.save()
-        self.verification_set.save()
+        self.validate_set.save()
 
     def save_sets_content(self):
-        image_set_list = [self.letter_set, self.training_set, self.verification_set, self.test_set]
+        image_set_list = [self.letter_set, self.training_set, self.validate_set, self.test_set]
         for image_set in image_set_list:
             with open(Preprocessor.set_content_file_name(image_set), 'w') as outfile:
                 json.dump(image_set.terms, outfile)
 
     @staticmethod
     def set_content_file_name(image_set):
-        file_name = 'verification.json'
+        file_name = 'validate.json'
         if image_set.type == DataSetTypes.LETTER_SET:
             file_name = 'letter.json'
         if image_set.type == DataSetTypes.TRAINING_SET:

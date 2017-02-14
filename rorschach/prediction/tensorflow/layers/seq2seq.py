@@ -151,16 +151,31 @@ class Seq2Seq(object):
             keep_prob=0.5
         )
 
-        _, loss_v = self.session.run([self.train_op, self.loss], feed_dict)
+        _, train_loss = self.session.run([self.train_op, self.loss], feed_dict)
+
+
+        return train_loss
+
+    def train(self):
+        train_losses = []
+
+        # Divide number of words in the training set on batch size
+        num_batches = int(
+            math.ceil(Config.get('preprocessing.training-set.size') / Config.get('predicting.batch-size')))
+
+        for i in range(num_batches):
+            train_loss = self.train_batch()
+
+            train_losses.append(train_loss)
+
+        train_mean_loss = np.mean(train_losses)
 
         if self.callback is not None:
             self.callback.run({
-                'loss': loss_v
+                'loss': train_mean_loss
             }, CallbackRunner.TRAINING)
 
-        self.log.write('- Loss: {:.5f}'.format(loss_v))
-
-        return loss_v
+        self.log.write('- Loss: {:.5f}'.format(train_mean_loss))
 
     def validate_batch(self):
         batchX, batchY = self.validation_set.__next__()
@@ -171,7 +186,7 @@ class Seq2Seq(object):
             keep_prob=1.
         )
 
-        loss_v, dec_op_v = self.session.run(
+        validation_loss, validation_output = self.session.run(
             [
                 self.loss,
                 self.decode_outputs_test
@@ -179,43 +194,68 @@ class Seq2Seq(object):
             feed_dict
         )
 
-        dec_op_v = np.array(dec_op_v).transpose([1, 0, 2])
-        correct = np.array(batchY).transpose([1, 0])
+        # Transpose the validation output
+        validation_output = np.array(validation_output).transpose([1, 0, 2])
 
-        pred_val = np.argmax(dec_op_v, axis=2)
-        correct_pred = np.equal(pred_val, correct)
+        # Transpose the validate labels
+        validate_labels = np.array(batchY).transpose([1, 0])
 
-        classification_correct = np.sum(correct_pred)
-        classification_total = correct_pred.shape[0] * correct_pred.shape[1]
+        # We use argmax to get the output with the highest probability for each character in the output
+        validation_predictions = np.argmax(validation_output, axis=2)
 
-        accuracy = classification_correct / float(classification_total)
+        # Create a boolen matrix with true where we predited the correct label and false where we did not
+        validation_correct_predictions = np.equal(validation_predictions, validate_labels)
 
-        return loss_v, accuracy, classification_correct, classification_total
+        # Sum the number of correct predictions
+        validation_correct = np.sum(validation_correct_predictions)
+
+        # Calculate the number of predictions done in this batch
+        validation_total = validation_correct_predictions.shape[0] * validation_correct_predictions.shape[1]
+
+        # Calculate the float value of the accuracy
+        validation_accuracy = validation_correct / float(validation_total)
+
+        # Return: loss, calculate accuracy, number of correct predictions and total number of predictions done
+        return validation_loss, validation_accuracy, validation_correct, validation_total
 
     def validate(self):
-        losses = []
-        accuracyies = []
+        validation_losses = []
+        validation_accuracies = []
 
-        correct = 0
-        total = 0
+        validation_total_correct = 0
+        validation_total_predictions = 0
 
-        # Divide number of words in the training set on batch size
-        num_batches = int(math.ceil(Config.get('preprocessing.test-set.size') / Config.get('predicting.batch-size')))
+        # Divide number of words in the validate set on batch size
+        num_batches = int(math.ceil(Config.get('preprocessing.validate-set.size') / Config.get('predicting.batch-size')))
 
         for i in range(num_batches):
-            loss_v, accuracy, correct_current, total_current = self.validate_batch()
-            losses.append(loss_v)
-            accuracyies.append(accuracy)
+            validation_loss, validation_accuracy, validation_correct, validation_total = self.validate_batch()
 
-            correct += correct_current
-            total += total_current
+            validation_losses.append(validation_loss)
+            validation_accuracies.append(validation_accuracy)
 
-        return np.mean(losses), np.mean(accuracyies), correct, total
+            validation_total_correct += validation_correct
+            validation_total_predictions += validation_total
+
+        validation_mean_loss = np.mean(validation_losses)
+        validation_mean_accuracy = np.mean(validation_accuracies)
+
+        if self.callback is not None:
+            self.callback.run({
+                'validate_loss': validation_mean_loss,
+                'validate_accuracy': validation_mean_accuracy
+            }, CallbackRunner.TEST)
+
+        # Output debug
+        self.log.write('- Validate loss: {:.5f}'.format(validation_mean_loss))
+        self.log.write('- Validate accuracy: {:.5f}'.format(validation_mean_accuracy))
+        self.log.write('- Validate correct attributes: {:,} / {:,}'.format(validation_total_correct,
+                                                                           validation_total_predictions))
 
     def test(self):
         pass
 
-    def train(self):
+    def run(self):
         # TODO
         # saver = tf.train.Saver()
 
@@ -231,28 +271,18 @@ class Seq2Seq(object):
             if epoch == 0:
                 log_type = LogPrettifier.FIRST_EPOCH
 
+            # Output epoch information
             self.log.write('Epoch {:d}'.format(epoch + 1), log_type)
 
-            self.train_batch()
+            # Train the model
+            self.train()
 
-            if epoch > 0 and (epoch + 1) % Config.get('predicting.verify-interval') == 0:
-                # TODO
-                # save model to disk
-                # saver.save(sess, self.ckpt_path + self.model_name + '.ckpt', global_step=i)
+            # TODO
+            # Save the model to disk
+            # saver.save(sess, self.ckpt_path + self.model_name + '.ckpt', global_step=i)
 
-                # Test
-                test_loss, test_accuracy, test_correct, test_all = self.validate()
-
-                if self.callback is not None:
-                    self.callback.run({
-                        'test_loss': test_loss,
-                        'test_accuracy': test_accuracy
-                    }, CallbackRunner.TEST)
-
-                # Output debug
-                self.log.write('- Test loss: {:.5f}'.format(test_loss))
-                self.log.write('- Test accuracy: {:.5f}'.format(test_accuracy))
-                self.log.write('- Test correct attributes: {:,} / {:,}'.format(test_correct, test_all))
+            # Validate the model
+            self.validate()
 
         self.log.write('', LogPrettifier.END)
 

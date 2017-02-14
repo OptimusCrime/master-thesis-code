@@ -15,7 +15,7 @@ class PredictorWrapper:
         assert(self.predictor is not None)
 
         self.predictor.training_set = unpickle_data(Config.get_path('path.data', 'training_set.pickl'))
-        self.predictor.verification_set = unpickle_data(Config.get_path('path.data', 'verification_set.pickl'))
+        self.predictor.validate_set = unpickle_data(Config.get_path('path.data', 'validate_set.pickl'))
         self.predictor.test_set = unpickle_data(Config.get_path('path.data', 'test_set.pickl'))
 
         if Config.get('transformation.run'):
@@ -35,8 +35,8 @@ class PredictorWrapper:
             'set': self.predictor.training_set,
             'type': DataSetTypes.TRAINING_SET
         }, {
-            'set': self.predictor.verification_set,
-            'type': DataSetTypes.VERIFICATION_SET
+            'set': self.predictor.validate_set,
+            'type': DataSetTypes.VALIDATE_SET
         }, {
             'set': self.predictor.test_set,
             'type': DataSetTypes.TEST_SET
@@ -47,8 +47,8 @@ class PredictorWrapper:
         self.predictor.training_images_transformed, \
             self.predictor.training_labels_transformed = transformator.data_set(DataSetTypes.TRAINING_SET)
 
-        self.predictor.verification_images_transformed, \
-            self.predictor.verification_labels_transformed = transformator.data_set(DataSetTypes.VERIFICATION_SET)
+        self.predictor.validate_images_transformed, \
+            self.predictor.validate_labels_transformed = transformator.data_set(DataSetTypes.VALIDATE_SET)
 
         self.predictor.test_images_transformed, \
             self.predictor.test_labels_transformed = transformator.data_set(DataSetTypes.TEST_SET)

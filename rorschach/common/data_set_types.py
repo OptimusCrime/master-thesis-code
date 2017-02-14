@@ -6,7 +6,7 @@ class DataSetTypes:
 
     LETTER_SET = 0
     TRAINING_SET = 1
-    VERIFICATION_SET = 2
+    VALIDATE_SET = 2
     TEST_SET = 3
 
 

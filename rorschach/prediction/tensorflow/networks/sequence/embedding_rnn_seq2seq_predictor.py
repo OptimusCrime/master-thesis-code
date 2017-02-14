@@ -34,8 +34,8 @@ class EmbeddingRNNSeq2SeqPredictor(BasePredictor):
         )
 
         self.validation_batch_gen = rand_batch_gen(
-            self.verification_images_transformed,
-            self.verification_labels_transformed,
+            self.validate_images_transformed,
+            self.validate_labels_transformed,
             Config.get('predicting.batch-size')
         )
 
@@ -75,7 +75,7 @@ class EmbeddingRNNSeq2SeqPredictor(BasePredictor):
         # TODO
         # sess = self.model.restore_last_session()
 
-        self.model.train()
+        self.model.run()
 
         self.log.info('Finished training')
 
