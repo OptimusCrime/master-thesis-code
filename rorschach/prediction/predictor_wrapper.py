@@ -22,8 +22,7 @@ class PredictorWrapper:
             self.transform()
 
         self.predictor.prepare()
-        self.predictor.train()
-        self.predictor.predict()
+        self.predictor.run()
 
     def transform(self):
         transformator = Transformator()

@@ -2,12 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import math
+import time
 
 import numpy as np
 import tensorflow as tf
 
 from rorschach.prediction.tensorflow.callbacks import CallbackRunner
-from rorschach.prediction.tensorflow.tools import LogPrettifier
+from rorschach.prediction.tensorflow.tools import LogPrettifier, TimeParse
 from rorschach.utilities import Config, LoggerWrapper
 
 
@@ -46,6 +47,15 @@ class Seq2Seq(object):
         self.decoder_input_placeholders = None
         self.label_placeholders = None
         self.keep_probability = None
+
+        self.data_loss = {
+            'train': [],
+            'validate': []
+        }
+
+        self.data_accuracy = []
+
+        self.epoch_time_start = None
 
     def build_graph(self):
         # Reset the default graph of Tensorflow here
@@ -153,7 +163,6 @@ class Seq2Seq(object):
 
         _, train_loss = self.session.run([self.train_op, self.loss], feed_dict)
 
-
         return train_loss
 
     def train(self):
@@ -168,12 +177,11 @@ class Seq2Seq(object):
 
             train_losses.append(train_loss)
 
+        # Get the mean loss value
         train_mean_loss = np.mean(train_losses)
 
-        if self.callback is not None:
-            self.callback.run({
-                'loss': train_mean_loss
-            }, CallbackRunner.TRAINING)
+        # Add to our store
+        self.data_loss['train'].append(train_mean_loss)
 
         self.log.write('- Loss: {:.5f}'.format(train_mean_loss))
 
@@ -240,11 +248,20 @@ class Seq2Seq(object):
         validation_mean_loss = np.mean(validation_losses)
         validation_mean_accuracy = np.mean(validation_accuracies)
 
+        self.data_loss['validate'].append(validation_mean_loss)
+        self.data_accuracy.append(validation_mean_accuracy)
+
         if self.callback is not None:
+            # Plot the loss
             self.callback.run({
-                'validate_loss': validation_mean_loss,
-                'validate_accuracy': validation_mean_accuracy
-            }, CallbackRunner.TEST)
+                'loss_train': self.data_loss['train'],
+                'loss_validate': self.data_loss['validate']
+            }, CallbackRunner.LOSS)
+
+            # Plot the accuracy
+            self.callback.run({
+                'accuracy': self.data_accuracy
+            }, CallbackRunner.ACCURACY)
 
         # Output debug
         self.log.write('- Validate loss: {:.5f}'.format(validation_mean_loss))
@@ -267,6 +284,8 @@ class Seq2Seq(object):
 
         # Loop the epochs
         for epoch in range(Config.get('predicting.epochs')):
+            self.epoch_time_start = time.time()
+
             log_type = LogPrettifier.EPOCH
             if epoch == 0:
                 log_type = LogPrettifier.FIRST_EPOCH
@@ -283,6 +302,9 @@ class Seq2Seq(object):
 
             # Validate the model
             self.validate()
+
+            self.log.write('- Execution: {}'.format(TimeParse.parse(self.epoch_time_start)))
+
 
         self.log.write('', LogPrettifier.END)
 
