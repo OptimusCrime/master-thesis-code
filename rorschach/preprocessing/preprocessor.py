@@ -16,6 +16,8 @@ class Preprocessor:
     OUTPUT_FORMAT = re.compile("^\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}-[a-z]{6}")
 
     def __init__(self):
+        self.log = LoggerWrapper.load(__name__)
+
         self.letter_set = None
         self.training_set = None
         self.validate_set = None
