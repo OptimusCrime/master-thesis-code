@@ -162,8 +162,8 @@ class Seq2Seq(object):
 
         return loss_v
 
-    def test_batch(self):
-        batchX, batchY = self.test_set.__next__()
+    def validate_batch(self):
+        batchX, batchY = self.validation_set.__next__()
 
         feed_dict = self.get_feed(
             batchX,
@@ -192,7 +192,7 @@ class Seq2Seq(object):
 
         return loss_v, accuracy, classification_correct, classification_total
 
-    def test(self):
+    def validate(self):
         losses = []
         accuracyies = []
 
@@ -203,7 +203,7 @@ class Seq2Seq(object):
         num_batches = int(math.ceil(Config.get('preprocessing.test-set.size') / Config.get('predicting.batch-size')))
 
         for i in range(num_batches):
-            loss_v, accuracy, correct_current, total_current = self.test_batch()
+            loss_v, accuracy, correct_current, total_current = self.validate_batch()
             losses.append(loss_v)
             accuracyies.append(accuracy)
 
@@ -212,7 +212,7 @@ class Seq2Seq(object):
 
         return np.mean(losses), np.mean(accuracyies), correct, total
 
-    def validate(self):
+    def test(self):
         pass
 
     def train(self):
@@ -235,13 +235,13 @@ class Seq2Seq(object):
 
             self.train_batch()
 
-            if epoch > 0 and (epoch + 1) % Config.get('predicting.test-interval') == 0:
+            if epoch > 0 and (epoch + 1) % Config.get('predicting.verify-interval') == 0:
                 # TODO
                 # save model to disk
                 # saver.save(sess, self.ckpt_path + self.model_name + '.ckpt', global_step=i)
 
                 # Test
-                test_loss, test_accuracy, test_correct, test_all = self.test()
+                test_loss, test_accuracy, test_correct, test_all = self.validate()
 
                 if self.callback is not None:
                     self.callback.run({
@@ -257,7 +257,7 @@ class Seq2Seq(object):
         self.log.write('', LogPrettifier.END)
 
         # Run final validation
-        self.validate()
+        self.test()
 
     def restore_last_session(self):
         # TODO

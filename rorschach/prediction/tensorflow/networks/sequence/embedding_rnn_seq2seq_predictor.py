@@ -33,15 +33,15 @@ class EmbeddingRNNSeq2SeqPredictor(BasePredictor):
             Config.get('predicting.batch-size')
         )
 
-        self.test_batch_gen = rand_batch_gen(
-            self.test_images_transformed,
-            self.test_labels_transformed,
-            Config.get('predicting.batch-size')
-        )
-
         self.validation_batch_gen = rand_batch_gen(
             self.verification_images_transformed,
             self.verification_labels_transformed,
+            Config.get('predicting.batch-size')
+        )
+
+        self.test_batch_gen = rand_batch_gen(
+            self.test_images_transformed,
+            self.test_labels_transformed,
             Config.get('predicting.batch-size')
         )
 
@@ -58,8 +58,8 @@ class EmbeddingRNNSeq2SeqPredictor(BasePredictor):
         )
 
         self.model.training_set = self.train_batch_gen
-        self.model.test_set = self.test_batch_gen
         self.model.validation_set = self.validation_batch_gen
+        self.model.test_set = self.test_batch_gen
 
         self.model.callback = CallbackRunner([
             CallbackPlotter

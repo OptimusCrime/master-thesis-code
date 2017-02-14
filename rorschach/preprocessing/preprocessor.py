@@ -20,8 +20,8 @@ class Preprocessor:
 
         self.letter_set = None
         self.training_set = None
-        self.test_set = None
         self.verification_set = None
+        self.test_set = None
 
     def run(self):
         if Config.get('preprocessing.run') and Config.get('preprocessing.wipe'):
@@ -56,26 +56,26 @@ class Preprocessor:
         self.letter_set = LetterSetCreator(DataSetTypes.LETTER_SET)
         self.letter_set.create()
 
-        # Create the word set
+        # Create the training set
         self.log.info('Creating training set.')
         self.training_set = InputSetCreator(DataSetTypes.TRAINING_SET)
         self.training_set.generate_random_words()
         self.training_set.letter_matrices = self.letter_set.contents
         self.training_set.create()
 
-        # Create the word set
-        self.log.info('Creating test set.')
-        self.test_set = InputSetCreator(DataSetTypes.TEST_SET)
-        self.test_set.generate_random_words()
-        self.test_set.letter_matrices = self.letter_set.contents
-        self.test_set.create()
-
-        # Create the word set
+        # Create the verification set
         self.log.info('Creating verification set.')
         self.verification_set = InputSetCreator(DataSetTypes.VERIFICATION_SET)
         self.verification_set.generate_random_words()
         self.verification_set.letter_matrices = self.letter_set.contents
         self.verification_set.create()
+
+        # Create the test set
+        self.log.info('Creating test set.')
+        self.test_set = InputSetCreator(DataSetTypes.TEST_SET)
+        self.test_set.generate_random_words()
+        self.test_set.letter_matrices = self.letter_set.contents
+        self.test_set.create()
 
     def save_sets(self):
         self.letter_set.save()
@@ -84,7 +84,7 @@ class Preprocessor:
         self.verification_set.save()
 
     def save_sets_content(self):
-        image_set_list = [self.letter_set, self.training_set, self.test_set, self.verification_set]
+        image_set_list = [self.letter_set, self.training_set, self.verification_set, self.test_set]
         for image_set in image_set_list:
             with open(Preprocessor.set_content_file_name(image_set), 'w') as outfile:
                 json.dump(image_set.terms, outfile)

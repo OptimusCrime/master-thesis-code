@@ -13,10 +13,10 @@ class BasePredictor:
 
         self.training_images_transformed = None
         self.training_labels_transformed = None
-        self.test_images_transformed = None
-        self.test_labels_transformed = None
         self.verification_images_transformed = None
         self.verification_labels_transformed = None
+        self.test_images_transformed = None
+        self.test_labels_transformed = None
 
     def prepare(self):
         pass

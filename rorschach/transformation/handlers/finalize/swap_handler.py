@@ -5,7 +5,7 @@ import numpy as np
 
 from rorschach.common import DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
-from rorschach.utilities import Config
+from rorschach.utilities import Config, Filesystem, unpickle_data
 
 
 class SwapHandler(BaseHandler):
@@ -13,7 +13,19 @@ class SwapHandler(BaseHandler):
     def __init__(self):
         super().__init__()
 
+        self.voc_sizes = False
+
+    def prepare(self):
+        super().prepare()
+
+        self.data['voc_lower'] = 0
+        self.data['voc_upper'] = 0
+
     def run(self, input_lists):
+        super().run(input_lists)
+
+        self.calculate_voc_size()
+
         super().run(input_lists)
 
         return input_lists
@@ -21,6 +33,10 @@ class SwapHandler(BaseHandler):
     def list_handler(self, input_list, key):
         if key == DataSetTypes.LETTER_SET:
             return
+
+        if not self.voc_sizes:
+            self.count_voc_size(input_list)
+            return input_list
 
         inputs = SwapHandler.reshape_input(input_list)
         labels = SwapHandler.reshape_labels(input_list)
@@ -30,10 +46,13 @@ class SwapHandler(BaseHandler):
             DataSetTypes.LABELS: labels
         }
 
-        self.data['voc_size_labels'] = len(Config.get('general.characters')) + 2
-        self.data['voc_size_input'] = SwapHandler.calculate_voc_size(inputs)
-
         return new_list
+
+    def calculate_voc_size(self):
+        self.voc_sizes = True
+
+        self.data['voc_size_labels'] = len(unpickle_data(Config.get_path('path.data', 'labels.pickl')))
+        self.data['voc_size_input'] = self.data['voc_lower'] + self.data['voc_upper']
 
     @staticmethod
     def reshape_input(input_list):
@@ -51,16 +70,11 @@ class SwapHandler(BaseHandler):
 
         return np.array(raw_array)
 
-    @staticmethod
-    def calculate_voc_size(input_list):
-        voc_lower = 0
-        voc_upper = 0
+    def count_voc_size(self, input_list):
         for seq in input_list:
-            for val in seq:
-                if val < voc_lower:
-                    voc_lower = val
+            for val in seq[DataSetTypes.IMAGES]['input']:
+                if val < self.data['voc_lower']:
+                    self.data['voc_lower'] = val
 
-                if val > voc_upper:
-                    voc_upper = val
-
-        return abs(voc_lower) + voc_upper + 1
+                if val > self.data['voc_upper']:
+                    self.data['voc_upper'] = val

@@ -39,6 +39,9 @@ class Transformator:
                 # Set data
                 handler_module.data = self.data
 
+                # Prepare
+                handler_module.prepare()
+
                 # Run the handler
                 current_input = handler_module.run(copy.deepcopy(current_input))
 

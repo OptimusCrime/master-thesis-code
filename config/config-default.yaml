@@ -81,14 +81,14 @@ preprocessing:
 
     # Training set
     training-set:
-        size: 4000
-
-    # Test set
-    test-set:
-        size: 400
+        size: 30
 
     # Verification set
     verification-set:
+        size: 20
+
+    # Test set
+    test-set:
         size: 20
 
 ##################################################################
@@ -127,7 +127,7 @@ predicting:
     epochs: 10
     batch-size: 10
     learning-rate: 0.0001
-    test-interval: 2
+    verify-interval: 2
 
     # Class to lazy load for the prediction
     predictor: prediction.tensorflow.networks.sequence.EmbeddingRNNSeq2SeqPredictor

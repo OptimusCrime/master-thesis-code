@@ -5,9 +5,11 @@
 class DataSetTypes:
 
     LETTER_SET = 0
-    TEST_SET = 1
-    TRAINING_SET = 2
-    VERIFICATION_SET = 3
+    TRAINING_SET = 1
+    VERIFICATION_SET = 2
+    TEST_SET = 3
+
+
 
     LABELS = 'labels'
     IMAGES = 'images'

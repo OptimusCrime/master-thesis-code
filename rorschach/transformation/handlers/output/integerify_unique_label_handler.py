@@ -6,7 +6,7 @@ import numpy as np
 from rorschach.common import DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
 from rorschach.transformation.handlers.output import IntegerifyLabelHandler
-from rorschach.utilities import Config
+from rorschach.utilities import Config, Filesystem, pickle_data
 
 
 class IntegerifyUniqueLabelHandler(BaseHandler):
@@ -46,6 +46,9 @@ class IntegerifyUniqueLabelHandler(BaseHandler):
 
         # Gets list of duplicates [['A', 'B'], ['C'], ['D', 'E', 'F']]
         label_uniques = IntegerifyUniqueLabelHandler.find_label_uniques(characters_set)
+
+        # Save the labels
+        pickle_data(label_uniques, Filesystem.save(Config.get('path.data'), 'labels.pickl'))
 
         # Loop each character, then check if the current character has duplicates. If it has duplicates, check if the
         # other characters are already in the label_lookup table. If it is, use their value instead.

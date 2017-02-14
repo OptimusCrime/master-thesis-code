@@ -8,6 +8,9 @@ class BaseHandler:
         self.input_lists = None
         self.data = {}
 
+    def prepare(self):
+        pass
+
     def run(self, input_lists):
         self.input_lists = input_lists
 
