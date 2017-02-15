@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import json
+
 import numpy as np
 
 from rorschach.common import DataSetTypes
@@ -50,6 +52,9 @@ class IntegerifyUniqueLabelHandler(BaseHandler):
         # Save the labels
         pickle_data(label_uniques, Filesystem.save(Config.get('path.data'), 'labels.pickl'))
 
+        with open(Filesystem.save(Config.get('path.data'), 'labels.json'), 'w') as outfile:
+            json.dump(label_uniques, outfile)
+
         # Loop each character, then check if the current character has duplicates. If it has duplicates, check if the
         # other characters are already in the label_lookup table. If it is, use their value instead.
         label_offset = 1
@@ -69,6 +74,9 @@ class IntegerifyUniqueLabelHandler(BaseHandler):
                 continue
 
             self.label_lookup[characters[i]] = index
+
+        with open(Filesystem.save(Config.get('path.data'), 'labels_lookup.json'), 'w') as outfile:
+            json.dump(self.label_lookup, outfile)
 
     def find_duplicate_lookup_index(self, labels):
         for label in labels:

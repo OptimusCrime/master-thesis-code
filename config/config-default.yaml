@@ -7,6 +7,9 @@ general:
     # Separate each character with a comma with no ending comma present
     characters: A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z
 
+    # Turn debug mode on/off
+    debug: false
+
 ##################################################################
 #                          Logging                               #
 ##################################################################
@@ -109,8 +112,11 @@ transformation:
         # Pad the input sequence to fit the longest sequence
         - transformation.handlers.input.PadHandler
 
-        # Translate text sequences into integers (B -> 0, 6W -> 5, ...)
-        - transformation.handlers.input.IntegerifyStringSequenceHandler
+        # Translate text sequences into integers (1B -> -1, 6W -> 6, ...)
+        - transformation.handlers.input.IntegerifyStringSequenceSpatialHandler
+
+        # Rearrange values from previous handler so the are all positive integers starting from 0
+        - transformation.handlers.input.RearrangeSequenceValuesHandler
 
         # Translate the label text to corresponding integer ids (A -> 1, D -> 4, ...)
         - transformation.handlers.output.IntegerifyUniqueLabelHandler

@@ -99,4 +99,4 @@ class Preprocessor:
         if image_set.type == DataSetTypes.TEST_SET:
             file_name = 'test.json'
 
-        return Config.get_path('path.output', file_name, fragment=Config.get('uid'))
+        return Config.get_path('path.data', file_name)

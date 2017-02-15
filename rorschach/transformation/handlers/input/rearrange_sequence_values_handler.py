@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import json
+
 import numpy as np
 
 from rorschach.common import DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
+from rorschach.utilities import Config
 
 
 class RearrangeSequenceValuesHandler(BaseHandler):
@@ -33,6 +36,20 @@ class RearrangeSequenceValuesHandler(BaseHandler):
             return
 
         super().list_handler(input_list, key)
+
+        # Dump content before and after shift if we are in debug mode
+        if Config.get('general.debug') and key == DataSetTypes.TRAINING_SET:
+            file_ending = 'rearrange_' + ('pre' if not self.rearrange else 'post') + '.json'
+            file_name = Config.get_path('path.output',  file_ending, fragment=Config.get('uid'))
+
+            # Get just the inputs
+            data = []
+            for obj in input_list:
+                data.append(obj[DataSetTypes.IMAGES]['input'].tolist())
+
+            # Dump to JSON
+            with open(file_name, 'w') as outfile:
+                json.dump(data, outfile)
 
         return input_list
 
