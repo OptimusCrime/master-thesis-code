@@ -5,7 +5,7 @@ from rorschach.prediction.common import BasePredictor
 from rorschach.prediction.tensorflow.callbacks import CallbackRunner
 from rorschach.prediction.tensorflow.callbacks.plotter import CallbackPlotter
 from rorschach.prediction.tensorflow.layers import Seq2Seq
-from rorschach.prediction.tensorflow.tools import rand_batch_gen
+from rorschach.prediction.tensorflow.tools import batch_gen
 
 from rorschach.utilities import Config, LoggerWrapper  # isort:skip
 
@@ -27,19 +27,19 @@ class EmbeddingRNNSeq2SeqPredictor(BasePredictor):
         self.build_model()
 
     def build_batches(self):
-        self.train_batch_gen = rand_batch_gen(
+        self.train_batch_gen = batch_gen(
             self.training_images_transformed,
             self.training_labels_transformed,
             Config.get('predicting.batch-size')
         )
 
-        self.validation_batch_gen = rand_batch_gen(
+        self.validation_batch_gen = batch_gen(
             self.validate_images_transformed,
             self.validate_labels_transformed,
             Config.get('predicting.batch-size')
         )
 
-        self.test_batch_gen = rand_batch_gen(
+        self.test_batch_gen = batch_gen(
             self.test_images_transformed,
             self.test_labels_transformed,
             Config.get('predicting.batch-size')
