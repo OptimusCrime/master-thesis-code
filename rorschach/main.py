@@ -3,7 +3,7 @@
 
 from rorschach.prediction import PredictorWrapper
 from rorschach.preprocessing import Preprocessor
-from rorschach.utilities import Config, ModuleImporter, UidGenerator, LoggerWrapper
+from rorschach.utilities import Config, LoggerWrapper, ModuleImporter, UidGenerator
 
 
 def main():

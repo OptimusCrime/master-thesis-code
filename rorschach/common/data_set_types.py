@@ -9,8 +9,6 @@ class DataSetTypes:
     VALIDATE_SET = 2
     TEST_SET = 3
 
-
-
     LABELS = 'labels'
     IMAGES = 'images'
 

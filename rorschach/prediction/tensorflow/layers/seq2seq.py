@@ -234,7 +234,8 @@ class Seq2Seq(object):
         validation_total_predictions = 0
 
         # Divide number of words in the validate set on batch size
-        num_batches = int(math.ceil(Config.get('preprocessing.validate-set.size') / Config.get('predicting.batch-size')))
+        num_batches = int(math.ceil(
+            Config.get('preprocessing.validate-set.size') / Config.get('predicting.batch-size')))
 
         for i in range(num_batches):
             validation_loss, validation_accuracy, validation_correct, validation_total = self.validate_batch()
@@ -304,7 +305,6 @@ class Seq2Seq(object):
             self.validate()
 
             self.log.write('- Execution: {}'.format(TimeParse.parse(self.epoch_time_start)))
-
 
         self.log.write('', LogPrettifier.END)
 

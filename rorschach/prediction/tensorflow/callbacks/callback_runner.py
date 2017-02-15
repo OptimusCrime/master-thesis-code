@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from rorschach.utilities import Config
-
 
 class CallbackRunner():
 

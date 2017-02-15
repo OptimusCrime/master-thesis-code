@@ -89,7 +89,7 @@ class CallbackPlotter():
                          box_loss.height * 0.88])
 
         ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.13),
-                    fancybox=True, shadow=True, ncol=5)
+                  fancybox=True, shadow=True, ncol=5)
 
     def save_plot(self, fig):
         file_name = 'plot_loss'

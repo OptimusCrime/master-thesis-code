@@ -21,4 +21,3 @@ for i in range(10):
     print(val_trainX)
     print(val_testX)
     print('---')
-
