@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import json
+
 import numpy as np
 
 from rorschach.common import DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
-from rorschach.utilities import Config
+from rorschach.utilities import Config, pickle_data, Filesystem
 
 
 class IntegerifyLabelHandler(BaseHandler):
@@ -19,6 +21,7 @@ class IntegerifyLabelHandler(BaseHandler):
     def run(self, input_lists):
         self.label_length = IntegerifyLabelHandler.calculate_label_length(input_lists)
         self.build_lookup_table()
+        self.store_label_file()
 
         super().run(input_lists)
 
@@ -44,6 +47,17 @@ class IntegerifyLabelHandler(BaseHandler):
         characters = Config.get('general.characters')
         for i in range(len(characters)):
             self.label_lookup[characters[i]] = i + 1
+
+    def store_label_file(self):
+        # Get the array of our character. Also add 0 because our words can be padded.
+        labels = Config.get('general.characters')
+        labels.append('0')
+
+        # Save the labels
+        pickle_data(labels, Filesystem.save(Config.get('path.data'), 'labels.pickl'))
+
+        with open(Filesystem.save(Config.get('path.data'), 'labels.json'), 'w') as outfile:
+            json.dump(labels, outfile)
 
     def obj_handler(self, obj):
         return self.apply_lookup(obj)
