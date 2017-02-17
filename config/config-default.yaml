@@ -7,6 +7,10 @@ general:
     # Separate each character with a comma with no ending comma present
     characters: A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z
 
+    # Code has two modes, training and test. 'train' trains the model and saves the best model as defined by
+    # criterias. 'test' runs the set suit and gives the final accuracy of the model.
+    mode: train
+
     # Turn debug mode on/off
     debug: false
 
@@ -130,9 +134,19 @@ transformation:
 
 predicting:
     run: true
+
+    # How many epochs to run
     epochs: 10
+
+    # Size of each batch. NOTE: This value must divide the size of training, validation and test sets
     batch-size: 10
+
+    # The learning rate for our network
     learning-rate: 0.0001
+
+    # Evaluating best model to save weights for. With a value of 5 we will store the model if the results are the best
+    # we've seen the past 5 epochs. We evaluate this based on validation loss.
+    best-results: 5
 
     # Class to lazy load for the prediction
     predictor: prediction.tensorflow.networks.sequence.EmbeddingRNNSeq2SeqPredictor

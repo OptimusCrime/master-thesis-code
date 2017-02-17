@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import copy
 import math
+import os
+import re
 import time
 
 import numpy as np
@@ -13,6 +16,9 @@ from rorschach.utilities import Config, LoggerWrapper
 
 
 class Seq2Seq(object):
+
+    MODEL_CKPT_PATTERN = re.compile('^model\.ckpt\-[0-9]\.(?:index|meta|data\-[0-9]*\-of\-[0-9]*)')
+
     def __init__(
         self,
         xseq_len,
@@ -54,6 +60,8 @@ class Seq2Seq(object):
         }
 
         self.data_accuracy = []
+
+        self.data_stores = []
 
         self.epoch_time_start = None
 
@@ -256,7 +264,8 @@ class Seq2Seq(object):
             # Plot the loss
             self.callback.run({
                 'loss_train': self.data_loss['train'],
-                'loss_validate': self.data_loss['validate']
+                'loss_validate': self.data_loss['validate'],
+                'stores': self.data_stores
             }, CallbackRunner.LOSS)
 
             # Plot the accuracy
@@ -274,8 +283,7 @@ class Seq2Seq(object):
         pass
 
     def run(self):
-        # TODO
-        # saver = tf.train.Saver()
+        saver = tf.train.Saver()
 
         # Start a session
         if not self.session:
@@ -297,12 +305,14 @@ class Seq2Seq(object):
             # Train the model
             self.train()
 
-            # TODO
-            # Save the model to disk
-            # saver.save(sess, self.ckpt_path + self.model_name + '.ckpt', global_step=i)
-
             # Validate the model
             self.validate()
+
+            # Check if we should save our model
+            if self.should_save_session():
+                self.log.write('- Saving model')
+
+                self.save_session(saver, epoch)
 
             self.log.write('- Execution: {}'.format(TimeParse.parse(self.epoch_time_start)))
 
@@ -310,6 +320,39 @@ class Seq2Seq(object):
 
         # Run final validation
         self.test()
+
+    def should_save_session(self):
+        validation_loss = copy.copy(self.data_loss['validate'])
+        if len(validation_loss) <= Config.get('predicting.best-results'):
+            return False
+
+        # The current (last) loss
+        current_loss = validation_loss[-1]
+
+        # The other loss values (without the last)
+        validation_loss.pop(-1)
+
+        # If the last value is higher or equal to the highest value in the other losses, we store the weights
+        return current_loss <= min(validation_loss)
+
+    def save_session(self, saver, epoch):
+        # Add save to plot
+        self.data_stores.append(epoch)
+
+        # Delete earlier model files
+        dir_content = os.listdir(os.path.join(Config.get('path.output'), Config.get('uid')))
+        for content in dir_content:
+            if not Seq2Seq.MODEL_CKPT_PATTERN.match(content):
+                continue
+
+            os.remove(Config.get_path('path.output', content, fragment=Config.get('uid')))
+
+        # Save the ckpt dump
+        saver.save(
+            self.session,
+            Config.get_path('path.output', 'model.ckpt', fragment=Config.get('uid')),
+            global_step=epoch
+        )
 
     def restore_last_session(self):
         # TODO

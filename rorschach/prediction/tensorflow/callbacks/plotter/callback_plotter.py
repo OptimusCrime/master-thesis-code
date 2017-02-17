@@ -30,6 +30,9 @@ class CallbackPlotter():
         self.set_ticks(ax)
         self.adjust_legend(ax)
 
+        if 'stores' in self.data and len(self.data['stores']) > 0:
+            self.add_stores(ax)
+
         self.save_plot(fig)
 
     def build_axes(self):
@@ -90,6 +93,13 @@ class CallbackPlotter():
 
         ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.13),
                   fancybox=True, shadow=True, ncol=5)
+
+    def add_stores(self, ax):
+        for epoch in self.data['stores']:
+            value = self.data['loss_validate'][epoch]
+
+            store = plt.Circle((epoch, value), 0.07, color='r', alpha=0.3)
+            ax.add_artist(store)
 
     def save_plot(self, fig):
         file_name = 'plot_loss'
