@@ -7,7 +7,7 @@ import numpy as np
 
 from rorschach.common import DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
-from rorschach.utilities import Config, pickle_data, Filesystem
+from rorschach.utilities import Config, Filesystem, pickle_data
 
 
 class IntegerifyLabelHandler(BaseHandler):
