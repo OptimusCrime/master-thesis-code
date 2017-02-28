@@ -29,7 +29,6 @@ class LoggerWrapper:
                     'level': 'DEBUG',
                     'class': 'logging.handlers.RotatingFileHandler',
                     'formatter': 'default',
-                    'filename': Config.get_path('path.output', 'debug.log', fragment=Config.get('uid')),
                     'maxBytes': 1024 * 1024 * 10,
                     'backupCount': 1
                 }
@@ -61,7 +60,6 @@ class LoggerWrapper:
                     'level': 'DEBUG',
                     'class': 'logging.handlers.RotatingFileHandler',
                     'formatter': 'default',
-                    'filename': Config.get_path('path.output', 'run.log', fragment=Config.get('uid')),
                     'maxBytes': 1024 * 1024 * 10,
                     'backupCount': 1
                 }
@@ -86,6 +84,12 @@ class LoggerWrapper:
 
     @staticmethod
     def load(name, logger_type=DEFAULT):
+        # This may be the ugliest hack every applied. Because static variable are evaluated on initialization
+        # we instead add this logic here, which is not ran before the first call to this function. We can then avoid
+        # that our system creates a new directory for every uid seed.
+        LoggerWrapper.LOG_CONFIGS[logger_type]['handlers']['file']['filename'] = \
+            Config.get_path('path.output', 'run.log', fragment=Config.get('uid'))
+
         dictConfig(LoggerWrapper.LOG_CONFIGS[logger_type])
 
         return logging.getLogger(name)
