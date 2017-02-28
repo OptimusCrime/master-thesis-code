@@ -4,12 +4,17 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import ticker as ticker
+from matplotlib.patches import Ellipse
 
 from rorschach.prediction.tensorflow.callbacks import CallbackRunner
 from rorschach.utilities import Config
 
 
 class CallbackPlotter():
+
+    CIRCLE_WIDTH = 0.15
+    FIGURE_WIDTH = 16
+    FIGURE_HEIGHT = 6
 
     def __init__(self):
         super().__init__()
@@ -36,7 +41,7 @@ class CallbackPlotter():
         self.save_plot(fig)
 
     def build_axes(self):
-        fig = plt.figure(figsize=(16, 6), dpi=80)
+        fig = plt.figure(figsize=(CallbackPlotter.FIGURE_WIDTH, CallbackPlotter.FIGURE_HEIGHT), dpi=80)
 
         ax = fig.add_subplot(111)
 
@@ -88,7 +93,7 @@ class CallbackPlotter():
 
         ax.set_position([box_loss.x0,
                          box_loss.y0 + box_loss.height * 0.12,
-                         box_loss.width,
+                         box_loss.width * 0.88,
                          box_loss.height * 0.88])
 
         ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.13),
@@ -98,7 +103,12 @@ class CallbackPlotter():
         for epoch in self.data['stores']:
             value = self.data['loss_validate'][epoch]
 
-            store = plt.Circle((epoch, value), 0.07, color='r', alpha=0.3)
+            # Because axis are different
+            ellipse_width = CallbackPlotter.CIRCLE_WIDTH * \
+                            (CallbackPlotter.FIGURE_HEIGHT  / CallbackPlotter.FIGURE_WIDTH) * 2
+            ellipse_height = CallbackPlotter.CIRCLE_WIDTH
+
+            store = Ellipse((epoch, value), ellipse_width, ellipse_height, color='r', alpha=0.3)
             ax.add_artist(store)
 
     def save_plot(self, fig):
