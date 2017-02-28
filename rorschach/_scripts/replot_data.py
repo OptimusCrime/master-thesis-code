@@ -34,8 +34,7 @@ class ReplotData:
         self.replot(content)
 
     def find_uid(self):
-        #uid = input('Enter uid for replotting: ')
-        self.uid = '2017-02-28-16-10-19-zterzb'
+        self.uid = input('Enter uid for replotting: ')
 
         if self.uid is None or len(self.uid) == 0:
             raise Exception('No valid uid provided')
