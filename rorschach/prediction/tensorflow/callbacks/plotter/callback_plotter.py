@@ -20,7 +20,7 @@ class CallbackPlotter():
     def run(self):
         # Do not produce any figure the first epoch, not enough data
         for key, value in self.data.items():
-            if len(value) == 1:
+            if key != 'stores' and len(value) == 1:
                 return
 
         fig, ax = self.build_axes()

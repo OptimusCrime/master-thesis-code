@@ -10,6 +10,7 @@ import time
 import numpy as np
 import tensorflow as tf
 
+from rorschach.prediction.common.tools import DataDumper
 from rorschach.prediction.tensorflow.callbacks import CallbackRunner
 from rorschach.prediction.tensorflow.tools import LogPrettifier, TimeParse
 from rorschach.utilities import Config, LoggerWrapper
@@ -189,7 +190,7 @@ class Seq2Seq(object):
         train_mean_loss = np.mean(train_losses)
 
         # Add to our store
-        self.data_loss['train'].append(train_mean_loss)
+        self.data_loss['train'].append(float(train_mean_loss))
 
         self.log.write('- Loss: {:.5f}'.format(train_mean_loss))
 
@@ -257,8 +258,8 @@ class Seq2Seq(object):
         validation_mean_loss = np.mean(validation_losses)
         validation_mean_accuracy = np.mean(validation_accuracies)
 
-        self.data_loss['validate'].append(validation_mean_loss)
-        self.data_accuracy.append(validation_mean_accuracy)
+        self.data_loss['validate'].append(float(validation_mean_loss))
+        self.data_accuracy.append(float(validation_mean_accuracy))
 
         if self.callback is not None:
             # Plot the loss
@@ -281,6 +282,14 @@ class Seq2Seq(object):
 
     def test(self):
         pass
+
+    def dump_data(self):
+        DataDumper.dump({
+            'validate_accuracy': self.data_accuracy,
+            'validate_loss': self.data_loss['validate'],
+            'train_loss': self.data_loss['train'],
+            'stores': self.data_stores
+        })
 
     def run(self):
         saver = tf.train.Saver()
@@ -307,6 +316,9 @@ class Seq2Seq(object):
 
             # Validate the model
             self.validate()
+
+            # Dump the data
+            self.dump_data()
 
             # Check if we should save our model
             if self.should_save_session():

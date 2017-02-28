@@ -6,6 +6,7 @@ import sys
 
 import yaml
 
+from rorschach.common import DataStore
 from rorschach.utilities import Filesystem
 
 
@@ -103,7 +104,8 @@ class Config:
             path_string = Config.get(path)
 
         # Ensure the locatin exists (for log files)
-        Filesystem.create(path_string, outside=True)
+        if 'no-create' in DataStore.CONTENT or DataStore.CONTENT['no-create'] is False:
+            Filesystem.create(path_string, outside=True)
 
         return os.path.join(path_string, file)
 
