@@ -12,7 +12,7 @@ from rorschach.prediction.keras.callbacks.plotter import PlotCallback
 from rorschach.utilities import Config, LoggerWrapper  # isort:skip
 
 
-class LSTMEmbeddedPredictor(BasePredictor):
+class LSTMEmbeddingPredictor(BasePredictor):
 
     def __init__(self):
         super().__init__()
@@ -48,7 +48,7 @@ class LSTMEmbeddedPredictor(BasePredictor):
 
         self.model.summary()
 
-        plot(self.model, to_file='model_rnn.png', show_shapes=True)
+        # plot(self.model, to_file='model_rnn.png', show_shapes=True)
 
     def train(self):
         self.log.info('Begin training')

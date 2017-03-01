@@ -26,7 +26,7 @@ class ModuleImporter:
             return getattr(module, model_name)()
 
         except Exception as e:
-            print(str(e))
             print('Could not import module ' + module_string, file=sys.stderr)
 
-        return None
+            # Reraise previous exception
+            raise
