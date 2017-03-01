@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
+
 import logging
 from logging.config import dictConfig
 
-from rorschach.utilities import Config, UidGenerator
+from rorschach.utilities import Config, UidGenerator, Filesystem
 
 UidGenerator.run()
 
@@ -89,6 +91,10 @@ class LoggerWrapper:
         # that our system creates a new directory for every uid seed.
         LoggerWrapper.LOG_CONFIGS[logger_type]['handlers']['file']['filename'] = \
             Config.get_path('path.output', 'run.log', fragment=Config.get('uid'))
+
+        directory = Config.get_path('path.output', Config.get('uid'))
+        if not os.path.exists(directory):
+            Filesystem.create(directory, outside=True)
 
         dictConfig(LoggerWrapper.LOG_CONFIGS[logger_type])
 
