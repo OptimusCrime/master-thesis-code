@@ -11,8 +11,8 @@ class PredictorWrapper:
     def __init__(self):
         self.predictor = None
 
-    def run(self):
-        assert(self.predictor is not None)
+    def setup(self):
+        assert (self.predictor is not None)
 
         self.predictor.training_set = unpickle_data(Config.get_path('path.data', 'training_set.pickl'))
         self.predictor.validate_set = unpickle_data(Config.get_path('path.data', 'validate_set.pickl'))
@@ -22,7 +22,14 @@ class PredictorWrapper:
             self.transform()
 
         self.predictor.prepare()
-        self.predictor.run()
+
+    def train(self):
+        self.setup()
+        self.predictor.train()
+
+    def test(self):
+        self.setup()
+        self.predictor.test()
 
     def transform(self):
         transformator = Transformator()

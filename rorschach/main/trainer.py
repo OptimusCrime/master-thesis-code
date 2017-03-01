@@ -26,4 +26,4 @@ class Trainer:
         if Config.get('predicting.run') and Config.get('predicting.predictor') is not None:
             wrapper = PredictorWrapper()
             wrapper.predictor = ModuleImporter.load(Config.get('predicting.predictor'))
-            wrapper.run()
+            wrapper.train()

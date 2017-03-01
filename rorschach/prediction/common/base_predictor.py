@@ -21,5 +21,8 @@ class BasePredictor:
     def prepare(self):
         pass
 
-    def run(self):
+    def train(self):
+        pass
+
+    def test(self):
         pass

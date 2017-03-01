@@ -291,7 +291,7 @@ class Seq2Seq(object):
             'stores': self.data_stores
         })
 
-    def run(self):
+    def start_train(self):
         saver = tf.train.Saver()
 
         # Start a session
@@ -332,6 +332,9 @@ class Seq2Seq(object):
 
         # Run final validation
         self.test()
+
+    def start_test(self):
+        pass
 
     def should_save_session(self):
         validation_loss = copy.copy(self.data_loss['validate'])

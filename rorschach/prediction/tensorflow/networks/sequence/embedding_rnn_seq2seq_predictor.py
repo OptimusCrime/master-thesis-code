@@ -69,9 +69,16 @@ class EmbeddingRNNSeq2SeqPredictor(BasePredictor):
 
         self.log.info('Finished building model')
 
-    def run(self):
+    def train(self):
         self.log.info('Begin')
 
-        self.model.run()
+        self.model.start_train()
+
+        self.log.info('Finished')
+
+    def test(self):
+        self.log.info('Begin')
+
+        self.model.start_test()
 
         self.log.info('Finished')
