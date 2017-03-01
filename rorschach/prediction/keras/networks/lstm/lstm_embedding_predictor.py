@@ -22,20 +22,16 @@ class LSTMEmbeddingPredictor(BasePredictor):
         self.callback = None
 
     def prepare(self):
-        self.keras_setup()
-
-    def keras_setup(self):
         self.callback = PlotCallback()
         self.callback.epochs = Config.get('predicting.epochs')
 
         self.model = Sequential()
         self.model.add(InputLayer(batch_input_shape=(Config.get('predicting.batch_size'), 48)))
-        self.model.add(Embedding(300, 19))
+        self.model.add(Embedding(1024, 19))
         self.model.add(LSTM(output_dim=256,
                             return_sequences=True,
                             W_regularizer=WeightRegularizer(l1=0.01, l2=0.01),
                             b_regularizer=ActivityRegularizer(l1=0.01, l2=0.01),
-                            stateful=False,
                             ))
 
         self.model.add(Dropout(0.2))
@@ -51,20 +47,18 @@ class LSTMEmbeddingPredictor(BasePredictor):
         plot(self.model, to_file='model_rnn.png', show_shapes=True)
 
     def train(self):
-        self.log.info('Begin training')
+        self.log.info('Begin')
+
         self.model.fit(self.training_images_transformed,
                        self.training_labels_transformed,
                        nb_epoch=Config.get('predicting.epochs'),
                        verbose=1,
                        batch_size=Config.get('predicting.batch_size'),
-                       validation_data=(self.test_images_transformed, self.test_labels_transformed),
+                       validation_data=(self.validate_images_transformed, self.validate_labels_transformed),
                        callbacks=[self.callback]
                        )
 
-        self.log.info('Finished training')
+        self.log.info('Finish')
 
     def predict(self):
         self.log.info('Begin predicting')
-
-        derp = self.model.predict(self.test_images_transformed, batch_size=100)
-        print(list(derp[0:2]))
