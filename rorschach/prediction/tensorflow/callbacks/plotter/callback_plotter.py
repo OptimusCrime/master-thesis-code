@@ -104,8 +104,8 @@ class CallbackPlotter():
             value = self.data['loss_validate'][epoch]
 
             # Because axis are different
-            ellipse_width = CallbackPlotter.CIRCLE_WIDTH * \
-                            (CallbackPlotter.FIGURE_HEIGHT  / CallbackPlotter.FIGURE_WIDTH) * 2
+            ellipse_width = CallbackPlotter.CIRCLE_WIDTH * (
+                CallbackPlotter.FIGURE_HEIGHT / CallbackPlotter.FIGURE_WIDTH) * 2
             ellipse_height = CallbackPlotter.CIRCLE_WIDTH
 
             store = Ellipse((epoch, value), ellipse_width, ellipse_height, color='r', alpha=0.3)

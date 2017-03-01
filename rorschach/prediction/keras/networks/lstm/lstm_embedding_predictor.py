@@ -48,7 +48,7 @@ class LSTMEmbeddingPredictor(BasePredictor):
 
         self.model.summary()
 
-        # plot(self.model, to_file='model_rnn.png', show_shapes=True)
+        plot(self.model, to_file='model_rnn.png', show_shapes=True)
 
     def train(self):
         self.log.info('Begin training')

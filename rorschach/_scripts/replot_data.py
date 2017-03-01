@@ -2,11 +2,14 @@
 # -*- coding: utf-8 -*-
 
 # Avoid creating a new directory each time we run this script
+# flake8: noqa: E402
+
+
 from rorschach.common import DataStore # isort:skip
 DataStore.CONTENT['no-create'] = True
 
-import os
 import json
+import os
 
 from rorschach.prediction.tensorflow.callbacks import CallbackRunner
 from rorschach.prediction.tensorflow.callbacks.plotter import CallbackPlotter
@@ -69,6 +72,7 @@ class ReplotData:
         }, CallbackRunner.ACCURACY)
 
         print('Successfully replotted data')
+
 
 if __name__ == '__main__':
     replot_data = ReplotData()
