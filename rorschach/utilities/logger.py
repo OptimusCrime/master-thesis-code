@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import logging
 import os
 
-import logging
+
 from logging.config import dictConfig
 
-from rorschach.utilities import Config, UidGenerator, Filesystem
+from rorschach.utilities import Config, Filesystem, UidGenerator
 
 UidGenerator.run()
 
