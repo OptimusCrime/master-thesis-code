@@ -6,11 +6,14 @@ from matplotlib import pyplot as plt
 from matplotlib import ticker as ticker
 from matplotlib.patches import Ellipse
 
-from rorschach.prediction.tensorflow.callbacks import CallbackRunner
+from rorschach.prediction.common.callbacks import BaseCallback
 from rorschach.utilities import Config
 
 
-class CallbackPlotter():
+class PlotterCallback(BaseCallback):
+
+    LOSS = 0
+    ACCURACY = 1
 
     CIRCLE_WIDTH = 0.15
     FIGURE_WIDTH = 16
@@ -19,12 +22,9 @@ class CallbackPlotter():
     def __init__(self):
         super().__init__()
 
-        self.data = {}
-        self.callback_type = None
-
     def run(self):
         # Do not produce any figure the first epoch, not enough data
-        for key, value in self.data.items():
+        for key, value in self.data.all().items():
             if key != 'stores' and len(value) == 1:
                 return
 
@@ -41,14 +41,14 @@ class CallbackPlotter():
         self.save_plot(fig)
 
     def build_axes(self):
-        fig = plt.figure(figsize=(CallbackPlotter.FIGURE_WIDTH, CallbackPlotter.FIGURE_HEIGHT), dpi=80)
+        fig = plt.figure(figsize=(PlotterCallback.FIGURE_WIDTH, PlotterCallback.FIGURE_HEIGHT), dpi=80)
 
         ax = fig.add_subplot(111)
 
         return fig, ax
 
     def add_plots(self, ax):
-        if self.callback_type == CallbackRunner.LOSS:
+        if PlotterCallback.LOSS in self.flags:
             ax.plot(self.data['loss_train'], label="training")
             ax.plot(self.data['loss_validate'], label="validation")
 
@@ -58,7 +58,7 @@ class CallbackPlotter():
         ax.plot(self.data['accuracy'], label="accuracy")
 
     def add_labels(self, ax):
-        if self.callback_type == CallbackRunner.LOSS:
+        if PlotterCallback.LOSS in self.flags:
             ax.set_title('loss')
             ax.set_ylabel('loss')
 
@@ -77,7 +77,7 @@ class CallbackPlotter():
         ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
 
         # Specific for loss
-        if self.callback_type == CallbackRunner.LOSS:
+        if PlotterCallback.LOSS in self.flags:
             ax.set_xlim(xmin=0, xmax=len(self.data['loss_validate']) - 1)
 
             return
@@ -104,16 +104,16 @@ class CallbackPlotter():
             value = self.data['loss_validate'][epoch]
 
             # Because axis are different
-            ellipse_width = CallbackPlotter.CIRCLE_WIDTH * (
-                CallbackPlotter.FIGURE_HEIGHT / CallbackPlotter.FIGURE_WIDTH) * 2
-            ellipse_height = CallbackPlotter.CIRCLE_WIDTH
+            ellipse_width = PlotterCallback.CIRCLE_WIDTH * (
+                PlotterCallback.FIGURE_HEIGHT / PlotterCallback.FIGURE_WIDTH) * 2
+            ellipse_height = PlotterCallback.CIRCLE_WIDTH
 
             store = Ellipse((epoch, value), ellipse_width, ellipse_height, color='r', alpha=0.3)
             ax.add_artist(store)
 
     def save_plot(self, fig):
         file_name = 'plot_loss'
-        if self.callback_type == CallbackRunner.ACCURACY:
+        if PlotterCallback.ACCURACY in self.flags:
             file_name = 'plot_accuracy'
 
         fig.savefig(Config.get_path('path.output', file_name + '.png', fragment=Config.get('uid')))

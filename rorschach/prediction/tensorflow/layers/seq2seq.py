@@ -1,24 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import copy
 import math
-import os
-import re
 import time
 
 import numpy as np
 import tensorflow as tf
 
-from rorschach.prediction.common.tools import DataDumper
-from rorschach.prediction.tensorflow.callbacks import CallbackRunner
+from rorschach.prediction.common import CallbackRunner
+from rorschach.prediction.common.callbacks import DataCallback, PlotterCallback, TensorflowSaverCallback
 from rorschach.prediction.tensorflow.tools import LogPrettifier, TimeParse
 from rorschach.utilities import Config, LoggerWrapper
 
 
-class Seq2Seq(object):
-
-    MODEL_CKPT_PATTERN = re.compile('^model\.ckpt\-[0-9]\.(?:index|meta|data\-[0-9]*\-of\-[0-9]*)')
+class Seq2Seq():
 
     def __init__(
         self,
@@ -33,6 +28,7 @@ class Seq2Seq(object):
         self.log = LogPrettifier(LoggerWrapper.load(__name__, LoggerWrapper.SIMPLE))
         self.session = None
         self.callback = None
+        self.data_container = None
 
         # Settings
         self.xseq_len = xseq_len
@@ -55,16 +51,11 @@ class Seq2Seq(object):
         self.label_placeholders = None
         self.keep_probability = None
 
-        self.data_loss = {
-            'train': [],
-            'validate': []
-        }
-
-        self.data_accuracy = []
-
-        self.data_stores = []
-
         self.epoch_time_start = None
+
+    def register_data_container(self, data_container):
+        self.callback = CallbackRunner(data_container)
+        self.data_container = data_container
 
     def build_graph(self):
         # Reset the default graph of Tensorflow here
@@ -190,7 +181,7 @@ class Seq2Seq(object):
         train_mean_loss = np.mean(train_losses)
 
         # Add to our store
-        self.data_loss['train'].append(float(train_mean_loss))
+        self.data_container.add_list('train_loss', float(train_mean_loss))
 
         self.log.write('- Loss: {:.5f}'.format(train_mean_loss))
 
@@ -258,21 +249,15 @@ class Seq2Seq(object):
         validation_mean_loss = np.mean(validation_losses)
         validation_mean_accuracy = np.mean(validation_accuracies)
 
-        self.data_loss['validate'].append(float(validation_mean_loss))
-        self.data_accuracy.append(float(validation_mean_accuracy))
+        self.data_container.add_list('validate_loss', float(validation_mean_loss))
+        self.data_container.add_list('validate_accuracy', float(validation_mean_accuracy))
 
         if self.callback is not None:
             # Plot the loss
-            self.callback.run({
-                'loss_train': self.data_loss['train'],
-                'loss_validate': self.data_loss['validate'],
-                'stores': self.data_stores
-            }, CallbackRunner.LOSS)
+            self.callback.run([PlotterCallback], [PlotterCallback.LOSS])
 
             # Plot the accuracy
-            self.callback.run({
-                'accuracy': self.data_accuracy
-            }, CallbackRunner.ACCURACY)
+            self.callback.run([PlotterCallback], [PlotterCallback.ACCURACY])
 
         # Output debug
         self.log.write('- Validate loss: {:.5f}'.format(validation_mean_loss))
@@ -282,14 +267,6 @@ class Seq2Seq(object):
 
     def test(self):
         pass
-
-    def dump_data(self):
-        DataDumper.dump({
-            'validate_accuracy': self.data_accuracy,
-            'validate_loss': self.data_loss['validate'],
-            'train_loss': self.data_loss['train'],
-            'stores': self.data_stores
-        })
 
     def start_train(self):
         saver = tf.train.Saver()
@@ -302,6 +279,8 @@ class Seq2Seq(object):
 
         # Loop the epochs
         for epoch in range(Config.get('predicting.epochs')):
+            self.data_container.set('epoch', epoch)
+
             self.epoch_time_start = time.time()
 
             log_type = LogPrettifier.EPOCH
@@ -317,14 +296,16 @@ class Seq2Seq(object):
             # Validate the model
             self.validate()
 
-            # Dump the data
-            self.dump_data()
+            if self.callback is not None:
+                # Dump the data
+                self.callback.run([DataCallback])
 
-            # Check if we should save our model
-            if self.should_save_session():
-                self.log.write('- Saving model')
-
-                self.save_session(saver, epoch)
+                # Dump weights
+                self.callback.run([TensorflowSaverCallback], None, {
+                    'saver': saver,
+                    'sess': self.session,
+                    'log': self.log
+                })
 
             self.log.write('- Execution: {}'.format(TimeParse.parse(self.epoch_time_start)))
 
@@ -335,39 +316,6 @@ class Seq2Seq(object):
 
     def start_test(self):
         pass
-
-    def should_save_session(self):
-        validation_loss = copy.copy(self.data_loss['validate'])
-        if len(validation_loss) <= Config.get('predicting.best-results'):
-            return False
-
-        # The current (last) loss
-        current_loss = validation_loss[-1]
-
-        # The other loss values (without the last)
-        validation_loss.pop(-1)
-
-        # If the last value is higher or equal to the highest value in the other losses, we store the weights
-        return current_loss <= min(validation_loss)
-
-    def save_session(self, saver, epoch):
-        # Add save to plot
-        self.data_stores.append(epoch)
-
-        # Delete earlier model files
-        dir_content = os.listdir(os.path.join(Config.get('path.output'), Config.get('uid')))
-        for content in dir_content:
-            if not Seq2Seq.MODEL_CKPT_PATTERN.match(content):
-                continue
-
-            os.remove(Config.get_path('path.output', content, fragment=Config.get('uid')))
-
-        # Save the ckpt dump
-        saver.save(
-            self.session,
-            Config.get_path('path.output', 'model.ckpt', fragment=Config.get('uid')),
-            global_step=epoch
-        )
 
     def restore_last_session(self):
         # TODO

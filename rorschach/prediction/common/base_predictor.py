@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from rorschach.prediction.common import DataContainer
+
 
 class BasePredictor:
 
     def __init__(self):
         self.data = {}
+
+        self.data_container = DataContainer()
 
         self.training_set = None
         self.test_set = None
