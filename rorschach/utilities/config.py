@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-import sys
 
 import yaml
 
@@ -28,7 +27,7 @@ class Config:
 
         # Make sure that we found anything, or just quit life
         if Config.CONTENTS is None or Config.CONTENTS == '':
-            sys.exit(1)
+            raise Exception('Could not find any config file')
 
     @staticmethod
     def override_config(obj, path=''):

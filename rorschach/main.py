@@ -12,7 +12,7 @@ def main():
     if Config.get('general.mode') == 'test':
         return Tester.run()
 
-    raise Exception('Unknown mode found. Should be either train or test.')
+    raise Exception('Unknown mode. Should be either train or test.')
 
 
 if __name__ == '__main__':
