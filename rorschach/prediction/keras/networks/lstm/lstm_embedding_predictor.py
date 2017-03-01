@@ -8,7 +8,7 @@ from keras.utils.visualize_util import plot
 
 from rorschach.prediction.common import BasePredictor
 from rorschach.prediction.keras.callbacks.plotter import PlotCallback
-
+from rorschach.prediction.keras.tools import DimCalculator
 from rorschach.utilities import Config, LoggerWrapper  # isort:skip
 
 
@@ -22,12 +22,15 @@ class LSTMEmbeddingPredictor(BasePredictor):
         self.callback = None
 
     def prepare(self):
+        input_width = DimCalculator.width(self.training_images_transformed)
+        output_depth = DimCalculator.depth()
+
         self.callback = PlotCallback()
         self.callback.epochs = Config.get('predicting.epochs')
 
         self.model = Sequential()
-        self.model.add(InputLayer(batch_input_shape=(Config.get('predicting.batch_size'), 48)))
-        self.model.add(Embedding(1024, 19))
+        self.model.add(InputLayer(batch_input_shape=(Config.get('predicting.batch_size'), input_width)))
+        self.model.add(Embedding(1024, output_depth))
         self.model.add(LSTM(output_dim=256,
                             return_sequences=True,
                             W_regularizer=WeightRegularizer(l1=0.01, l2=0.01),
@@ -36,7 +39,7 @@ class LSTMEmbeddingPredictor(BasePredictor):
 
         self.model.add(Dropout(0.2))
 
-        self.model.add(Dense(output_dim=19))
+        self.model.add(Dense(output_dim=output_depth))
 
         self.model.add(Activation('softmax'))
 

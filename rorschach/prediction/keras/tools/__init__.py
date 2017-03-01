@@ -1,1 +1,1 @@
-from .width_calculator import WidthCalculator
+from .dim_calculator import DimCalculator
