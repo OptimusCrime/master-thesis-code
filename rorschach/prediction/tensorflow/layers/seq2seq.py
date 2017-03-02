@@ -303,7 +303,7 @@ class Seq2Seq():
                 # Dump weights
                 self.callback.run([TensorflowSaverCallback], None, {
                     'saver': saver,
-                    'sess': self.session,
+                    'session': self.session,
                     'log': self.log
                 })
 

@@ -24,8 +24,8 @@ class PlotterCallback(BaseCallback):
 
     def run(self):
         # Do not produce any figure the first epoch, not enough data
-        for key, value in self.data.all().items():
-            if key != 'stores' and len(value) == 1:
+        for key in ['train_loss', 'validate_loss', 'validate_accuracy']:
+            if self.data.has(key) and len(self.data.get(key)) == 1:
                 return
 
         fig, ax = self.build_axes()
@@ -35,7 +35,7 @@ class PlotterCallback(BaseCallback):
         self.set_ticks(ax)
         self.adjust_legend(ax)
 
-        if 'stores' in self.data and len(self.data['stores']) > 0:
+        if self.data.has('stores') and len(self.data.get('stores')) > 0:
             self.add_stores(ax)
 
         self.save_plot(fig)
@@ -49,13 +49,13 @@ class PlotterCallback(BaseCallback):
 
     def add_plots(self, ax):
         if PlotterCallback.LOSS in self.flags:
-            ax.plot(self.data['loss_train'], label="training")
-            ax.plot(self.data['loss_validate'], label="validation")
+            ax.plot(self.data.get('train_loss'), label="training")
+            ax.plot(self.data.get('validate_loss'), label="validation")
 
             return
 
         # Add plots
-        ax.plot(self.data['accuracy'], label="accuracy")
+        ax.plot(self.data.get('validate_accuracy'), label="accuracy")
 
     def add_labels(self, ax):
         if PlotterCallback.LOSS in self.flags:
@@ -78,12 +78,12 @@ class PlotterCallback(BaseCallback):
 
         # Specific for loss
         if PlotterCallback.LOSS in self.flags:
-            ax.set_xlim(xmin=0, xmax=len(self.data['loss_validate']) - 1)
+            ax.set_xlim(xmin=0, xmax=len(self.data.get('validate_loss')) - 1)
 
             return
 
         # Specific for accuracy
-        ax.set_xlim(xmin=0, xmax=len(self.data['accuracy']) - 1)
+        ax.set_xlim(xmin=0, xmax=len(self.data.get('validate_accuracy')) - 1)
         ax.set_ylim(0., 1.)
         ax.set_yticks(np.arange(0., 1.1, 0.1))
 
@@ -100,8 +100,8 @@ class PlotterCallback(BaseCallback):
                   fancybox=True, shadow=True, ncol=5)
 
     def add_stores(self, ax):
-        for epoch in self.data['stores']:
-            value = self.data['loss_validate'][epoch]
+        for epoch in self.data.get('stores'):
+            value =self.data.get('validate_loss')[epoch]
 
             # Because axis are different
             ellipse_width = PlotterCallback.CIRCLE_WIDTH * (

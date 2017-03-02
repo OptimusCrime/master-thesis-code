@@ -25,7 +25,20 @@ class TensorflowSaverCallback(BaseCallback):
     def should_save_session(self):
         validation_loss = copy.copy(self.data.get('validate_loss'))
         if len(validation_loss) <= Config.get('predicting.best-results'):
-            return False
+            # We do not have enough data to store correctly. To make sure we always have some weights stored, do
+            # following checks:
+
+            # 1. If this is the first epoch dump weights either way
+            if len(validation_loss) == 1:
+                return True
+
+            # 2. If we have more than one epochs, check if the current loss is "equal" to the overall best loss we have
+            # seen this far
+            current_loss = validation_loss[-1]
+            validation_loss.pop(-1)
+
+            # We are really just comparing floats here
+            return abs(min(validation_loss) - current_loss) <= 0.001
 
         # The current (last) loss
         current_loss = validation_loss[-1]

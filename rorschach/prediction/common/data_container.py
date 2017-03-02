@@ -37,6 +37,9 @@ class DataContainer:
     def all(self):
         return self.data
 
+    def has(self, key):
+        return key in self.data
+
     def get(self, key):
         # This may throw an exception. If it does, you messed up!
         return self.data[key]
