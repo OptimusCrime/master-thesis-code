@@ -4,7 +4,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import ticker as ticker
-from matplotlib.patches import Ellipse
 
 from rorschach.prediction.common.callbacks import BaseCallback
 from rorschach.utilities import Config
@@ -14,10 +13,6 @@ class PlotterCallback(BaseCallback):
 
     LOSS = 0
     ACCURACY = 1
-
-    CIRCLE_WIDTH = 0.15
-    FIGURE_WIDTH = 16
-    FIGURE_HEIGHT = 6
 
     def __init__(self):
         super().__init__()
@@ -35,13 +30,13 @@ class PlotterCallback(BaseCallback):
         self.set_ticks(ax)
         self.adjust_legend(ax)
 
-        if self.data.has('stores') and len(self.data.get('stores')) > 0:
+        if PlotterCallback.LOSS in self.flags and self.data.has('stores') and len(self.data.get('stores')) > 0:
             self.add_stores(ax)
 
         self.save_plot(fig)
 
     def build_axes(self):
-        fig = plt.figure(figsize=(PlotterCallback.FIGURE_WIDTH, PlotterCallback.FIGURE_HEIGHT), dpi=80)
+        fig = plt.figure(figsize=(16, 6), dpi=80)
 
         ax = fig.add_subplot(111)
 
@@ -100,16 +95,13 @@ class PlotterCallback(BaseCallback):
                   fancybox=True, shadow=True, ncol=5)
 
     def add_stores(self, ax):
+        values = []
+        sizes = []
         for epoch in self.data.get('stores'):
-            value =self.data.get('validate_loss')[epoch]
+            values.append(self.data.get('validate_loss')[epoch])
+            sizes.append(100)
 
-            # Because axis are different
-            ellipse_width = PlotterCallback.CIRCLE_WIDTH * (
-                PlotterCallback.FIGURE_HEIGHT / PlotterCallback.FIGURE_WIDTH) * 2
-            ellipse_height = PlotterCallback.CIRCLE_WIDTH
-
-            store = Ellipse((epoch, value), ellipse_width, ellipse_height, color='r', alpha=0.3)
-            ax.add_artist(store)
+        ax.scatter(self.data.get('stores'), values, s=sizes, color='red', alpha=0.3)
 
     def save_plot(self, fig):
         file_name = 'plot_loss'

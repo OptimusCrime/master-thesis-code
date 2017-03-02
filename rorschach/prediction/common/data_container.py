@@ -43,3 +43,6 @@ class DataContainer:
     def get(self, key):
         # This may throw an exception. If it does, you messed up!
         return self.data[key]
+
+    def reset(self, content):
+        self.data = content

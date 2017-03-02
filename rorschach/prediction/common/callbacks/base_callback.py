@@ -8,3 +8,6 @@ class BaseCallback:
         self.data = None
         self.flags = None
         self.information = None
+
+    def run(self):
+        raise Exception('Missing callback run implementation')

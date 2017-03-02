@@ -6,10 +6,9 @@ from keras.models import Sequential
 from keras.regularizers import ActivityRegularizer, WeightRegularizer
 from keras.utils.visualize_util import plot
 
-from rorschach.prediction.common import BasePredictor
-from rorschach.prediction.keras.callbacks.plotter import PlotCallback
+from rorschach.prediction.common import BasePredictor, CallbackRunner, KerasCallbackRunnerBridge
 from rorschach.prediction.keras.tools import DimCalculator
-from rorschach.utilities import Config, LoggerWrapper  # isort:skip
+from rorschach.utilities import Config, LoggerWrapper
 
 
 class LSTMEmbeddingPredictor(BasePredictor):
@@ -25,8 +24,9 @@ class LSTMEmbeddingPredictor(BasePredictor):
         input_width = DimCalculator.width(self.training_images_transformed)
         output_depth = DimCalculator.depth()
 
-        self.callback = PlotCallback()
-        self.callback.epochs = Config.get('predicting.epochs')
+        self.callback = KerasCallbackRunnerBridge(
+            CallbackRunner(self.data_container)
+        )
 
         self.model = Sequential()
         self.model.add(InputLayer(batch_input_shape=(Config.get('predicting.batch_size'), input_width)))
@@ -47,6 +47,9 @@ class LSTMEmbeddingPredictor(BasePredictor):
 
         self.model.summary()
 
+        # Bootstrap our model to the bridge
+        self.callback.model = self.model
+
         plot(self.model, to_file='model_rnn.png', show_shapes=True)
 
     def train(self):
@@ -56,7 +59,7 @@ class LSTMEmbeddingPredictor(BasePredictor):
                        self.training_labels_transformed,
                        nb_epoch=Config.get('predicting.epochs'),
                        verbose=1,
-                       batch_size=Config.get('predicting.batch_size'),
+                       batch_size=Config.get('predicting.batch-size'),
                        validation_data=(self.validate_images_transformed, self.validate_labels_transformed),
                        callbacks=[self.callback]
                        )

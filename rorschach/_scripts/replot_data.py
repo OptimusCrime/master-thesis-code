@@ -11,8 +11,8 @@ DataStore.CONTENT['no-create'] = True
 import json
 import os
 
-from rorschach.prediction.tensorflow.callbacks import CallbackRunner
-from rorschach.prediction.tensorflow.callbacks.plotter import CallbackPlotter
+from rorschach.prediction.common import CallbackRunner, DataContainer
+from rorschach.prediction.common.callbacks import PlotterCallback
 from rorschach.utilities import Config
 
 
@@ -23,9 +23,8 @@ class ReplotData:
         Config.load_config()
 
         self.uid = None
-        self.callback = CallbackRunner([
-            CallbackPlotter
-        ])
+        self.data_container = DataContainer()
+        self.callback = CallbackRunner(self.data_container)
 
     def run(self):
         self.find_uid()
@@ -60,16 +59,10 @@ class ReplotData:
         return None
 
     def replot(self, content):
-        self.callback.run({
-            'loss_train': content['train_loss'],
-            'loss_validate': content['validate_loss'],
-            'stores': content['stores']
-        }, CallbackRunner.LOSS)
+        self.data_container.reset(content)
 
-        # Plot the accuracy
-        self.callback.run({
-            'accuracy': content['validate_accuracy']
-        }, CallbackRunner.ACCURACY)
+        self.callback.run([PlotterCallback], [PlotterCallback.LOSS])
+        self.callback.run([PlotterCallback], [PlotterCallback.ACCURACY])
 
         print('Successfully replotted data')
 
