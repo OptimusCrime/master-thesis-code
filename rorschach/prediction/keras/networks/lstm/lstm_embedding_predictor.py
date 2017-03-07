@@ -56,13 +56,32 @@ class LSTMEmbeddingPredictor(BasePredictor):
         )
 
         self.model = Sequential()
-        self.model.add(InputLayer(batch_input_shape=(Config.get('predicting.batch_size'), input_width)))
-        self.model.add(Embedding(1024, output_depth, mask_zero=True))
-        self.model.add(LSTM(output_dim=256,
-                            return_sequences=True,
-                            W_regularizer=WeightRegularizer(l1=0.01, l2=0.01),
-                            b_regularizer=ActivityRegularizer(l1=0.01, l2=0.01),
-                            ))
+
+        self.model.add(
+            InputLayer(
+                batch_input_shape=(
+                    Config.get('predicting.batch_size'),
+                    input_width
+                )
+            )
+        )
+
+        self.model.add(
+            Embedding(
+                1024,
+                output_depth,
+                mask_zero=True
+            )
+        )
+
+        self.model.add(
+            LSTM(
+                output_dim=256,
+                return_sequences=True,
+                W_regularizer=WeightRegularizer(l1=0.01, l2=0.01),
+                b_regularizer=ActivityRegularizer(l1=0.01, l2=0.01),
+            )
+        )
 
         self.model.add(Dropout(0.2))
 
@@ -70,12 +89,11 @@ class LSTMEmbeddingPredictor(BasePredictor):
 
         self.model.add(Activation('softmax'))
 
-        optimizer = Adam()
-
         self.model.compile(
             loss='categorical_crossentropy',
-            optimizer=optimizer,
+            optimizer='rmsprop',
             metrics=[
+                'categorical_crossentropy'
                 'categorical_accuracy'
             ]
         )
@@ -90,14 +108,15 @@ class LSTMEmbeddingPredictor(BasePredictor):
     def train(self):
         self.log.info('Begin')
 
-        self.model.fit(self.test_images_transformed,
-                       self.test_labels_transformed,
-                       nb_epoch=Config.get('predicting.epochs'),
-                       verbose=1,
-                       batch_size=Config.get('predicting.batch-size'),
-                       validation_data=(self.validate_images_transformed, self.validate_labels_transformed),
-                       callbacks=[self.callback]
-                       )
+        self.model.fit(
+            self.training_images_transformed,
+            self.training_labels_transformed,
+            nb_epoch=Config.get('predicting.epochs'),
+            verbose=1,
+            batch_size=Config.get('predicting.batch-size'),
+            validation_data=(self.validate_images_transformed, self.validate_labels_transformed),
+            callbacks=[self.callback]
+        )
 
         self.log.info('Finish')
 
