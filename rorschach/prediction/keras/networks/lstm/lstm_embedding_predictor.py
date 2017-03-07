@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from keras.layers import LSTM, Activation, Dense, Dropout, Embedding, InputLayer
+from keras.layers import LSTM, Activation, Dense, Dropout, Embedding, InputLayer, TimeDistributed
 from keras.models import Sequential
 from keras.regularizers import ActivityRegularizer, WeightRegularizer
 from keras.utils.visualize_util import plot
@@ -19,6 +19,32 @@ class LSTMEmbeddingPredictor(BasePredictor):
         self.log = LoggerWrapper.load(__name__)
         self.model = None
         self.callback = None
+
+        self.transformation_handlers = [
+            # Initialize the labels
+            'transformation.handlers.initializers.LabelInitializeHandler',
+
+            # Translate individual bits to string representations
+            'transformation.handlers.input.ConcatenateBinaryDataHandler',
+
+            # Pad the input sequence to fit the longest sequence
+            'transformation.handlers.input.PadHandler',
+
+            # Translate text sequences into integers (1B -> -1, 6W -> 6, ...)
+            'transformation.handlers.input.IntegerifyStringSequenceSpatialHandler',
+
+            # Rearrange values from previous handler so the are all positive integers starting from 0
+            'transformation.handlers.input.RearrangeSequenceValuesHandler',
+
+            # Translate the label text to corresponding integer ids (A -> 1, D -> 4, ...)
+            'transformation.handlers.output.IntegerifyLabelHandler',
+
+            # Keras specific handler. Change the output length to the same as the input (LSTMs)
+            'transformation.handlers.output.KerasHandler',
+
+            # Swap inputs and labels
+            'transformation.handlers.finalize.SwapHandler'
+        ]
 
     def prepare(self):
         input_width = DimCalculator.width(self.training_images_transformed)
@@ -39,7 +65,7 @@ class LSTMEmbeddingPredictor(BasePredictor):
 
         self.model.add(Dropout(0.2))
 
-        self.model.add(Dense(output_dim=output_depth))
+        self.model.add(TimeDistributed(Dense(output_dim=output_depth)))
 
         self.model.add(Activation('softmax'))
 

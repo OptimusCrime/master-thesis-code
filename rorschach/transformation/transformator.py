@@ -9,9 +9,10 @@ from rorschach.utilities import Config, LoggerWrapper, ModuleImporter
 
 class Transformator:
 
-    def __init__(self):
+    def __init__(self, handler):
         self.log = LoggerWrapper.load(__name__)
 
+        self.handlers = handlers
         self.data = {}
         self.original_lists = []
         self.transformed_lists = {}
@@ -26,11 +27,9 @@ class Transformator:
             self.transformed_lists[data_list['type']] = data_list['set']
 
     def get_handlers(self):
-        handlers = Config.get('transformation.handlers')
-
         current_input = self.transformed_lists
 
-        for handler_module_path in handlers:
+        for handler_module_path in self.handlers:
             handler_module = ModuleImporter.load(handler_module_path)
 
             if handler_module is not None:

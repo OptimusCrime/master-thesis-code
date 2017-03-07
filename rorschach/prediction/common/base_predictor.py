@@ -15,6 +15,8 @@ class BasePredictor:
         self.test_set = None
         self.validate_set = None
 
+        self.transformation_handlers = []
+
         self.training_images_transformed = None
         self.training_labels_transformed = None
         self.validate_images_transformed = None

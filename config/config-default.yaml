@@ -98,35 +98,6 @@ preprocessing:
     test-set:
         size: 20
 
-##################################################################
-#                       Transformation                           #
-##################################################################
-
-transformation:
-    run: true
-
-    # List of transformations to apply, in order
-    handlers:
-        # Initialize the labels
-        - transformation.handlers.initializers.LabelInitializeHandler
-
-        # Translate individual bits to string representations
-        - transformation.handlers.input.ConcatenateBinaryDataHandler
-
-        # Pad the input sequence to fit the longest sequence
-        - transformation.handlers.input.PadHandler
-
-        # Translate text sequences into integers (1B -> -1, 6W -> 6, ...)
-        - transformation.handlers.input.IntegerifyStringSequenceSpatialHandler
-
-        # Rearrange values from previous handler so the are all positive integers starting from 0
-        - transformation.handlers.input.RearrangeSequenceValuesHandler
-
-        # Translate the label text to corresponding integer ids (A -> 1, D -> 4, ...)
-        - transformation.handlers.output.IntegerifyUniqueLabelHandler
-
-        # Swap inputs and labels
-        - transformation.handlers.finalize.SwapHandler
 
 ##################################################################
 #                         Predicting                             #

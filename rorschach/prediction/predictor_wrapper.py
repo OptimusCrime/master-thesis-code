@@ -18,8 +18,8 @@ class PredictorWrapper:
         self.predictor.validate_set = unpickle_data(Config.get_path('path.data', 'validate_set.pickl'))
         self.predictor.test_set = unpickle_data(Config.get_path('path.data', 'test_set.pickl'))
 
-        if Config.get('transformation.run'):
-            self.transform()
+        if len(self.predictor.transformation_handlers) > 0:
+            self.transform(self.predictor.transformation_handlers)
 
         self.predictor.prepare()
 
