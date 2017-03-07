@@ -42,6 +42,7 @@ class LSTMEmbeddingBidirectionalPredictor(BaseKerasPredictor):
             Bidirectional(
                 LSTM(
                     output_dim=256,
+                    return_sequences=False,
                     W_regularizer=WeightRegularizer(l1=0.01, l2=0.01),
                     b_regularizer=ActivityRegularizer(l1=0.01, l2=0.01),
                 )
@@ -52,10 +53,19 @@ class LSTMEmbeddingBidirectionalPredictor(BaseKerasPredictor):
             Bidirectional(
                 LSTM(
                     output_dim=256,
-                    return_sequences=True,
+                    return_sequences=False,
                     W_regularizer=WeightRegularizer(l1=0.01, l2=0.01),
                     b_regularizer=ActivityRegularizer(l1=0.01, l2=0.01),
                 )
+            )
+        )
+
+        self.model.add(
+            LSTM(
+                output_dim=256,
+                return_sequences=True,
+                W_regularizer=WeightRegularizer(l1=0.01, l2=0.01),
+                b_regularizer=ActivityRegularizer(l1=0.01, l2=0.01),
             )
         )
 

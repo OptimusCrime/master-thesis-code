@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from keras.layers import LSTM, Activation, Dense, Dropout, Embedding, InputLayer, TimeDistributed
+from keras.layers import LSTM, Activation, Dense, Embedding, InputLayer, TimeDistributed
 from keras.models import Sequential
 from keras.regularizers import ActivityRegularizer, WeightRegularizer
 from keras.utils.visualize_util import plot
@@ -32,8 +32,8 @@ class LSTMEmbeddingSimplePredictor(BaseKerasPredictor):
 
         self.model.add(
             Embedding(
+                self.data['voc_size_input'] + 1,
                 1024,
-                output_depth,
                 mask_zero=True
             )
         )
@@ -47,8 +47,6 @@ class LSTMEmbeddingSimplePredictor(BaseKerasPredictor):
             )
         )
 
-        self.model.add(Dropout(0.2))
-
         self.model.add(TimeDistributed(Dense(output_dim=output_depth)))
 
         self.model.add(Activation('softmax'))
@@ -57,8 +55,7 @@ class LSTMEmbeddingSimplePredictor(BaseKerasPredictor):
             loss='categorical_crossentropy',
             optimizer='rmsprop',
             metrics=[
-                'categorical_crossentropy'
-                'categorical_accuracy'
+                'categorical_accuracy',
             ]
         )
 

@@ -30,6 +30,10 @@ class KerasCallbackRunnerBridge(Callback):
         if 'loss' in logs:
             self.runner.data_container.add_list('train_loss', logs['loss'])
 
+        # Other keras log values
+        if 'val_categorical_accuracy' in logs:
+            self.runner.data_container.add_list('validate_accuracy', logs['val_categorical_accuracy'])
+
         # Run all the callbacks
         self.runner.run([KerasSaverCallback], None, {
             'model': self.model
