@@ -9,7 +9,7 @@ from rorschach.utilities import Config, LoggerWrapper, ModuleImporter
 
 class Transformator:
 
-    def __init__(self, handler):
+    def __init__(self, handlers):
         self.log = LoggerWrapper.load(__name__)
 
         self.handlers = handlers
