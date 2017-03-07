@@ -21,9 +21,14 @@ class KerasCallbackRunnerBridge(Callback):
         # Update information in our data container
         self.runner.data_container.set('epoch', epoch)
 
-        self.runner.data_container.add_list('validate_accuracy', logs['val_acc'])
-        self.runner.data_container.add_list('validate_loss', logs['val_loss'])
-        self.runner.data_container.add_list('train_loss', logs['loss'])
+        if 'val_acc' in logs:
+            self.runner.data_container.add_list('validate_accuracy', logs['val_acc'])
+
+        if 'val_loss' in logs:
+            self.runner.data_container.add_list('validate_loss', logs['val_loss'])
+
+        if 'loss' in logs:
+            self.runner.data_container.add_list('train_loss', logs['loss'])
 
         # Run all the callbacks
         self.runner.run([KerasSaverCallback], None, {

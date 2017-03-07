@@ -59,6 +59,9 @@ class IntegerifyLabelHandler(BaseHandler):
         with open(Filesystem.save(Config.get('path.data'), 'labels.json'), 'w') as outfile:
             json.dump(labels, outfile)
 
+        with open(Filesystem.save(Config.get('path.data'), 'labels_lookup.json'), 'w') as outfile:
+            json.dump(self.label_lookup, outfile)
+
     def obj_handler(self, obj):
         return self.apply_lookup(obj)
 

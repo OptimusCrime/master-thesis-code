@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from keras.optimizers import Adam
 from keras.layers import LSTM, Activation, Dense, Dropout, Embedding, InputLayer, TimeDistributed
 from keras.models import Sequential
 from keras.regularizers import ActivityRegularizer, WeightRegularizer
@@ -56,7 +57,7 @@ class LSTMEmbeddingPredictor(BasePredictor):
 
         self.model = Sequential()
         self.model.add(InputLayer(batch_input_shape=(Config.get('predicting.batch_size'), input_width)))
-        self.model.add(Embedding(1024, output_depth))
+        self.model.add(Embedding(1024, output_depth, mask_zero=True))
         self.model.add(LSTM(output_dim=256,
                             return_sequences=True,
                             W_regularizer=WeightRegularizer(l1=0.01, l2=0.01),
@@ -69,7 +70,15 @@ class LSTMEmbeddingPredictor(BasePredictor):
 
         self.model.add(Activation('softmax'))
 
-        self.model.compile(loss='mse', optimizer='rmsprop', metrics=['accuracy'])
+        optimizer = Adam()
+
+        self.model.compile(
+            loss='categorical_crossentropy',
+            optimizer=optimizer,
+            metrics=[
+                'categorical_accuracy'
+            ]
+        )
 
         self.model.summary()
 
@@ -81,8 +90,8 @@ class LSTMEmbeddingPredictor(BasePredictor):
     def train(self):
         self.log.info('Begin')
 
-        self.model.fit(self.training_images_transformed,
-                       self.training_labels_transformed,
+        self.model.fit(self.test_images_transformed,
+                       self.test_labels_transformed,
                        nb_epoch=Config.get('predicting.epochs'),
                        verbose=1,
                        batch_size=Config.get('predicting.batch-size'),
@@ -92,5 +101,7 @@ class LSTMEmbeddingPredictor(BasePredictor):
 
         self.log.info('Finish')
 
-    def predict(self):
-        self.log.info('Begin predicting')
+    def test(self):
+        self.log.info('Begin test')
+
+        self.log.info('Finish test')

@@ -19,7 +19,7 @@ class PredictorWrapper:
         self.predictor.test_set = unpickle_data(Config.get_path('path.data', 'test_set.pickl'))
 
         if len(self.predictor.transformation_handlers) > 0:
-            self.transform(self.predictor.transformation_handlers)
+            self.transform()
 
         self.predictor.prepare()
 
@@ -32,7 +32,7 @@ class PredictorWrapper:
         self.predictor.test()
 
     def transform(self):
-        transformator = Transformator()
+        transformator = Transformator(self.predictor.transformation_handlers)
 
         transformator.construct_lists([{
             'set': unpickle_data(Config.get_path('path.data', 'letter_set.pickl')),

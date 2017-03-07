@@ -17,6 +17,11 @@ class BaseSaverCallback(BaseCallback):
 
     def should_save_session(self):
         validation_loss = copy.copy(self.data.get('validate_loss'))
+
+        # If we have no validations at all, skip the check
+        if len(validation_loss) == 0:
+            return False
+
         if len(validation_loss) <= Config.get('predicting.best-results'):
             # We do not have enough data to store correctly. To make sure we always have some weights stored, do
             # following checks:
