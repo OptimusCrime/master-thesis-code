@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 from keras.layers import LSTM, Activation, Dense, Dropout, Embedding, InputLayer, TimeDistributed

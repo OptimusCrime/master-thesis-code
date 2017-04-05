@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 from rorschach.prediction.tensorflow.networks.sequence import AbstractSeq2SeqPredictor

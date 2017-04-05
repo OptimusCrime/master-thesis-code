@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 from rorschach.utilities import Config, Filesystem, pickle_data

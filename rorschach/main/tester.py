@@ -1,17 +1,10 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-# Avoid creating a new directory each time we run this script
-# flake8: noqa: E402
-
-
-from rorschach.common import DataStore # isort:skip
-DataStore.CONTENT['no-create'] = True
 
 import os
 
 from rorschach.prediction import PredictorWrapper
 from rorschach.utilities import Config, LoggerWrapper, ModuleImporter
+
 
 class Tester:
 
