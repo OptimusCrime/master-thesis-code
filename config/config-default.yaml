@@ -14,12 +14,14 @@ general:
     # Turn debug mode on/off
     debug: false
 
+
 ##################################################################
 #                          Logging                               #
 ##################################################################
 
 logging:
     batch_reporting: 10
+
 
 ##################################################################
 #                           Path                                 #
@@ -35,6 +37,7 @@ path:
     # Where to save the output (logs and images)
     output: PROJECT_ROOT/data
 
+
 ##################################################################
 #                         Word list                              #
 ##################################################################
@@ -46,6 +49,15 @@ wordlist:
     # Set to true to remove duplicates across all sets
     remove-duplicate-all: false
 
+
+##################################################################
+#                       Transformation                           #
+##################################################################
+
+transformation:
+    # If noise handler is called, use this degree of randomness (in percent)
+    noise-random-factor: 10
+
 ##################################################################
 #                       Preprocessing                            #
 ##################################################################
@@ -55,9 +67,6 @@ preprocessing:
 
     # Remove all earlier data on each run
     wipe: true
-
-    # Turn on to handle identical signatures as one
-    unique-signatures: true
 
     # Saves
     save:
