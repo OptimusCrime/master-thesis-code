@@ -4,7 +4,7 @@
 import os
 from random import randrange
 
-from rorschach.utilities import Filesystem, LoggerWrapper
+from rorschach.utilities import Config, Filesystem, LoggerWrapper
 
 
 class WordListParser:
@@ -14,11 +14,52 @@ class WordListParser:
         self._words = None
         self.list_length = None
 
-    def random_word(self, length=None):
-        if self.list_length is None:
-            self.run(length)
+        # Keep track of duplicates
+        self.duplicates_all = []
+        self.duplicates_set = {}
 
-        return self.words[randrange(0, self.list_length)]
+    def random_word(self, word_list=None):
+        if self.list_length is None:
+            self.run(Config.get('preprocessing.input.max-length'))
+
+        remove_duplicate_set = Config.get('wordlist.remove-duplicate-set')
+        remove_duplicate_all = Config.get('wordlist.remove-duplicate-all')
+
+        # If both settings are false we can just return a random word
+        if not remove_duplicate_set and not remove_duplicate_all:
+            return self.words[randrange(0, self.list_length)]
+
+        # Duplicate all has precedence over duplicate set
+        while True:
+            random_word = self.words[randrange(0, self.list_length)]
+
+            if self.not_duplicated_word(random_word, remove_duplicate_set, remove_duplicate_all, word_list=word_list):
+                return random_word
+
+    def not_duplicated_word(self, word, remove_duplicate_set, remove_duplicate_all, word_list=None):
+        if remove_duplicate_all:
+            return self.not_duplicated_word_all(word)
+
+        if word_list is None:
+            raise Exception('Filtering duplicate words on word set, but no word set was provided')
+
+        return self.not_duplicated_word_set(word, word_list)
+
+    def not_duplicated_word_all(self, word):
+        if word not in self.duplicates_all:
+            self.duplicates_all.append(word)
+            return True
+        return False
+
+    def not_duplicated_word_set(self, word, word_list):
+        # Make sure to create a list in the dict for our set
+        if word_list not in self.duplicates_set:
+            self.duplicates_set[word_list] = []
+
+        if word not in self.duplicates_set[word_list]:
+            self.duplicates_set[word_list].append(word)
+            return True
+        return False
 
     @property
     def words(self):

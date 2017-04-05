@@ -36,6 +36,17 @@ path:
     output: PROJECT_ROOT/data
 
 ##################################################################
+#                         Word list                              #
+##################################################################
+
+wordlist:
+    # Set to true to remove duplicates within the same set
+    remove-duplicate-set: true
+
+    # Set to true to remove duplicates across all sets
+    remove-duplicate-all: false
+
+##################################################################
 #                       Preprocessing                            #
 ##################################################################
 
