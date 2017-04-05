@@ -2,6 +2,7 @@
 
 import gc
 import os
+from random import randrange
 
 from rorschach.preprocessing.creators import AbstractCreator
 from rorschach.preprocessing.handlers import TextCreator
@@ -13,6 +14,12 @@ class TermCreator(AbstractCreator):
     def __init__(self, type):
         super().__init__(type)
 
+    def random_font(self):
+        if len(self.fonts) == 0:
+            return self.fonts[0]
+
+        return self.fonts[randrange(0, len(self.fonts))]
+
     def create_sets(self):
         contents = []
 
@@ -21,7 +28,7 @@ class TermCreator(AbstractCreator):
             if (i + 1) % Config.get('logging.batch_reporting') == 0:
                 self.log.info('Constructing image %s/%s.', i + 1, data_set_size)
 
-            phrase_arr = TextCreator.write(self.terms[i], self.set_type_keyword)
+            phrase_arr = TextCreator.write(self.terms[i], self.set_type_keyword, self.random_font())
 
             contents.append({
                 'text': self.terms[i],

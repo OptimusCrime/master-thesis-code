@@ -17,15 +17,18 @@ class LetterSetCreator(AbstractCreator):
 
     def create_sets(self):
         contents = []
+
         for character in Config.get('general.characters'):
-            character_arr = TextCreator.write(character, self.set_type_keyword)
+            for font in self.fonts:
+                character_arr = TextCreator.write(character, self.set_type_keyword, font)
 
-            self.constraint_handler.calculate(character_arr)
+                self.constraint_handler.calculate(character_arr)
 
-            contents.append({
-                'text': character,
-                'matrix': character_arr
-            })
+                contents.append({
+                    'text': character,
+                    'matrix': character_arr,
+                    'font': font
+                })
 
         # We save the constraints for the letters here. This constraint is used to calculate the upper and lower
         # cutoffs for the phrase and the word set

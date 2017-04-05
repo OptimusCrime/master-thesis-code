@@ -81,7 +81,9 @@ preprocessing:
 
     # Settings for text
     text:
-        font: arial-mono
+        fonts:
+        - arial-mono
+        #- arial
         size: 35
 
     # Settings for the canvas we write on (should be irrelevant)

@@ -81,8 +81,18 @@ class Config:
                    Config.CONTENTS['preprocessing']['canvas']['height']
 
         # Special handler for the font file location
-        if key == 'preprocessing.text.font':
-            return Filesystem.get_root_path('fonts/' + Config.CONTENTS['preprocessing']['text']['font'] + '.ttf')
+        if key == 'preprocessing.text.fonts':
+            fonts_names = []
+            if type(Config.CONTENTS['preprocessing']['text']['fonts']) == list:
+                fonts_names = Config.CONTENTS['preprocessing']['text']['fonts']
+            else:
+                fonts_names.append(Config.CONTENTS['preprocessing']['text']['fonts'])
+
+            fonts = []
+            for name in fonts_names:
+                fonts.append(Filesystem.get_root_path('fonts/' + name + '.ttf'))
+
+            return fonts
 
         # If we have no dash in our key we can access it directly
         if '.' not in key:

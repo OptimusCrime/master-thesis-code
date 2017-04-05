@@ -17,19 +17,12 @@ class AbstractCreator:
         self.contents = []
         self.constraint_handler = ConstraintHandler()
         self.terms = []
+        self.fonts = Config.get('preprocessing.text.fonts')
+
 
     @property
     def set_type_keyword(self):
-        if self.type == DataSetTypes.LETTER_SET:
-            return 'letter'
-
-        if self.type == DataSetTypes.TEST_SET:
-            return 'test'
-
-        if self.type == DataSetTypes.TRAINING_SET:
-            return 'training'
-
-        return 'validate'
+        return DataSetTypes.type_to_keyword(self.type)
 
     def create(self):
         self.contents = self.create_sets()
