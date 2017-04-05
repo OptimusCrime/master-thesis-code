@@ -14,7 +14,7 @@ class TextCreator:
         pass
 
     @staticmethod
-    def write(text):
+    def write(text, data_set):
         im = Image.new('1', Config.get('preprocessing.canvas.size'), 1)
         draw = ImageDraw.Draw(im)
 
@@ -22,8 +22,17 @@ class TextCreator:
                                          Config.get('preprocessing.text.size'))
         draw.text((0, 0), text, font=font_object, fill=0)
 
-        if Config.get('preprocessing.save.raw'):
-            im.save(Filesystem.save(os.path.join(Config.get('path.image'), 'raw'), text + '.png'))
+        if Config.get('preprocessing.save.canvas'):
+            im.save(
+                Filesystem.save(
+                    os.path.join(
+                        Config.get('path.image'),
+                        'canvas',
+                        data_set
+                    ),
+                    text + '.png'
+                )
+            )
 
         arr = np.fromiter(list(im.getdata()), dtype="bool").reshape((im.height,
                                                                     im.width))

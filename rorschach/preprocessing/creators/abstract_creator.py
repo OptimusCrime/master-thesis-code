@@ -2,6 +2,7 @@
 
 from abc import ABCMeta
 
+from rorschach.common import DataSetTypes
 from rorschach.preprocessing.handlers import ConstraintHandler
 from rorschach.utilities import Config, LoggerWrapper
 
@@ -16,6 +17,19 @@ class AbstractCreator:
         self.contents = []
         self.constraint_handler = ConstraintHandler()
         self.terms = []
+
+    @property
+    def set_type_keyword(self):
+        if self.type == DataSetTypes.LETTER_SET:
+            return 'letter'
+
+        if self.type == DataSetTypes.TEST_SET:
+            return 'test'
+
+        if self.type == DataSetTypes.TRAINING_SET:
+            return 'training'
+
+        return 'validate'
 
     def create(self):
         self.contents = self.create_sets()

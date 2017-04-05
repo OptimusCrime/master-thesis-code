@@ -71,20 +71,13 @@ preprocessing:
     # Saves
     save:
         # The entire canvas (as defined in this config file)
-        raw: true
+        canvas: true
 
-        # Save letters
-        letters: true
-        letters-signatures: true
-        letters-illustration: true
+        # The cropped images
+        cropped: true
 
-        # Training set
-        training: true
-        training-signtures: true
-
-        # Test set
-        test: true
-        test-signatures: true
+        # The signatures
+        signatures: true
 
     # Settings for text
     text:

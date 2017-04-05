@@ -24,6 +24,7 @@ class Preprocessor:
 
     def run(self):
         if Config.get('preprocessing.run') and Config.get('preprocessing.wipe'):
+            Preprocessor.wipe_images()
             Preprocessor.wipe_data()
 
         if Config.get('preprocessing.run'):
@@ -33,21 +34,16 @@ class Preprocessor:
         self.save_sets_content()
 
     @staticmethod
+    def wipe_images():
+        images_path = Config.get('path.image')
+        if os.path.exists(images_path):
+            shutil.rmtree(images_path)
+
+    @staticmethod
     def wipe_data():
-        data_path = Filesystem.get_root_path('data')
-        dir_content = os.listdir(data_path)
-
-        for content in dir_content:
-            if Preprocessor.OUTPUT_FORMAT.match(content):
-                continue
-
-            full_path = os.path.join(data_path, content)
-            if os.path.isdir(full_path):
-                shutil.rmtree(full_path)
-                continue
-
-            if content != '.gitignore':
-                os.remove(full_path)
+        data_path = Config.get('path.data')
+        if os.path.exists(data_path):
+            shutil.rmtree(data_path)
 
     def create_sets(self):
         # Create the data set

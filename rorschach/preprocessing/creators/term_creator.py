@@ -21,7 +21,7 @@ class TermCreator(AbstractCreator):
             if (i + 1) % Config.get('logging.batch_reporting') == 0:
                 self.log.info('Constructing image %s/%s.', i + 1, data_set_size)
 
-            phrase_arr = TextCreator.write(self.terms[i])
+            phrase_arr = TextCreator.write(self.terms[i], self.set_type_keyword)
 
             contents.append({
                 'text': self.terms[i],
