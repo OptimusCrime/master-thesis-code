@@ -4,12 +4,13 @@
 import os
 from random import randrange
 
-from rorschach.utilities import Filesystem
+from rorschach.utilities import Filesystem, LoggerWrapper
 
 
 class WordListParser:
 
     def __init__(self):
+        self.log = LoggerWrapper.load(__name__)
         self._words = None
         self.list_length = None
 
@@ -30,7 +31,7 @@ class WordListParser:
         # Create first _words as a set to avoid duplicate entries
         self._words = set()
 
-        files = WordListParser.get_word_files()
+        files = self.get_word_files()
         self.get_words(files, length)
 
         # Change the set to a list to allow index lookup used by the randomizer
@@ -38,14 +39,18 @@ class WordListParser:
 
         self.list_length = len(self._words)
 
-    @staticmethod
-    def get_word_files():
+        self.log.info('Word lists have a total of %d words', self.list_length)
+
+    def get_word_files(self):
         wordfiles_dir = Filesystem.get_root_path('config/wordlists')
         files = os.listdir(wordfiles_dir)
         files.remove('.gitignore')
 
         # We preappend all the files in the list with the path for the wordlists directory
         files = ['{0}/{1}'.format(wordfiles_dir, i) for i in files]
+
+        # Log
+        self.log.info('Found %d word lists', len(files))
 
         return files
 
