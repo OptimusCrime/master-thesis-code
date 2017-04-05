@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from abc import ABC, abstractmethod
 import math
 import time
 
@@ -13,8 +14,7 @@ from rorschach.prediction.tensorflow.tools import LogPrettifier, TimeParse
 from rorschach.utilities import Config, LoggerWrapper
 
 
-class Seq2Seq():
-
+class AbstractSeq2seq(ABC):
     def __init__(
         self,
         xseq_len,
@@ -85,43 +85,8 @@ class Seq2Seq():
         # LSTM
         self.keep_probability = tf.placeholder(tf.float32)
 
-        rnn_cell = tf.nn.rnn_cell.DropoutWrapper(
-            tf.nn.rnn_cell.BasicLSTMCell(
-                self.emb_dim,
-                state_is_tuple=True
-            ),
-            output_keep_prob=self.keep_probability
-        )
-
-        # Stacked LSTMs (defined by the number of layers in the model)
-        stacked_lstms = tf.nn.rnn_cell.MultiRNNCell(
-            [rnn_cell] * self.num_layers,
-            state_is_tuple=True
-        )
-
-        # Sharing of parameters between training and testing models
-        with tf.variable_scope('decoder') as scope:
-            self.decode_outputs, self.decode_states = tf.nn.seq2seq.embedding_attention_seq2seq(
-                self.encoder_input_placeholders,
-                self.decoder_input_placeholders,
-                stacked_lstms,
-                self.xvocab_size,
-                self.yvocab_size,
-                self.emb_dim
-            )
-
-            scope.reuse_variables()
-
-            # Testing model. Here the output from the previous timestep is fed as input to the next timestep
-            self.decode_outputs_test, self.decode_states_test = tf.nn.seq2seq.embedding_attention_seq2seq(
-                self.encoder_input_placeholders,
-                self.decoder_input_placeholders,
-                stacked_lstms,
-                self.xvocab_size,
-                self.yvocab_size,
-                self.emb_dim,
-                feed_previous=True
-            )
+        # Build the model itself here
+        self.build_model()
 
         # Loss for the weights
         loss_weights = [tf.ones_like(
@@ -141,6 +106,10 @@ class Seq2Seq():
         self.train_op = tf.train.AdamOptimizer(
             learning_rate=Config.get('predicting.learning-rate')
         ).minimize(self.loss)
+
+    @abstractmethod
+    def build_model(self):
+        pass
 
     def get_feed(self, X, Y, keep_prob):
         feed_dict = {

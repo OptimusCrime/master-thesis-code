@@ -1,1 +1,3 @@
+from .abstract_seq2seq_predictor import AbstractSeq2SeqPredictor
+from .embedding_attention_seq2seq_predictor import EmbeddingAttentionSeq2SeqPredictor
 from .embedding_rnn_seq2seq_predictor import EmbeddingRNNSeq2SeqPredictor
