@@ -67,13 +67,16 @@ class PlotterCallback(BaseCallback):
         ax.tick_params(axis='x', which='major', labeltop=False, labelright=False, top=False)
         ax.tick_params(axis='x', which='minor', labeltop=False, labelright=False, top=False, bottom=False)
         ax.tick_params(axis='y', which='both', labeltop=False, labelright=True, right=True)
-        ax.set_ylim(ymin=0)
+
+        if PlotterCallback.LOSS not in self.flags:
+            ax.set_ylim(ymin=0)
 
         ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
 
         # Specific for loss
         if PlotterCallback.LOSS in self.flags:
             ax.set_xlim(xmin=0, xmax=len(self.data.get('validate_loss')) - 1)
+            ax.set_yscale('log')
 
             return
 
