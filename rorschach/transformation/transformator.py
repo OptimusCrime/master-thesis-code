@@ -4,7 +4,7 @@
 import copy
 
 from rorschach.common import DataSetTypes
-from rorschach.utilities import Config, LoggerWrapper, ModuleImporter
+from rorschach.utilities import LoggerWrapper, ModuleImporter
 
 
 class Transformator:
