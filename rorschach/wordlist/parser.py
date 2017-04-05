@@ -9,17 +9,18 @@ from rorschach.utilities import Config, Filesystem, LoggerWrapper
 
 class WordListParser:
 
+    LIST_LENGTH = None
+    WORDS = []
+
+    # Keep track of duplicates
+    DUPLICATES_ALL = []
+    DUPLICATES_SET = {}
+
     def __init__(self):
         self.log = LoggerWrapper.load(__name__)
-        self._words = None
-        self.list_length = None
-
-        # Keep track of duplicates
-        self.duplicates_all = []
-        self.duplicates_set = {}
 
     def random_word(self, word_list=None):
-        if self.list_length is None:
+        if WordListParser.LIST_LENGTH is None:
             self.run(Config.get('preprocessing.input.max-length'))
 
         remove_duplicate_set = Config.get('wordlist.remove-duplicate-set')
@@ -27,11 +28,11 @@ class WordListParser:
 
         # If both settings are false we can just return a random word
         if not remove_duplicate_set and not remove_duplicate_all:
-            return self.words[randrange(0, self.list_length)]
+            return self.words[randrange(0, WordListParser.LIST_LENGTH)]
 
         # Duplicate all has precedence over duplicate set
         while True:
-            random_word = self.words[randrange(0, self.list_length)]
+            random_word = self.words[randrange(0, WordListParser.LIST_LENGTH)]
 
             if self.not_duplicated_word(random_word, remove_duplicate_set, remove_duplicate_all, word_list=word_list):
                 return random_word
@@ -46,41 +47,41 @@ class WordListParser:
         return self.not_duplicated_word_set(word, word_list)
 
     def not_duplicated_word_all(self, word):
-        if word not in self.duplicates_all:
-            self.duplicates_all.append(word)
+        if word not in WordListParser.DUPLICATES_ALL:
+            WordListParser.DUPLICATES_ALL.append(word)
             return True
         return False
 
     def not_duplicated_word_set(self, word, word_list):
         # Make sure to create a list in the dict for our set
-        if word_list not in self.duplicates_set:
-            self.duplicates_set[word_list] = []
+        if word_list not in WordListParser.DUPLICATES_SET:
+            WordListParser.DUPLICATES_SET[word_list] = []
 
-        if word not in self.duplicates_set[word_list]:
-            self.duplicates_set[word_list].append(word)
+        if word not in WordListParser.DUPLICATES_SET[word_list]:
+            WordListParser.DUPLICATES_SET[word_list].append(word)
             return True
         return False
 
     @property
     def words(self):
-        if self.list_length is None:
+        if WordListParser.LIST_LENGTH is None:
             self.run()
 
-        return self._words
+        return WordListParser.WORDS
 
     def run(self, length=None):
         # Create first _words as a set to avoid duplicate entries
-        self._words = set()
+        WordListParser.WORDS = set()
 
         files = self.get_word_files()
         self.get_words(files, length)
 
         # Change the set to a list to allow index lookup used by the randomizer
-        self._words = list(self._words)
+        WordListParser.WORDS = list(WordListParser.WORDS)
 
-        self.list_length = len(self._words)
+        WordListParser.LIST_LENGTH = len(WordListParser.WORDS)
 
-        self.log.info('Word lists have a total of %d words', self.list_length)
+        self.log.info('Word lists have a total of %d words', WordListParser.LIST_LENGTH)
 
     def get_word_files(self):
         wordfiles_dir = Filesystem.get_root_path('config/wordlists')
@@ -107,4 +108,4 @@ class WordListParser:
     def validate_string(self, line, length=None):
         if line.isalpha() and len(line) > 1:
             if length is None or len(line) <= length:
-                self._words.add(line.upper())
+                WordListParser.WORDS.add(line.upper())

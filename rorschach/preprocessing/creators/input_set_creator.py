@@ -34,7 +34,7 @@ class InputSetCreator(TermCreator):
 
     def generate_random_words(self):
         for i in range(Config.get('preprocessing.' + self.type_keyword + '-set.size')):
-            random_word = self.word_list_parser.random_word(word_set=self.type)
+            random_word = self.word_list_parser.random_word(word_list=self.type)
             self.terms.append(random_word)
 
     def save(self):
