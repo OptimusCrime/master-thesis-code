@@ -5,6 +5,13 @@ import numpy as np
 from rorschach.common import DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
 
+'''
+PadHandler
+
+Padding the data set to have the same width across all data sets for both input and output (they are not aligned).
+
+'''
+
 
 class PadHandler(BaseHandler):
 
@@ -51,7 +58,7 @@ class PadHandler(BaseHandler):
         return obj
 
     def pad_input(self, obj):
-        new_matrix = np.full(self.widest_sequence, 0, dtype=(np.str, 35))
+        new_matrix = np.full(self.widest_sequence + 1, 0, dtype=(np.str, 35))
         for v in range(len(obj[DataSetTypes.IMAGES][self.sequence_key])):
             new_matrix[v] = obj[DataSetTypes.IMAGES][self.sequence_key][v]
 

@@ -6,6 +6,14 @@ from rorschach.common import DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
 from rorschach.utilities import Config
 
+'''
+NoiseHandler
+
+Adds noise into the data.
+
+'''
+
+
 class NoiseHandler(BaseHandler):
 
     def __init__(self):

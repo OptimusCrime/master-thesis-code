@@ -8,6 +8,14 @@ from rorschach.common import DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
 from rorschach.utilities import Config
 
+'''
+RearrangeSequenceValuesHandler
+
+Because embedding solutions require whole integer values, we need to rearrange our upper and lower bounds and shift
+the values so that all values are whole integers. 
+
+'''
+
 
 class RearrangeSequenceValuesHandler(BaseHandler):
 

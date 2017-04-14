@@ -5,11 +5,20 @@ import numpy as np
 from rorschach.common import DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
 
+'''
+IntegerifyStringSequenceHandler
+
+Legacy stuff, not currently working.
+
+'''
+
 
 class IntegerifyStringSequenceHandler(BaseHandler):
 
     def __init__(self):
         super().__init__()
+
+        raise Exception('Needs to handel stop words. This handler is not good. Legacy stuff.')
 
         self.string_values = {}
         self.translation_lookup = None

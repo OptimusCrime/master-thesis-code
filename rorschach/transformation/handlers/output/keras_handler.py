@@ -6,6 +6,14 @@ from rorschach.common import DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
 from rorschach.utilities import Config, unpickle_data
 
+'''
+KerasHandler
+
+Special handler that pads the output to the same width as the input. Necessary for networks which simply feeds the
+sequences into an LSTM and uses the entire return sequence as the output.
+
+'''
+
 
 class KerasHandler(BaseHandler):
 

@@ -9,6 +9,14 @@ from rorschach.transformation.handlers import BaseHandler
 from rorschach.transformation.handlers.output import IntegerifyLabelHandler
 from rorschach.utilities import Config, Filesystem, pickle_data
 
+'''
+IntegerifyUniqueLabelHandler
+
+Convert labels into integers while tacking into account unique signatures. This means that characters that have the
+very same signature sequence are "added" into one value in the output. Turns the output into a one hot vector.
+
+'''
+
 
 class IntegerifyUniqueLabelHandler(BaseHandler):
 

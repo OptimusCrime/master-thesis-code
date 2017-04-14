@@ -6,6 +6,13 @@ from rorschach.common import DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
 from rorschach.utilities import Config, unpickle_data
 
+'''
+SwapHandler
+
+This handler does swapping of images and labels. It also calculates the widths for various things.
+
+'''
+
 
 class SwapHandler(BaseHandler):
 

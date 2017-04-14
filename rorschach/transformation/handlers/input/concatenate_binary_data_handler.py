@@ -3,6 +3,13 @@
 from rorschach.common import DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
 
+'''
+ConcatenateBinaryDataHandler
+
+Takes a series of binary data and concatenates them. 0 0 0 1 would be 3B 1W.
+
+'''
+
 
 class ConcatenateBinaryDataHandler(BaseHandler):
 

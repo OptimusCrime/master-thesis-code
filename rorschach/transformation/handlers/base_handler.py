@@ -5,7 +5,6 @@ class BaseHandler:
 
     def __init__(self):
         self.input_lists = None
-        self.data = {}
 
     def prepare(self):
         pass

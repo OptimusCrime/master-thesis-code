@@ -2,8 +2,16 @@
 
 import numpy as np
 
-from rorschach.common import DataSetTypes
+from rorschach.common import Constants, DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
+
+'''
+IntegerifyStringSequenceSpatialHandler
+
+Takes string values from concatenate binary data handler and turns it into a positive or negative integer depending
+on the value. 1B 4W 6B would become -1 4 -6.
+
+'''
 
 
 class IntegerifyStringSequenceSpatialHandler(BaseHandler):
@@ -27,9 +35,16 @@ class IntegerifyStringSequenceSpatialHandler(BaseHandler):
 
     def obj_handler(self, obj):
         input_sequence = obj[DataSetTypes.IMAGES]['input']
+        print(input_sequence)
+
+        first_zero = False
+
         new_matrix = np.zeros(input_sequence.shape, dtype=np.int64)
         for i in range(len(input_sequence)):
             if input_sequence[i] == '0':
+                if not first_zero:
+                    new_matrix[i] = Constants.STOP_WORD
+                    first_zero = True
                 continue
 
             # We use negative values for black pixels and positive values for white pixels. We do this by multiplying
@@ -45,5 +60,6 @@ class IntegerifyStringSequenceSpatialHandler(BaseHandler):
         # Swap array
         obj[DataSetTypes.IMAGES]['input_str'] = obj[DataSetTypes.IMAGES]['input']
         obj[DataSetTypes.IMAGES]['input'] = new_matrix
-
+        print(new_matrix)
+        print('---')
         return obj

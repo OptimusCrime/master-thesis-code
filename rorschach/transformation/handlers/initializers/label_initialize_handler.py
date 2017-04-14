@@ -3,6 +3,13 @@
 from rorschach.common import DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
 
+'''
+LabelInitializeHandler
+
+Creates the lists for images and labels. Used as entrypoint for all the other handlers.
+
+'''
+
 
 class LabelInitializeHandler(BaseHandler):
 
