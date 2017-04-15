@@ -21,11 +21,8 @@ class SwapHandler(BaseHandler):
 
         self.voc_sizes = False
 
-    def prepare(self):
-        super().prepare()
-
-        self.data['voc_lower'] = 0
-        self.data['voc_upper'] = 0
+        self.input_vocabulary_lower = 0
+        self.input_vocabulary_upper = 0
 
     def run(self, input_lists):
         super().run(input_lists)
@@ -57,8 +54,8 @@ class SwapHandler(BaseHandler):
     def calculate_voc_size(self):
         self.voc_sizes = True
 
-        self.data['voc_size_labels'] = len(unpickle_data(Config.get_path('path.data', 'labels.pickl')))
-        self.data['voc_size_input'] = self.data['voc_lower'] + self.data['voc_upper']
+        Config.set('dataset.voc_size_input', self.input_vocabulary_lower + self.input_vocabulary_upper)
+        Config.set('dataset.voc_size_output', len(unpickle_data(Config.get_path('path.data', 'labels.pickl'))))
 
     @staticmethod
     def reshape_input(input_list):
@@ -79,8 +76,8 @@ class SwapHandler(BaseHandler):
     def count_voc_size(self, input_list):
         for seq in input_list:
             for val in seq[DataSetTypes.IMAGES]['input']:
-                if val < self.data['voc_lower']:
-                    self.data['voc_lower'] = val
+                if val < self.input_vocabulary_lower:
+                    self.input_vocabulary_lower = val
 
-                if val > self.data['voc_upper']:
-                    self.data['voc_upper'] = val
+                if val > self.input_vocabulary_upper:
+                    self.input_vocabulary_upper = val

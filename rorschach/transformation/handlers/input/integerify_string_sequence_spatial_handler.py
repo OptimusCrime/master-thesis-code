@@ -35,7 +35,6 @@ class IntegerifyStringSequenceSpatialHandler(BaseHandler):
 
     def obj_handler(self, obj):
         input_sequence = obj[DataSetTypes.IMAGES]['input']
-        print(input_sequence)
 
         first_zero = False
 
@@ -60,6 +59,5 @@ class IntegerifyStringSequenceSpatialHandler(BaseHandler):
         # Swap array
         obj[DataSetTypes.IMAGES]['input_str'] = obj[DataSetTypes.IMAGES]['input']
         obj[DataSetTypes.IMAGES]['input'] = new_matrix
-        print(new_matrix)
-        print('---')
+
         return obj

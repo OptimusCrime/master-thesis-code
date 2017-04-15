@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from rorschach.prediction.common import DataContainer
+from rorschach.prediction.keras.tools import DimCalculator
 
 
 class BasePredictor:
@@ -22,6 +23,8 @@ class BasePredictor:
         self.validate_labels_transformed = None
         self.test_images_transformed = None
         self.test_labels_transformed = None
+
+        self.dim_calculator = DimCalculator(self)
 
     def prepare(self):
         pass

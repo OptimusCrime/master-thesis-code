@@ -52,6 +52,9 @@ class Config:
                 current_pool[sub_key] = value
                 break
 
+            if sub_key not in current_pool:
+                current_pool[sub_key] = {}
+
             current_pool = current_pool[sub_key]
 
     @staticmethod
@@ -105,12 +108,17 @@ class Config:
 
     @staticmethod
     def get_path(path, file, fragment=None):
+        path_value = Config.get(path)
+
+        if path is None:
+            raise Exception('Unknown path')
+
         if fragment is not None:
-            path_string = os.path.join(Config.get(path), fragment)
+            path_string = os.path.join(path_value, fragment)
         else:
             path_string = Config.get(path)
 
-        # Ensure the locatin exists (for log files)
+        # Ensure the location exists (for log files)
         Filesystem.create(path_string, outside=True)
 
         return os.path.join(path_string, file)

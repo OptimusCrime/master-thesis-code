@@ -11,7 +11,7 @@ from rorschach.utilities import Config, Filesystem, pickle_data
 '''
 IntegerifyLabelHandler
 
-Convert labels into integers ignoring unique signatures. Turns the output into a one hot vector.
+Convert labels into integers ignoring unique signatures.
 
 '''
 

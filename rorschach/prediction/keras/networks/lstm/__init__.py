@@ -1,4 +1,1 @@
-from .lstm_embedding_bidirectional_predictor import LSTMEmbeddingBidirectionalPredictor
-from .lstm_embedding_branching_predictor import LSTMEmbeddingBranchingPredictor
-from .lstm_embedding_simple_predictor import LSTMEmbeddingSimplePredictor
-from .lstm_embedding_stacked_predictor import LSTMEmbeddingStackedPredictor
+from .lstm_embedding_repeat_predictor import LSTMEmbeddingVectorPredictor
