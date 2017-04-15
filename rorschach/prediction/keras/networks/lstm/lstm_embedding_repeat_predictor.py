@@ -34,8 +34,6 @@ class LSTMEmbeddingVectorPredictor(BaseKerasPredictor):
             # Translate the label text to corresponding integer ids (A -> 1, D -> 4, ...)
             'transformation.handlers.output.IntegerifyLabelHandler',
 
-            # TODO Thomas: right now input format is [1, 2, 3, 4], needs to be [[1], [2], [3], [4]]
-
             # Turn into one hot matrix
             'transformation.handlers.output.OneHotHandler',
 

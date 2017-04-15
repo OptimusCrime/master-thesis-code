@@ -21,7 +21,6 @@ class SwapHandler(BaseHandler):
 
         self.voc_sizes = False
 
-        self.input_vocabulary_lower = 0
         self.input_vocabulary_upper = 0
 
     def run(self, input_lists):
@@ -54,7 +53,7 @@ class SwapHandler(BaseHandler):
     def calculate_voc_size(self):
         self.voc_sizes = True
 
-        Config.set('dataset.voc_size_input', self.input_vocabulary_lower + self.input_vocabulary_upper)
+        Config.set('dataset.voc_size_input', self.input_vocabulary_upper + 1)
         Config.set('dataset.voc_size_output', len(unpickle_data(Config.get_path('path.data', 'labels.pickl'))))
 
     @staticmethod
@@ -76,8 +75,5 @@ class SwapHandler(BaseHandler):
     def count_voc_size(self, input_list):
         for seq in input_list:
             for val in seq[DataSetTypes.IMAGES]['input']:
-                if val < self.input_vocabulary_lower:
-                    self.input_vocabulary_lower = val
-
                 if val > self.input_vocabulary_upper:
                     self.input_vocabulary_upper = val
