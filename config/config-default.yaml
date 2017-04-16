@@ -58,6 +58,9 @@ transformation:
     # If noise handler is called, use this degree of randomness (in percent)
     noise-random-factor: 10
 
+    # Seed to use for randomness
+    noise-random-seed: None
+
 ##################################################################
 #                       Preprocessing                            #
 ##################################################################

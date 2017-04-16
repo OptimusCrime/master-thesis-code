@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from random import randint
+import random
 
 from rorschach.common import DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
@@ -21,6 +21,10 @@ class NoiseHandler(BaseHandler):
 
         self.random_factor = Config.get('transformation.noise-random-factor')
 
+        # Set seed if defined in the config file
+        if Config.get('transformation.noise-random-seed') is not None:
+            random.seed(Config.get('transformation.noise-random-seed'))
+
     def list_handler(self, input_list, key):
         # Ignore the data set
         if key == DataSetTypes.LETTER_SET:
@@ -31,7 +35,7 @@ class NoiseHandler(BaseHandler):
     def obj_handler(self, obj):
         matrix = obj[DataSetTypes.IMAGES]['matrix'][0]
         for i in range(len(matrix)):
-            if randint(0, 100) <= self.random_factor:
-                value = True if randint(0, 1) == 1 else False
+            if random.randint(0, 100) <= self.random_factor:
+                value = True if random.randint(0, 1) == 1 else False
                 matrix[i] = value
         return obj
