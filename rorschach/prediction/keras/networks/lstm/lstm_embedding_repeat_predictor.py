@@ -51,30 +51,27 @@ class LSTMEmbeddingVectorPredictor(BaseKerasPredictor):
                 Config.get('dataset.voc_size_input'),
                 1024,
                 input_length=self.dim_calculator.get(DimCalculator.INPUT_WIDTH),
-                mask_zero=True
+                mask_zero=True,
             )
         )
 
         self.model.add(
             LSTM(
-                output_dim=256,
-                W_regularizer=WeightRegularizer(l1=0.01, l2=0.01),
-                b_regularizer=ActivityRegularizer(l1=0.01, l2=0.01),
+                output_dim=256
             )
         )
-
-        self.model.add(Dropout(0.2))
 
         self.model.add(RepeatVector(self.dim_calculator.get(DimCalculator.LABELS_WIDTH)))
 
-        self.model.add(
-            LSTM(
-                output_dim=256,
-                return_sequences=True,
-                W_regularizer=WeightRegularizer(l1=0.01, l2=0.01),
-                b_regularizer=ActivityRegularizer(l1=0.01, l2=0.01),
+        for _ in range(3):
+            self.model.add(
+                LSTM(
+                    output_dim=256,
+                    return_sequences=True
+                )
             )
-        )
+
+        # self.model.add(Dropout(0.1))
 
         self.model.add(TimeDistributed(Dense(output_dim=self.dim_calculator.get(DimCalculator.LABELS_DEPTH))))
 
