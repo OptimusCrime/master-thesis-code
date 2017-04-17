@@ -9,7 +9,7 @@ pytest==3.0.4
 six==1.10.0
 pytest==3.0.4
 toolz==0.8.0
-Keras==1.2.0
+git+https://github.com/fchollet/keras.git@73bf06fb023a8b37ddf2e2a168bbf920c7a6c766
 h5py==2.6.0
 git+https://github.com/nlhepler/pydot.git
 tox==2.4.1

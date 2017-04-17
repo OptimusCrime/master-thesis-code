@@ -1,10 +1,5 @@
 #!/bin/bash
 
-# Copy config
-
-echo -e "\033[0;34mCopying config file\033[0m"
-cp config/config_example.yaml config/config.yaml
-
 # Fonts
 
 echo -e ""
