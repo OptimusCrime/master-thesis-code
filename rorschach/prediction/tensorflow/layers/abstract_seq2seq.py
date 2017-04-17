@@ -94,7 +94,7 @@ class AbstractSeq2seq(ABC):
         ) for label in self.label_placeholders]
 
         # The loss
-        self.loss = tf.nn.seq2seq.sequence_loss(
+        self.loss = tf.contrib.legacy_seq2seq.sequence_loss(
             self.decode_outputs,
             self.label_placeholders,
             loss_weights,

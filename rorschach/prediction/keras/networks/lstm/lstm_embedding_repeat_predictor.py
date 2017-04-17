@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from keras.layers import LSTM, Activation, Dense, Dropout, Embedding, TimeDistributed, RepeatVector
+import math
+
+from keras.layers import LSTM, Activation, Dense, Embedding, TimeDistributed, RepeatVector
 from keras.models import Sequential
-from keras.regularizers import ActivityRegularizer, WeightRegularizer
-from keras.utils.visualize_util import plot
+from keras.initializers import RandomUniform
+#from keras.utils.visualize_util import plot
 
 from rorschach.prediction.keras.networks import BaseKerasPredictor
 from rorschach.prediction.keras.tools import DimCalculator
@@ -44,29 +46,21 @@ class LSTMEmbeddingVectorPredictor(BaseKerasPredictor):
     def prepare(self):
         super().prepare()
 
-        self.model = Sequential()
-
-        self.model.add(
+        self.model = Sequential([
             Embedding(
                 Config.get('dataset.voc_size_input'),
                 1024,
                 input_length=self.dim_calculator.get(DimCalculator.INPUT_WIDTH),
                 mask_zero=True,
-            )
-        )
-
-        self.model.add(
-            LSTM(
-                output_dim=256
-            )
-        )
-
-        self.model.add(RepeatVector(self.dim_calculator.get(DimCalculator.LABELS_WIDTH)))
+                embeddings_initializer=RandomUniform(minval=math.sqrt(3), maxval=math.sqrt(3))
+            ),
+            LSTM(256),
+            RepeatVector(self.dim_calculator.get(DimCalculator.LABELS_WIDTH))
+        ])
 
         for _ in range(3):
             self.model.add(
-                LSTM(
-                    output_dim=256,
+                LSTM(256,
                     return_sequences=True
                 )
             )
@@ -92,8 +86,8 @@ class LSTMEmbeddingVectorPredictor(BaseKerasPredictor):
         self.callback.model = self.model
 
         # Plot
-        plot(
-            self.model,
-            to_file=Config.get_path('path.output', 'model.png', fragment=Config.get('uid')),
-            show_shapes=True
-        )
+        #plot(
+        #    self.model,
+        #    to_file=Config.get_path('path.output', 'model.png', fragment=Config.get('uid')),
+        #    show_shapes=True
+        #)
