@@ -10,7 +10,7 @@ class AttentionSeq2Seq(AbstractSeq2seq):
 
     def build_model(self):
         rnn_cell = tf.contrib.rnn.DropoutWrapper(
-            tf.contrib.rnn.BasicLSTMCell(
+            tf.contrib.rnn.LSTMCell(
                 self.emb_dim,
                 state_is_tuple=True
             ),

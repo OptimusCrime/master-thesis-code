@@ -10,12 +10,14 @@ class RNNSeq2Seq(AbstractSeq2seq):
 
     def build_model(self):
         rnn_cell = tf.contrib.rnn.DropoutWrapper(
-            tf.contrib.rnn.BasicLSTMCell(
+            tf.contrib.rnn.LSTMCell(
                 self.emb_dim,
                 state_is_tuple=True
             ),
             output_keep_prob=self.keep_probability
         )
+
+        # TODO: WHAT IS THE CALCULATED VALUE OF KEEP_PROBABILITY
 
         # Stacked LSTMs (defined by the number of layers in the model)
         stacked_lstms = tf.contrib.rnn.MultiRNNCell(

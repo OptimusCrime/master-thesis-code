@@ -54,14 +54,21 @@ class LSTMEmbeddingVectorPredictor(BaseKerasPredictor):
                 mask_zero=True,
                 embeddings_initializer=RandomUniform(minval=math.sqrt(3), maxval=math.sqrt(3))
             ),
-            LSTM(256),
+            LSTM(
+                256,
+                recurrent_dropout=0.1, # ??
+                recurrent_activation='sigmoid'
+            ),
             RepeatVector(self.dim_calculator.get(DimCalculator.LABELS_WIDTH))
         ])
 
         for _ in range(3):
             self.model.add(
-                LSTM(256,
-                    return_sequences=True
+                LSTM(
+                    256,
+                    recurrent_dropout=0.1,  # ??
+                    return_sequences=True,
+                    recurrent_activation='sigmoid'
                 )
             )
 
