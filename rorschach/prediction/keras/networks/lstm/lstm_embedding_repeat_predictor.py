@@ -2,8 +2,9 @@
 
 import math
 
-from keras.layers import LSTM, Activation, Dense, Embedding, TimeDistributed, RepeatVector
+from keras.layers import LSTM, Activation, Dense, Embedding, Dropout, TimeDistributed, RepeatVector
 from keras.models import Sequential
+from keras.optimizers import Adam
 from keras.initializers import RandomUniform
 #from keras.utils.visualize_util import plot
 
@@ -46,41 +47,55 @@ class LSTMEmbeddingVectorPredictor(BaseKerasPredictor):
     def prepare(self):
         super().prepare()
 
-        self.model = Sequential([
+        self.model = Sequential()
+
+        self.model.add(
             Embedding(
                 Config.get('dataset.voc_size_input'),
                 1024,
                 input_length=self.dim_calculator.get(DimCalculator.INPUT_WIDTH),
                 mask_zero=True,
                 embeddings_initializer=RandomUniform(minval=math.sqrt(3), maxval=math.sqrt(3))
-            ),
-            LSTM(
-                256,
-                recurrent_dropout=0.1, # ??
-                recurrent_activation='sigmoid'
-            ),
-            RepeatVector(self.dim_calculator.get(DimCalculator.LABELS_WIDTH))
-        ])
+            )
+        )
 
+        # "Encoder"
         for _ in range(3):
             self.model.add(
                 LSTM(
-                    256,
-                    recurrent_dropout=0.1,  # ??
+                    1024,
                     return_sequences=True,
                     recurrent_activation='sigmoid'
                 )
             )
 
-        # self.model.add(Dropout(0.1))
+            self.model.add(Dropout(0.2))
+
+        # Voodoo magic
+        RepeatVector(self.dim_calculator.get(DimCalculator.LABELS_WIDTH))
+
+        # "Decoder"
+        for _ in range(3):
+            self.model.add(
+                LSTM(
+                    1024,
+                    return_sequences=True,
+                    recurrent_activation='sigmoid'
+                )
+            )
+
+            self.model.add(Dropout(0.2))
 
         self.model.add(TimeDistributed(Dense(output_dim=self.dim_calculator.get(DimCalculator.LABELS_DEPTH))))
-
         self.model.add(Activation('softmax'))
+
+        optimizer = Adam(
+            lr=Config.get('predicting.learning-rate')
+        )
 
         self.model.compile(
             loss='categorical_crossentropy',
-            optimizer='rmsprop',
+            optimizer=optimizer,
             metrics=[
                 'categorical_crossentropy',
                 'categorical_accuracy'

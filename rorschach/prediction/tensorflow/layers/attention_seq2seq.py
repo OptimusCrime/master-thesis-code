@@ -9,22 +9,24 @@ from rorschach.utilities import Config
 class AttentionSeq2Seq(AbstractSeq2seq):
 
     def build_model(self):
-        rnn_cell = tf.contrib.rnn.DropoutWrapper(
-            tf.contrib.rnn.LSTMCell(
-                self.emb_dim,
-                state_is_tuple=True
-            ),
-            output_keep_prob=self.keep_probability
-        )
+        with tf.name_scope('rnn'):
+            rnn_cell = tf.contrib.rnn.DropoutWrapper(
+                tf.contrib.rnn.LSTMCell(
+                    self.emb_dim,
+                    state_is_tuple=True
+                ),
+                output_keep_prob=self.keep_probability
+            )
 
-        # Stacked LSTMs (defined by the number of layers in the model)
-        stacked_lstms = tf.contrib.rnn.MultiRNNCell(
-            [rnn_cell] * self.num_layers,
-            state_is_tuple=True
-        )
+        with tf.name_scope('stack'):
+            # Stacked LSTMs (defined by the number of layers in the model)
+            stacked_lstms = tf.contrib.rnn.MultiRNNCell(
+                [rnn_cell] * self.num_layers,
+                state_is_tuple=True
+            )
 
         # Sharing of parameters between training and testing models
-        with tf.variable_scope('decoder') as scope:
+        with tf.variable_scope('encdec') as scope:
             self.decode_outputs, self.decode_states = tf.contrib.legacy_seq2seq.embedding_attention_seq2seq(
                 self.encoder_input_placeholders,
                 self.decoder_input_placeholders,

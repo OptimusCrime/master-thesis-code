@@ -48,9 +48,24 @@ class AbstractSeq2seq(ABC):
         self.encoder_input_placeholders = None
         self.decoder_input_placeholders = None
         self.label_placeholders = None
+
         self.keep_probability = None
+        self.stacked_lstms = None
+
+        self.decode_outputs = None
+        self.decode_states = None
+        self.decode_outputs_test = None
+        self.decode_states_test = None
 
         self.epoch_time_start = None
+
+        # Graphers
+        self.graph_writer = None
+        self.scalar_writer = None
+
+        # Merge for all tf variables
+        self.merged = None
+        self.merged_identifier = 0
 
     def register_data_container(self, data_container):
         self.callback = CallbackRunner(data_container)
@@ -60,51 +75,60 @@ class AbstractSeq2seq(ABC):
         # Reset the default graph of Tensorflow here
         tf.reset_default_graph()
 
-        # Encoder inputs
-        self.encoder_input_placeholders = [tf.placeholder(
-            shape=[None, ],
-            dtype=tf.int64,
-            name='ei_{}'.format(t)
-        ) for t in range(self.xseq_len)]
+        with tf.name_scope('placeholders'):
+            # Encoder inputs
+            self.encoder_input_placeholders = [tf.placeholder(
+                shape=[None, ],
+                dtype=tf.int64,
+                name='ei_{}'.format(t)
+            ) for t in range(self.xseq_len)]
 
-        # Output labels
-        self.label_placeholders = [tf.placeholder(
-            shape=[None, ],
-            dtype=tf.int64,
-            name='ei_{}'.format(t)
-        ) for t in range(self.yseq_len)]
+            # Output labels
+            self.label_placeholders = [tf.placeholder(
+                shape=[None, ],
+                dtype=tf.int64,
+                name='ei_{}'.format(t)
+            ) for t in range(self.yseq_len)]
 
-        # Decoder inputs
-        self.decoder_input_placeholders = [tf.zeros_like(
-            self.encoder_input_placeholders[0],
-            dtype=tf.int64,
-            name='GO'
-        )] + self.label_placeholders[:-1]
+            # Decoder inputs
+            self.decoder_input_placeholders = [tf.zeros_like(
+                self.encoder_input_placeholders[0],
+                dtype=tf.int64,
+                name='GO'
+            )] + self.label_placeholders[:-1]
 
-        # LSTM
-        self.keep_probability = tf.placeholder(tf.float32)
+        with tf.name_scope('dropout_probability'):
+            # LSTM
+            self.keep_probability = tf.placeholder(tf.float32)
 
         # Build the model itself here
         self.build_model()
 
-        # Loss for the weights
-        loss_weights = [tf.ones_like(
-            label,
-            dtype=tf.float32
-        ) for label in self.label_placeholders]
+        with tf.name_scope('loss'):
+            # Loss for the weights
+            loss_weights = [tf.ones_like(
+                label,
+                dtype=tf.float32
+            ) for label in self.label_placeholders]
 
-        # The loss
-        self.loss = tf.contrib.legacy_seq2seq.sequence_loss(
-            self.decode_outputs,
-            self.label_placeholders,
-            loss_weights,
-            self.yvocab_size
-        )
+            # The loss
+            self.loss = tf.contrib.legacy_seq2seq.sequence_loss(
+                self.decode_outputs,
+                self.label_placeholders,
+                loss_weights,
+                self.yvocab_size
+            )
 
-        # The train op
-        self.train_op = tf.train.AdamOptimizer(
-            learning_rate=Config.get('predicting.learning-rate')
-        ).minimize(self.loss)
+        with tf.name_scope('optimizer'):
+            self.train_op = tf.train.AdamOptimizer(
+                learning_rate=Config.get('predicting.learning-rate')
+            ).minimize(self.loss)
+
+        if Config.get('various.tensorboard'):
+            tf.summary.scalar('keep_probability', self.keep_probability)
+            tf.summary.scalar('loss', self.loss)
+
+            self.merged = tf.summary.merge_all()
 
     @abstractmethod
     def build_model(self):
@@ -126,10 +150,18 @@ class AbstractSeq2seq(ABC):
         feed_dict = self.get_feed(
             batchX,
             batchY,
-            keep_prob=0.5
+            keep_prob=0.8
         )
 
-        _, train_loss = self.session.run([self.train_op, self.loss], feed_dict)
+        if Config.get('various.tensorboard'):
+            _, train_loss, summary = self.session.run([self.train_op, self.loss, self.merged], feed_dict)
+            self.graph_writer.add_summary(summary, self.merged_identifier)
+            self.scalar_writer.add_summary(summary, self.merged_identifier)
+
+            self.merged_identifier += 1
+        else:
+            _, train_loss = self.session.run([self.train_op, self.loss], feed_dict)
+
 
         return train_loss
 
@@ -244,6 +276,17 @@ class AbstractSeq2seq(ABC):
             self.session = tf.Session()
 
             self.session.run(tf.global_variables_initializer())
+
+            if Config.get('various.tensorboard'):
+                self.graph_writer = tf.summary.FileWriter(
+                    Config.get_path('path.output', '', fragment=Config.get('uid')),
+                    self.session.graph
+                )
+
+            self.scalar_writer = tf.summary.FileWriter(
+                Config.get_path('path.output', '', fragment=Config.get('uid'))
+            )
+
 
         # Loop the epochs
         for epoch in range(Config.get('predicting.epochs')):
