@@ -1,13 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Avoid creating a new directory each time we run this script
-# flake8: noqa: E402
-
-
-from rorschach.common import DataStore # isort:skip
-DataStore.CONTENT['no-create'] = True
-
 import json
 import os
 
@@ -28,6 +21,7 @@ class ReplotData:
 
     def run(self):
         self.find_uid()
+        self.find_max_epochs()
 
         content = self.load_json()
         if content is None:
@@ -43,6 +37,12 @@ class ReplotData:
 
         # Store in Config (because the plotter uses it)
         Config.set('uid', self.uid)
+
+    def find_max_epochs(self):
+        max_epochs = input('Enter maximum number of epochs to plot: ')
+        if max_epochs is None or len(max_epochs) == 0 or not str(max_epochs).isdigit():
+            return None
+        Config.set('plotter_max_epochs', int(max_epochs))
 
     def load_json(self):
         data_path = Config.get_path('path.output', 'data.json', fragment=self.uid)

@@ -24,6 +24,9 @@ class PlotterCallback(BaseCallback):
 
         fig, ax = self.build_axes()
 
+        if Config.get('plotter_max_epochs') is not None:
+            self.adjust_plot()
+
         self.add_plots(ax)
         self.add_labels(ax)
         self.set_ticks(ax)
@@ -40,6 +43,18 @@ class PlotterCallback(BaseCallback):
         ax = fig.add_subplot(111)
 
         return fig, ax
+
+    def adjust_plot(self):
+        max_length = Config.get('plotter_max_epochs')
+        self.data.set('train_loss', self.data.get('train_loss')[:max_length])
+        self.data.set('validate_loss', self.data.get('validate_loss')[:max_length])
+        self.data.set('validate_accuracy', self.data.get('validate_accuracy')[:max_length])
+
+        new_stores = []
+        for store in self.data.get('stores'):
+            if store < max_length:
+                new_stores.append(store)
+        self.data.set('stores', new_stores)
 
     def add_plots(self, ax):
         if PlotterCallback.LOSS in self.flags:
