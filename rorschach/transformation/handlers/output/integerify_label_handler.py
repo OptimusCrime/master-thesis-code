@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
+import os
 import json
 
 import numpy as np
 
 from rorschach.common import DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
-from rorschach.utilities import Config, Filesystem, pickle_data
+from rorschach.utilities import Config, Filesystem, pickle_data, unpickle_data
 
 '''
 IntegerifyLabelHandler
@@ -25,7 +26,7 @@ class IntegerifyLabelHandler(BaseHandler):
         self.label_lookup = {}
 
     def run(self, input_lists):
-        self.label_length = IntegerifyLabelHandler.calculate_label_length(input_lists)
+        self.label_length = IntegerifyLabelHandler.calculate_label_length()
         self.build_lookup_table()
         self.store_label_file()
 
@@ -43,11 +44,17 @@ class IntegerifyLabelHandler(BaseHandler):
         return input_list
 
     @staticmethod
-    def calculate_label_length(input_lists):
-        if Config.get('preprocessing.input.max-length') is not None:
-            return Config.get('preprocessing.input.max-length')
+    def calculate_label_length():
+        information_file = Config.get_path('path.data', 'information.pickl')
+        if not os.path.exists(information_file):
+            raise Exception('Information file information.pickl not found in data directory')
 
-        raise NotImplementedError("Damnit")
+        data = unpickle_data(Config.get_path('path.data', 'information.pickl'))
+        if 'label_length' not in data:
+            raise Exception('Label length information not found in information.pickl file')
+
+        return data['label_length']
+
 
     def build_lookup_table(self):
         characters = Config.get('general.characters')

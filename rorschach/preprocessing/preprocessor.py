@@ -7,7 +7,7 @@ import shutil
 
 from rorschach.common import DataSetTypes
 from rorschach.preprocessing.creators import InputSetCreator, LetterSetCreator
-from rorschach.utilities import Config, Filesystem, LoggerWrapper
+from rorschach.utilities import Config, Filesystem, LoggerWrapper, pickle_data
 
 
 class Preprocessor:
@@ -29,6 +29,9 @@ class Preprocessor:
 
         if Config.get('preprocessing.run'):
             self.create_sets()
+
+            # Save related information concerning this data set
+            Preprocessor.save_information()
 
         self.save_sets()
         self.save_sets_content()
@@ -83,6 +86,12 @@ class Preprocessor:
         for image_set in image_set_list:
             with open(Preprocessor.set_content_file_name(image_set), 'w') as outfile:
                 json.dump(image_set.terms, outfile)
+
+    @staticmethod
+    def save_information():
+        pickle_data({
+            'label_length': Config.get('preprocessing.input.max-length')
+        }, Config.get_path('path.data', 'information.pickl'))
 
     @staticmethod
     def set_content_file_name(image_set):
