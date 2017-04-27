@@ -21,27 +21,14 @@ class BaseSaverCallback(BaseCallback):
         if len(validation_loss) == 0:
             return False
 
-        if len(validation_loss) <= Config.get('predicting.best-results'):
-            # We do not have enough data to store correctly. To make sure we always have some weights stored, do
-            # following checks:
+        # 1. If this is the first epoch dump weights either way
+        if len(validation_loss) == 1:
+            return True
 
-            # 1. If this is the first epoch dump weights either way
-            if len(validation_loss) == 1:
-                return True
-
-            # 2. If we have more than one epochs, check if the current loss is "equal" to the overall best loss we have
-            # seen this far
-            current_loss = validation_loss[-1]
-            validation_loss.pop(-1)
-
-            # We are really just comparing floats here
-            return abs(min(validation_loss) - current_loss) <= 0.001
-
-        # The current (last) loss
+        # 2. If we have more than one epochs, check if the current loss is "equal" to the overall best loss we have
+        # seen this far
         current_loss = validation_loss[-1]
-
-        # The other loss values (without the last)
         validation_loss.pop(-1)
 
-        # If the last value is higher or equal to the highest value in the other losses, we store the weights
-        return current_loss <= min(validation_loss)
+        # We are really just comparing floats here
+        return abs(min(validation_loss) - current_loss) <= 0.001
