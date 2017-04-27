@@ -53,7 +53,7 @@ class BaseKerasPredictor(BasePredictor):
         self.model.fit(
             self.training_images_transformed,
             self.training_labels_transformed,
-            epoch=Config.get('predicting.epochs'),
+            epochs=Config.get('predicting.epochs'),
             verbose=1,
             batch_size=Config.get('predicting.batch-size'),
             validation_data=(self.validate_images_transformed, self.validate_labels_transformed),

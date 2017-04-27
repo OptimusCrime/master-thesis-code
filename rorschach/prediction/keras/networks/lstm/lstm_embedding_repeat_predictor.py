@@ -6,7 +6,6 @@ from keras.layers import LSTM, Activation, Dense, Embedding, Dropout, TimeDistri
 from keras.models import Sequential
 from keras.optimizers import Adam
 from keras.initializers import RandomUniform
-#from keras.utils.visualize_util import plot
 
 from rorschach.prediction.keras.networks import BaseKerasPredictor
 from rorschach.prediction.keras.tools import DimCalculator
@@ -14,6 +13,8 @@ from rorschach.utilities import Config
 
 
 class LSTMEmbeddingVectorPredictor(BaseKerasPredictor):
+
+    LSTM_REPEAT_SIZE = 3
 
     def __init__(self):
         super().__init__()
@@ -60,11 +61,12 @@ class LSTMEmbeddingVectorPredictor(BaseKerasPredictor):
         )
 
         # "Encoder"
-        for _ in range(3):
+        for i in range(LSTMEmbeddingVectorPredictor.LSTM_REPEAT_SIZE):
+            # The last LSTM should not return the complete sequence
             self.model.add(
                 LSTM(
                     1024,
-                    return_sequences=True,
+                    return_sequences=(LSTMEmbeddingVectorPredictor.LSTM_REPEAT_SIZE - 1) != i,
                     recurrent_activation='sigmoid'
                 )
             )
@@ -72,10 +74,10 @@ class LSTMEmbeddingVectorPredictor(BaseKerasPredictor):
             self.model.add(Dropout(0.2))
 
         # Voodoo magic
-        RepeatVector(self.dim_calculator.get(DimCalculator.LABELS_WIDTH))
+        self.model.add(RepeatVector(self.dim_calculator.get(DimCalculator.LABELS_WIDTH)))
 
         # "Decoder"
-        for _ in range(3):
+        for _ in range(LSTMEmbeddingVectorPredictor.LSTM_REPEAT_SIZE):
             self.model.add(
                 LSTM(
                     1024,
@@ -97,7 +99,6 @@ class LSTMEmbeddingVectorPredictor(BaseKerasPredictor):
             loss='categorical_crossentropy',
             optimizer=optimizer,
             metrics=[
-                'categorical_crossentropy',
                 'categorical_accuracy'
             ]
         )
@@ -106,10 +107,3 @@ class LSTMEmbeddingVectorPredictor(BaseKerasPredictor):
 
         # Bootstrap our model to the bridge
         self.callback.model = self.model
-
-        # Plot
-        #plot(
-        #    self.model,
-        #    to_file=Config.get_path('path.output', 'model.png', fragment=Config.get('uid')),
-        #    show_shapes=True
-        #)
