@@ -13,8 +13,7 @@ class RNNSeq2Seq(AbstractSeq2seq):
             rnn_cell = tf.contrib.rnn.DropoutWrapper(
                 tf.contrib.rnn.LSTMCell(
                     self.emb_dim,
-                    state_is_tuple=True,
-
+                    state_is_tuple=True
                 ),
                 output_keep_prob=self.keep_probability
             )
