@@ -45,8 +45,8 @@ class LSTMEmbeddingVectorPredictor(BaseKerasPredictor):
             'transformation.handlers.finalize.SwapHandler'
         ]
 
-    def prepare(self):
-        super().prepare()
+    def build(self):
+        super().build()
 
         self.model = Sequential()
 
@@ -91,6 +91,7 @@ class LSTMEmbeddingVectorPredictor(BaseKerasPredictor):
         self.model.add(TimeDistributed(Dense(units=self.dim_calculator.get(DimCalculator.LABELS_DEPTH))))
         self.model.add(Activation('softmax'))
 
+    def compile(self):
         optimizer = Adam(
             lr=Config.get('predicting.learning-rate')
         )

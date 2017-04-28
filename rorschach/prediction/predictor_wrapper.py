@@ -20,7 +20,7 @@ class PredictorWrapper:
         if len(self.predictor.transformation_handlers) > 0:
             self.transform()
 
-        self.predictor.prepare()
+        self.predictor.build()
 
     def train(self):
         self.setup()

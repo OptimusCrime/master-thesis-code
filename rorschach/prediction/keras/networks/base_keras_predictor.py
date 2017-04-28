@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import os
+
 from rorschach.prediction.common import BasePredictor, CallbackRunner, KerasCallbackRunnerBridge
 from rorschach.utilities import Config, LoggerWrapper
 
@@ -42,13 +44,18 @@ class BaseKerasPredictor(BasePredictor):
             'transformation.handlers.finalize.SwapHandler'
         ]
 
-    def prepare(self):
+    def build(self):
         self.callback = KerasCallbackRunnerBridge(
             CallbackRunner(self.data_container)
         )
 
+    def compile(self):
+        raise NotImplemented('Implement the compile function')
+
     def train(self):
         self.log.info('Begin')
+
+        self.compile()
 
         self.model.fit(
             self.training_images_transformed,
@@ -62,7 +69,25 @@ class BaseKerasPredictor(BasePredictor):
 
         self.log.info('Finish')
 
+    def load(self):
+        weight_file = Config.get_path('path.output', 'model.h5', fragment=Config.get('uid'))
+        if not os.path.exists(weight_file):
+            raise Exception('Weights file not found in ', weight_file)
+
+        self.model.load_weights(weight_file)
+
     def test(self):
         self.log.info('Begin test')
+
+        self.load()
+        self.compile()
+
+        loss_and_metrics = self.model.evaluate(
+            self.test_images_transformed,
+            self.test_labels_transformed,
+            batch_size=Config.get('predicting.batch-size')
+        )
+
+        print(loss_and_metrics)
 
         self.log.info('Finish test')

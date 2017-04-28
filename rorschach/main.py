@@ -6,13 +6,13 @@ from rorschach.utilities import Config
 
 
 def main():
-    if Config.get('general.mode') == 'train' or Config.get('general.mode') == 'both':
+    if Config.get('general.mode') in ['train', 'both', 'continue']:
         Trainer.run()
 
-    if Config.get('general.mode') == 'test' or Config.get('general.mode') == 'both':
+    if Config.get('general.mode') in ['test', 'both', 'continue']:
         Tester.run()
 
-    if Config.get('general.mode') in ['test', 'train', 'both']:
+    if Config.get('general.mode') in ['test', 'train', 'both', 'continue']:
         return
 
     raise Exception('Unknown mode. Should be either train, test or both.')
