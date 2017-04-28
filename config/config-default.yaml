@@ -38,13 +38,13 @@ various:
 
 path:
     # Where to save all the images
-    image: PROJECT_ROOT/data
+    image: PROJECT_ROOT_SEP_data_SEP_image
 
     # Where to save the data (pickle files and session dumps)
-    data: PROJECT_ROOT/data
+    data: PROJECT_ROOT_SEP_data_SEP_data
 
     # Where to save the output (logs and images)
-    output: PROJECT_ROOT/data
+    output: PROJECT_ROOT_SEP_data_SEP_output
 
 
 ##################################################################

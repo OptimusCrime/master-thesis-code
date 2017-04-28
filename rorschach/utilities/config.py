@@ -137,7 +137,9 @@ class Config:
         if value not in Config.CONTENTS['path']:
             return None
 
-        return Config.CONTENTS['path'][value].replace('PROJECT_ROOT', Filesystem.get_root_path())
+        return Config.CONTENTS['path'][value]\
+            .replace('PROJECT_ROOT', Filesystem.get_root_path())\
+            .replace('_SEP_', os.sep)
 
     @staticmethod
     def nested_key(key):

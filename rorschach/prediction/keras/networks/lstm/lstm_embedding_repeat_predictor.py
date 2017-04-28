@@ -88,7 +88,7 @@ class LSTMEmbeddingVectorPredictor(BaseKerasPredictor):
 
             self.model.add(Dropout(0.2))
 
-        self.model.add(TimeDistributed(Dense(output_dim=self.dim_calculator.get(DimCalculator.LABELS_DEPTH))))
+        self.model.add(TimeDistributed(Dense(units=self.dim_calculator.get(DimCalculator.LABELS_DEPTH))))
         self.model.add(Activation('softmax'))
 
         optimizer = Adam(

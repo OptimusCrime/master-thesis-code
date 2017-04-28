@@ -40,13 +40,19 @@ class Preprocessor:
     def wipe_images():
         images_path = Config.get('path.image')
         if os.path.exists(images_path):
-            shutil.rmtree(images_path)
+            try:
+                shutil.rmtree(images_path)
+            except Exception:
+                pass
 
     @staticmethod
     def wipe_data():
         data_path = Config.get('path.data')
         if os.path.exists(data_path):
-            shutil.rmtree(data_path)
+            try:
+                shutil.rmtree(data_path)
+            except Exception:
+                pass
 
     def create_sets(self):
         # Create the data set
