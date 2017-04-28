@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import os
-
 from rorschach.prediction import PredictorWrapper
-from rorschach.utilities import Config, LoggerWrapper, ModuleImporter
+from rorschach.utilities import Config, LoggerWrapper, ModuleImporter, UidGetter
 
 
 class Tester:
@@ -14,7 +12,7 @@ class Tester:
     @staticmethod
     def run():
         if Config.get('general.mode') == 'test':
-            Tester.provide_uid()
+            UidGetter.run()
 
         log = LoggerWrapper.load(__name__)
         log.info('Current uid is %s', Config.get('uid'))
@@ -24,15 +22,3 @@ class Tester:
             wrapper = PredictorWrapper()
             wrapper.predictor = ModuleImporter.load(Config.get('predicting.predictor'))
             wrapper.test()
-
-    @staticmethod
-    def provide_uid():
-        uid = input('Enter uid: ')
-
-        if uid is None or len(uid) == 0:
-            raise Exception('No valid uid provided')
-
-        if not os.path.exists(Config.get_path('path.output', 'data.json', fragment=uid)):
-            raise Exception('No valid uid provided')
-
-        Config.set('uid', uid)

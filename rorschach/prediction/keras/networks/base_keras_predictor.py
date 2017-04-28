@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import json
 
 from rorschach.prediction.common import BasePredictor, CallbackRunner, KerasCallbackRunnerBridge
 from rorschach.utilities import Config, LoggerWrapper
@@ -57,10 +58,18 @@ class BaseKerasPredictor(BasePredictor):
 
         self.compile()
 
+        epochs = Config.get('predicting.epochs')
+        if Config.get('general.mode') == 'continue':
+            with open(Config.get_path('path.output', 'data.json', fragment=Config.get('uid'))) as json_data:
+                data = json.load(json_data)
+
+                if 'epoch' in data:
+                    epochs = Config.get('predicting.epochs') - data['epoch']
+
         self.model.fit(
             self.training_images_transformed,
             self.training_labels_transformed,
-            epochs=Config.get('predicting.epochs'),
+            epochs=epochs,
             verbose=1,
             batch_size=Config.get('predicting.batch-size'),
             validation_data=(self.validate_images_transformed, self.validate_labels_transformed),

@@ -2,7 +2,7 @@
 
 from rorschach.prediction import PredictorWrapper
 from rorschach.preprocessing import Preprocessor
-from rorschach.utilities import Config, LoggerWrapper, ModuleImporter, UidGenerator
+from rorschach.utilities import Config, LoggerWrapper, ModuleImporter, UidGenerator, UidGetter
 
 
 class Trainer:
@@ -12,7 +12,10 @@ class Trainer:
 
     @staticmethod
     def run():
-        UidGenerator.run()
+        if Config.get('general.mode') == 'continue':
+            UidGetter.run()
+        else:
+            UidGenerator.run()
 
         log = LoggerWrapper.load(__name__)
         log.info('Current uid is %s', Config.get('uid'))

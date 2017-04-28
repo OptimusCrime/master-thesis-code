@@ -24,6 +24,10 @@ class PredictorWrapper:
 
     def train(self):
         self.setup()
+
+        if Config.get('general.mode') == 'continue':
+            self.predictor.load()
+
         self.predictor.train()
 
     def test(self):

@@ -1,6 +1,7 @@
 # Incorrect order due to import conflicts between config, filesystem
 from .filesystem import Filesystem
 from .config import Config
+from .uid_getter import UidGetter
 from .uid_generator import UidGenerator
 from .logger import LoggerWrapper
 from .pickler import pickle_data, unpickle_data

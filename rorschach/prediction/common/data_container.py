@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+import json
+
+from rorschach.utilities import Config
+
 
 class DataContainer:
 
@@ -11,6 +15,10 @@ class DataContainer:
             'validate_accuracy': [],
             'stores': []
         }
+
+        if Config.get('general.mode') == 'continue':
+            with open(Config.get_path('path.output', 'data.json', fragment=Config.get('uid'))) as json_data:
+                self.data = json.load(json_data)
 
     def add(self, key, value):
         self.data[key] = value
