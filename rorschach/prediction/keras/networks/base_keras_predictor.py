@@ -98,6 +98,14 @@ class BaseKerasPredictor(BasePredictor):
             batch_size=Config.get('predicting.batch-size')
         )
 
+        data = {
+            'loss': loss_and_metrics[0],
+            'accuracy': loss_and_metrics[1]
+        }
+
+        with open(Config.get_path('path.output', 'results.json', fragment=Config.get('uid')), 'w') as outfile:
+            json.dump(data, outfile)
+
         print(loss_and_metrics)
 
         self.log.info('Finish test')
