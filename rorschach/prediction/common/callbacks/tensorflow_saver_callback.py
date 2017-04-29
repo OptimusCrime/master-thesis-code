@@ -9,7 +9,7 @@ from rorschach.utilities import Config
 
 class TensorflowSaverCallback(BaseSaverCallback):
 
-    MODEL_CKPT_PATTERN = re.compile('^model\.ckpt-[0-9]\.(?:index|meta|data\-[0-9]*\-of\-[0-9]*)')
+    MODEL_CKPT_PATTERN = re.compile('^model\.ckpt-[0-9]\.(?:index|meta|data\-[0-9]*\-of\-[0-9]*)$')
 
     def __init__(self):
         super().__init__()
