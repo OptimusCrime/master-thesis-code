@@ -16,15 +16,21 @@ class DataContainer:
             'stores': []
         }
 
+        self.offset = 0
+
         if Config.get('general.mode') == 'continue':
             with open(Config.get_path('path.output', 'data.json', fragment=Config.get('uid'))) as json_data:
                 self.data = json.load(json_data)
+                self.offset = self.data['epoch']
 
     def add(self, key, value):
         self.data[key] = value
 
     def set(self, key, value):
-        self.add(key, value)
+        if key == 'epoch' and Config.get('general.mode') == 'continue':
+            self.add(key, value + self.offset)
+        else:
+            self.add(key, value)
 
     def remove(self, key):
         if key not in self.data:
