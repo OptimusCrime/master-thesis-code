@@ -43,7 +43,7 @@ class AbstractSeq2SeqPredictor(BasePredictor, ABC):
             'transformation.handlers.finalize.SwapHandler'
         ]
 
-    def prepare(self):
+    def build(self):
         self.build_batches()
         self.build_model()
 
@@ -80,7 +80,7 @@ class AbstractSeq2SeqPredictor(BasePredictor, ABC):
 
         self.model.build_graph()
 
-        self.log.info('Finished building modelx')
+        self.log.info('Finished building model')
 
     @abstractmethod
     def build_tf_model(self):
