@@ -58,18 +58,19 @@ class BaseKerasPredictor(BasePredictor):
 
         self.compile()
 
-        epochs = Config.get('predicting.epochs')
+        initial_epoch = None
         if Config.get('general.mode') == 'continue':
             with open(Config.get_path('path.output', 'data.json', fragment=Config.get('uid'))) as json_data:
                 data = json.load(json_data)
 
                 if 'epoch' in data:
-                    epochs = Config.get('predicting.epochs') - data['epoch']
+                    initial_epoch = data['epoch']
 
         self.model.fit(
             self.training_images_transformed,
             self.training_labels_transformed,
-            epochs=epochs,
+            epochs=Config.get('predicting.epochs'),
+            initial_epoch=initial_epoch,
             verbose=1,
             batch_size=Config.get('predicting.batch-size'),
             validation_data=(self.validate_images_transformed, self.validate_labels_transformed),
