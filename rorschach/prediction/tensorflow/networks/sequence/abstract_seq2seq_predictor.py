@@ -80,7 +80,7 @@ class AbstractSeq2SeqPredictor(BasePredictor, ABC):
 
         self.model.build_graph()
 
-        self.log.info('Finished building model')
+        self.log.info('Finished building modelx')
 
     @abstractmethod
     def build_tf_model(self):
