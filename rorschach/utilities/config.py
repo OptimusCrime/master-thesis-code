@@ -65,6 +65,13 @@ class Config:
         return yaml.safe_load(open(Filesystem.get_root_path('config/' + file)))
 
     @staticmethod
+    def all():
+        if Config.CONTENTS is None:
+            Config.load_config()
+
+        return Config.CONTENTS
+
+    @staticmethod
     def get(key):
         if Config.CONTENTS is None:
             Config.load_config()

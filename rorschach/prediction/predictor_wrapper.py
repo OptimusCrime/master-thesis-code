@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import os
+import json
+
 from rorschach.common import DataSetTypes
 from rorschach.transformation import Transformator
-from rorschach.utilities import Config, unpickle_data
+from rorschach.utilities import Config, JsonConfigEncoder, unpickle_data
 
 
 class PredictorWrapper:
@@ -19,6 +22,7 @@ class PredictorWrapper:
 
         if len(self.predictor.transformation_handlers) > 0:
             self.transform()
+            self.dump_info()
 
         self.predictor.build()
 
@@ -61,3 +65,28 @@ class PredictorWrapper:
 
         self.predictor.test_images_transformed, \
             self.predictor.test_labels_transformed = transformator.data_set(DataSetTypes.TEST_SET)
+
+    def dump_info(self):
+        config_file = Config.get_path('path.output', 'config.json', fragment=Config.get('uid'))
+        if not os.path.exists(config_file):
+            self.dump_config()
+
+        dataset_file = Config.get_path('path.output', 'dataset.json', fragment=Config.get('uid'))
+        if not os.path.exists(dataset_file):
+            self.dump_dataset()
+
+    def dump_config(self):
+        with open(Config.get_path('path.output', 'config.json', fragment=Config.get('uid')), 'w') as outfile:
+            json.dump(Config.all(), outfile, cls=JsonConfigEncoder)
+
+    def dump_dataset(self):
+        data = {
+            'training_size': len(self.predictor.training_images_transformed),
+            'validate_size': len(self.predictor.validate_images_transformed),
+            'test_size': len(self.predictor.test_images_transformed),
+            'label_length_perhaps': len(self.predictor.training_labels_transformed[0])
+        }
+
+        with open(Config.get_path('path.output', 'dataset.json', fragment=Config.get('uid')), 'w') as outfile:
+            json.dump(data, outfile)
+
