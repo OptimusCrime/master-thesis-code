@@ -13,6 +13,6 @@ class EmbeddingAttentionSeq2SeqPredictor(AbstractSeq2SeqPredictor):
             yseq_len=self.training_labels_transformed.shape[-1],
             xvocab_size=Config.get('dataset.voc_size_input'),
             yvocab_size=Config.get('dataset.voc_size_output'),
-            emb_dim=1024,
+            emb_dim=128,
             num_layers=3
         )

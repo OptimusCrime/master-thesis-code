@@ -53,7 +53,7 @@ class LSTMEmbeddingVectorPredictor(BaseKerasPredictor):
         self.model.add(
             Embedding(
                 Config.get('dataset.voc_size_input'),
-                1024,
+                128,
                 input_length=self.dim_calculator.get(DimCalculator.INPUT_WIDTH),
                 mask_zero=True,
                 embeddings_initializer=RandomUniform(minval=math.sqrt(3), maxval=math.sqrt(3))
