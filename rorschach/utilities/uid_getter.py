@@ -12,6 +12,9 @@ class UidGetter:
 
     @staticmethod
     def run():
+        if Config.get('uid') is not None:
+            return
+
         uid = input('Enter uid: ')
 
         if uid is None or len(uid) == 0:

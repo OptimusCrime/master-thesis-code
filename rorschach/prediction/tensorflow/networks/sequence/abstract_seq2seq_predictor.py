@@ -47,6 +47,9 @@ class AbstractSeq2SeqPredictor(BasePredictor, ABC):
         self.build_batches()
         self.build_model()
 
+    def load(self):
+        pass
+
     def build_batches(self):
         self.train_batch_gen = batch_gen(
             self.training_images_transformed,

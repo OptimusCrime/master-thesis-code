@@ -2,7 +2,10 @@
 
 from abc import ABC, abstractmethod
 import math
+import glob
+import json
 import time
+import re
 
 import numpy as np
 import tensorflow as tf
@@ -14,6 +17,9 @@ from rorschach.utilities import Config, LoggerWrapper
 
 
 class AbstractSeq2seq(ABC):
+
+    MODEl_CKPT_ID_PATTERN = re.compile('^model\.ckpt-(?P<id>[0-9]{1,})\.(?:index|meta|data\-[0-9]*\-of\-[0-9]*)$')
+
     def __init__(
         self,
         xseq_len,
@@ -66,6 +72,8 @@ class AbstractSeq2seq(ABC):
         # Merge for all tf variables
         self.merged = None
         self.merged_identifier = 0
+
+        self.saver = None
 
     def register_data_container(self, data_container):
         self.callback = CallbackRunner(data_container)
@@ -269,13 +277,9 @@ class AbstractSeq2seq(ABC):
         pass
 
     def start_train(self):
-        saver = tf.train.Saver()
-
         # Start a session
         if not self.session:
-            self.session = tf.Session()
-
-            self.session.run(tf.global_variables_initializer())
+            self.init_session()
 
             if Config.get('various.tensorboard'):
                 self.graph_writer = tf.summary.FileWriter(
@@ -287,9 +291,15 @@ class AbstractSeq2seq(ABC):
                 Config.get_path('path.output', '', fragment=Config.get('uid'))
             )
 
+        epoch_offset = 0
+        if Config.get('general.mode') == 'continue':
+            with open(Config.get_path('path.output', 'data.json', fragment=Config.get('uid'))) as json_data:
+                data = json.load(json_data)
+                if 'epoch' in data:
+                    epoch_offset = data['epoch'] + 1
 
         # Loop the epochs
-        for epoch in range(Config.get('predicting.epochs')):
+        for epoch in range(epoch_offset, Config.get('predicting.epochs')):
             self.data_container.set('epoch', epoch)
 
             self.epoch_time_start = time.time()
@@ -313,7 +323,7 @@ class AbstractSeq2seq(ABC):
 
                 # Dump weights
                 self.callback.run([TensorflowSaverCallback], None, {
-                    'saver': saver,
+                    'saver': self.saver,
                     'session': self.session,
                     'log': self.log
                 })
@@ -322,27 +332,48 @@ class AbstractSeq2seq(ABC):
 
         self.log.write('', LogPrettifier.END)
 
-        # Run final validation
-        self.test()
-
     def start_test(self):
         pass
 
+    def init_session(self):
+        if Config.get('general.mode') == 'continue':
+            return self.restore_last_session()
+
+        return self.create_session()
+
+    def create_session(self):
+        self.saver = tf.train.Saver()
+        self.session = tf.Session()
+        self.session.run(tf.global_variables_initializer())
+
     def restore_last_session(self):
-        # TODO
+        self.saver = tf.train.Saver()
 
-        '''
+        self.session = tf.Session()
 
-        saver = tf.train.Saver()
+        checkpoint = AbstractSeq2seq.locate_checkpoint_file()
 
-        sess = tf.Session()
+        self.log.write('Restoring model checkpoint from ' + checkpoint)
 
-        ckpt = tf.train.get_checkpoint_state()
+        self.saver.restore(self.session, checkpoint)
 
-        if ckpt and ckpt.model_checkpoint_path:
-            saver.restore(sess, ckpt.model_checkpoint_path)
+    @staticmethod
+    def locate_checkpoint_file():
+        ids = set()
+        base_path = Config.get_path('path.output', Config.get('uid'))
+        files = glob.glob(base_path + '/*')
+        for file in files:
+            filename = file.split('/')[-1]
 
-        return sess
-        '''
+            matches = re.findall(AbstractSeq2seq.MODEl_CKPT_ID_PATTERN, filename)
 
-        return
+            for match in matches:
+                if match is not None and len(match) > 0 and match.isdigit():
+                    ids.add(int(match))
+
+        if len(ids) == 0:
+            raise Exception('No ckpt file found!')
+
+        sorted_ids = sorted(list(ids))
+
+        return Config.get_path('path.output', 'model.ckpt-' + str(sorted_ids[-1]), fragment=Config.get('uid'))
