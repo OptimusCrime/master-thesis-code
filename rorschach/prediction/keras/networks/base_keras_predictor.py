@@ -58,7 +58,7 @@ class BaseKerasPredictor(BasePredictor):
 
         self.compile()
 
-        initial_epoch = None
+        initial_epoch = 0
         if Config.get('general.mode') == 'continue':
             with open(Config.get_path('path.output', 'data.json', fragment=Config.get('uid'))) as json_data:
                 data = json.load(json_data)
