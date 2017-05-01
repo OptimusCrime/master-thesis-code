@@ -50,6 +50,11 @@ class AbstractSeq2seq(ABC):
         self.test_set = None
         self.validation_set = None
 
+        # Sizes
+        self.training_set_size = 0
+        self.test_set_size = 0
+        self.validation_set_size = 0
+
         # Parts of the model
         self.encoder_input_placeholders = None
         self.decoder_input_placeholders = None
@@ -178,7 +183,7 @@ class AbstractSeq2seq(ABC):
 
         # Divide number of words in the training set on batch size
         num_batches = int(
-            math.ceil(Config.get('preprocessing.training-set.size') / Config.get('predicting.batch-size')))
+            math.ceil(self.training_set_size / Config.get('predicting.batch-size')))
 
         for i in range(num_batches):
             train_loss = self.train_batch()
@@ -243,7 +248,7 @@ class AbstractSeq2seq(ABC):
 
         # Divide number of words in the validate set on batch size
         num_batches = int(math.ceil(
-            Config.get('preprocessing.validate-set.size') / Config.get('predicting.batch-size')))
+            self.validation_set_size / Config.get('predicting.batch-size')))
 
         for i in range(num_batches):
             validation_loss, validation_accuracy, validation_correct, validation_total = self.validate_batch()

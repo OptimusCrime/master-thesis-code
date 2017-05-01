@@ -79,6 +79,10 @@ class AbstractSeq2SeqPredictor(BasePredictor, ABC):
         self.model.validation_set = self.validation_batch_gen
         self.model.test_set = self.test_batch_gen
 
+        self.model.training_set_size = self.training_images_transformed.shape[0]
+        self.model.validation_set_size = self.validate_images_transformed.shape[0]
+        self.model.test_set_size = self.test_images_transformed.shape[0]
+
         self.model.register_data_container(self.data_container)
 
         self.model.build_graph()
