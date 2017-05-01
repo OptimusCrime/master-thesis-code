@@ -106,6 +106,6 @@ class BaseKerasPredictor(BasePredictor):
         with open(Config.get_path('path.output', 'results.json', fragment=Config.get('uid')), 'w') as outfile:
             json.dump(data, outfile)
 
-        print(loss_and_metrics)
+        print(data)
 
         self.log.info('Finish test')

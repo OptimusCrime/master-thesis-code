@@ -13,12 +13,15 @@ import tensorflow as tf
 from rorschach.prediction.common import CallbackRunner
 from rorschach.prediction.common.callbacks import DataCallback, PlotterCallback, TensorflowSaverCallback
 from rorschach.prediction.tensorflow.tools import LogPrettifier, TimeParse
-from rorschach.utilities import Config, LoggerWrapper
+from rorschach.utilities import Config, LoggerWrapper, JsonConfigEncoder
 
 
 class AbstractSeq2seq(ABC):
 
     MODEl_CKPT_ID_PATTERN = re.compile('^model\.ckpt-(?P<id>[0-9]{1,})\.(?:index|meta|data\-[0-9]*\-of\-[0-9]*)$')
+
+    VALIDATE = 1
+    TEST = 2
 
     def __init__(
         self,
@@ -69,6 +72,9 @@ class AbstractSeq2seq(ABC):
         self.decode_states_test = None
 
         self.epoch_time_start = None
+
+        self.loss = None
+        self.train_op = None
 
         # Graphers
         self.graph_writer = None
@@ -147,22 +153,22 @@ class AbstractSeq2seq(ABC):
     def build_model(self):
         pass
 
-    def get_feed(self, X, Y, keep_prob):
+    def get_feed(self, x, y, keep_prob):
         feed_dict = {
-            self.encoder_input_placeholders[t]: X[t] for t in range(self.xseq_len)
+            self.encoder_input_placeholders[t]: x[t] for t in range(self.xseq_len)
         }
 
-        feed_dict.update({self.label_placeholders[t]: Y[t] for t in range(self.yseq_len)})
+        feed_dict.update({self.label_placeholders[t]: y[t] for t in range(self.yseq_len)})
         feed_dict[self.keep_probability] = keep_prob
 
         return feed_dict
 
     def train_batch(self):
-        batchX, batchY = self.training_set.__next__()
+        batch_x, batch_y = self.training_set.__next__()
 
         feed_dict = self.get_feed(
-            batchX,
-            batchY,
+            batch_x,
+            batch_y,
             keep_prob=0.8
         )
 
@@ -175,7 +181,6 @@ class AbstractSeq2seq(ABC):
         else:
             _, train_loss = self.session.run([self.train_op, self.loss], feed_dict)
 
-
         return train_loss
 
     def train(self):
@@ -185,7 +190,7 @@ class AbstractSeq2seq(ABC):
         num_batches = int(
             math.ceil(self.training_set_size / Config.get('predicting.batch-size')))
 
-        for i in range(num_batches):
+        for _ in range(num_batches):
             train_loss = self.train_batch()
 
             train_losses.append(train_loss)
@@ -198,16 +203,19 @@ class AbstractSeq2seq(ABC):
 
         self.log.write('- Loss: {:.5f}'.format(train_mean_loss))
 
-    def validate_batch(self):
-        batchX, batchY = self.validation_set.__next__()
+    def validate_test_batch(self, mode):
+        if mode == AbstractSeq2seq.VALIDATE:
+            batch_x, batch_y = self.validation_set.__next__()
+        else:
+            batch_x, batch_y = self.test_set.__next__()
 
         feed_dict = self.get_feed(
-            batchX,
-            batchY,
+            batch_x,
+            batch_y,
             keep_prob=1.
         )
 
-        validation_loss, validation_output = self.session.run(
+        loss, output = self.session.run(
             [
                 self.loss,
                 self.decode_outputs_test
@@ -216,51 +224,69 @@ class AbstractSeq2seq(ABC):
         )
 
         # Transpose the validation output
-        validation_output = np.array(validation_output).transpose([1, 0, 2])
+        output = np.array(output).transpose([1, 0, 2])
 
         # Transpose the validate labels
-        validate_labels = np.array(batchY).transpose([1, 0])
+        labels = np.array(batch_y).transpose([1, 0])
 
         # We use argmax to get the output with the highest probability for each character in the output
-        validation_predictions = np.argmax(validation_output, axis=2)
+        predictions = np.argmax(output, axis=2)
 
         # Create a boolen matrix with true where we predited the correct label and false where we did not
-        validation_correct_predictions = np.equal(validation_predictions, validate_labels)
+        correct_predictions = np.equal(predictions, labels)
 
         # Sum the number of correct predictions
-        validation_correct = np.sum(validation_correct_predictions)
+        correct = np.sum(correct_predictions)
 
         # Calculate the number of predictions done in this batch
-        validation_total = validation_correct_predictions.shape[0] * validation_correct_predictions.shape[1]
+        total = correct_predictions.shape[0] * correct_predictions.shape[1]
 
         # Calculate the float value of the accuracy
-        validation_accuracy = validation_correct / float(validation_total)
+        accuracy = correct / float(total)
 
         # Return: loss, calculate accuracy, number of correct predictions and total number of predictions done
-        return validation_loss, validation_accuracy, validation_correct, validation_total
+        return {
+            'loss': loss,
+            'accuracy': accuracy,
+            'correct': correct,
+            'total': total
+        }
+
+    def calculate_batch_size(self, mode):
+        dividend = self.validation_set_size
+        if mode == AbstractSeq2seq.TEST:
+            dividend = self.test_set_size
+
+        return int(math.ceil(dividend / Config.get('predicting.batch-size')))
+
+    def validate_test(self, mode):
+        losses = []
+        accuracies = []
+
+        total_correct = 0
+        total_predictions = 0
+
+        for _ in range(self.calculate_batch_size(mode)):
+            results = self.validate_test_batch(mode)
+
+            losses.append(results['loss'])
+            accuracies.append(results['accuracy'])
+
+            total_correct += results['correct']
+            total_predictions += results['total']
+
+        return {
+            'losses': losses,
+            'accuracies': accuracies,
+            'total_correct': total_correct,
+            'total_predictions': total_predictions
+        }
 
     def validate(self):
-        validation_losses = []
-        validation_accuracies = []
+        results = self.validate_test(AbstractSeq2seq.VALIDATE)
 
-        validation_total_correct = 0
-        validation_total_predictions = 0
-
-        # Divide number of words in the validate set on batch size
-        num_batches = int(math.ceil(
-            self.validation_set_size / Config.get('predicting.batch-size')))
-
-        for i in range(num_batches):
-            validation_loss, validation_accuracy, validation_correct, validation_total = self.validate_batch()
-
-            validation_losses.append(validation_loss)
-            validation_accuracies.append(validation_accuracy)
-
-            validation_total_correct += validation_correct
-            validation_total_predictions += validation_total
-
-        validation_mean_loss = np.mean(validation_losses)
-        validation_mean_accuracy = np.mean(validation_accuracies)
+        validation_mean_loss = np.mean(results['losses'])
+        validation_mean_accuracy = np.mean(results['accuracies'])
 
         self.data_container.add_list('validate_loss', float(validation_mean_loss))
         self.data_container.add_list('validate_accuracy', float(validation_mean_accuracy))
@@ -275,11 +301,21 @@ class AbstractSeq2seq(ABC):
         # Output debug
         self.log.write('- Validate loss: {:.5f}'.format(validation_mean_loss))
         self.log.write('- Validate accuracy: {:.5f}'.format(validation_mean_accuracy))
-        self.log.write('- Validate correct attributes: {:,} / {:,}'.format(validation_total_correct,
-                                                                           validation_total_predictions))
+        self.log.write('- Validate correct attributes: {:,} / {:,}'.format(results['total_correct'],
+                                                                           results['total_predictions']))
 
     def test(self):
-        pass
+        results = self.validate_test(AbstractSeq2seq.TEST)
+
+        data = {
+            'loss': results['losses'],
+            'accuracy': results['accuracies']
+        }
+
+        with open(Config.get_path('path.output', 'results.json', fragment=Config.get('uid')), 'w') as outfile:
+            json.dump(data, outfile, cls=JsonConfigEncoder)
+
+        print(data)
 
     def start_train(self):
         # Start a session
@@ -338,10 +374,15 @@ class AbstractSeq2seq(ABC):
         self.log.write('', LogPrettifier.END)
 
     def start_test(self):
-        pass
+        self.log.write('Begin test', LogPrettifier.NULL)
 
-    def init_session(self):
-        if Config.get('general.mode') == 'continue':
+        self.init_session(restore=True)
+        self.test()
+
+        self.log.write('Finish test', LogPrettifier.NULL)
+
+    def init_session(self, restore=False):
+        if restore or Config.get('general.mode') in ['continue', 'test']:
             return self.restore_last_session()
 
         return self.create_session()
@@ -358,7 +399,7 @@ class AbstractSeq2seq(ABC):
 
         checkpoint = AbstractSeq2seq.locate_checkpoint_file()
 
-        self.log.write('Restoring model checkpoint from ' + checkpoint)
+        self.log.write('Restoring model checkpoint from ' + checkpoint, LogPrettifier.NULL)
 
         self.saver.restore(self.session, checkpoint)
 

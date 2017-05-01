@@ -13,10 +13,16 @@ class LogPrettifier:
 
     LOG_LINE_WIDTH = 76
 
+    NULL = None
+
     def __init__(self, log):
         self.log = log
 
     def write(self, line, line_type=INFO):
+        if line_type is None:
+            self.log.info(line)
+            return
+
         # Opening/continuing line
         if line_type == LogPrettifier.FIRST_EPOCH:
             self.log.info('||==========================================================================||')
