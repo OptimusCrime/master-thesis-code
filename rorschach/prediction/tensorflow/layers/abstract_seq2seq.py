@@ -2,6 +2,7 @@
 
 from abc import ABC, abstractmethod
 import math
+import os
 import glob
 import json
 import time
@@ -407,9 +408,10 @@ class AbstractSeq2seq(ABC):
     def locate_checkpoint_file():
         ids = set()
         base_path = Config.get_path('path.output', Config.get('uid'))
-        files = glob.glob(base_path + '/*')
+        files = glob.glob(base_path + os.sep + '*')
+
         for file in files:
-            filename = file.split('/')[-1]
+            filename = file.split(os.sep)[-1]
 
             matches = re.findall(AbstractSeq2seq.MODEl_CKPT_ID_PATTERN, filename)
 
