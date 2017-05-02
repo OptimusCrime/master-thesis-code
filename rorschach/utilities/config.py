@@ -135,6 +135,10 @@ class Config:
         Config.override_config_value(value, '.' + key)
 
     @staticmethod
+    def inc(key, value):
+        Config.override_config_value(Config.get(key) + 1, '.' + key)
+
+    @staticmethod
     def parse_path_setting(value):
         if type(value) is list:
             if len(value) == 1:

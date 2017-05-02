@@ -2,11 +2,12 @@
 
 import gc
 import os
+import json
 from random import randrange
 
 from rorschach.preprocessing.creators import AbstractCreator
 from rorschach.preprocessing.handlers import TextCreator
-from rorschach.utilities import Config, unpickle_data
+from rorschach.utilities import Config, unpickle_data, JsonConfigEncoder
 
 
 class TermCreator(AbstractCreator):
@@ -20,15 +21,30 @@ class TermCreator(AbstractCreator):
 
         return self.fonts[randrange(0, len(self.fonts))]
 
+    @staticmethod
+    def font_path_to_name(path):
+        return path.split(os.sep)[-1].split('.')[0]
+
     def create_sets(self):
         contents = []
+
+        # Storing information about fonts
+        multiple_fonts = len(self.fonts) > 0
+
+        if multiple_fonts:
+            for font in self.fonts:
+                Config.set('multiple_fonts_' + TermCreator.font_path_to_name(font), 0)
 
         data_set_size = len(self.terms)
         for i in range(data_set_size):
             if (i + 1) % Config.get('logging.batch_reporting') == 0:
                 self.log.info('Constructing image %s/%s.', i + 1, data_set_size)
 
-            phrase_arr = TextCreator.write(self.terms[i], self.set_type_keyword, self.random_font())
+            font = self.random_font()
+            if multiple_fonts:
+                Config.inc('multiple_fonts_' + TermCreator.font_path_to_name(font), 0)
+
+            phrase_arr = TextCreator.write(self.terms[i], self.set_type_keyword, font)
 
             contents.append({
                 'text': self.terms[i],
@@ -37,6 +53,15 @@ class TermCreator(AbstractCreator):
 
             if i != 0 and i % 1000 == 0:
                 gc.collect()
+
+        if multiple_fonts:
+            data = {}
+            for font in self.fonts:
+                font_name = TermCreator.font_path_to_name(font)
+                data[font_name] = Config.get('multiple_fonts_' + font_name)
+
+            with open(Config.get_path('path.data', 'fonts_' + self.set_type_keyword + '.json'), 'w') as outfile:
+                json.dump(data, outfile, cls=JsonConfigEncoder)
 
         return contents
 
