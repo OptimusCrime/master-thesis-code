@@ -24,19 +24,22 @@ class CropPlots:
             if filename_split[0].endswith('_crop'):
                 continue
 
-            print('From = ')
+            new_file_path = os.sep.join(filepath_split[:len(filepath_split) - 1]) + os.sep
+            new_file_name = filename_split[0] + '_crop.' + filename_split[1]
+
+            img = Image.open(file)
+            width = img.size[0]
+            height = img.size[1]
+
+            img2 = img.crop((88, 0, width - 174, height))
+            img2.save(new_file_path + new_file_name)
+
+            del img
+            del img2
+
+            print('Cropped plot from ')
             print(file)
-            print('To = ')
-            new_filepath = os.sep.join(filepath_split[:len(filepath_split) - 1]) + os.sep + filename_split[0] + '_crop.' + filename_split[1]
-            print(new_filepath)
             print('')
-            print('')
-
-            #break
-
-            #img = Image.open(file)
-            #img2 = img.crop((0, 0, 100, 100))
-            #img2.save("img2.jpg")
 
 
 if __name__ == '__main__':
