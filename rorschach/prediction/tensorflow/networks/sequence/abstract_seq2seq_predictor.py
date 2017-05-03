@@ -24,6 +24,9 @@ class AbstractSeq2SeqPredictor(BasePredictor, ABC):
             # Initialize the labels
             'transformation.handlers.initializers.LabelInitializeHandler',
 
+            # Noise
+            'transformation.handlers.input.NoiseHandler',
+
             # Translate individual bits to string representations
             'transformation.handlers.input.ConcatenateBinaryDataHandler',
 

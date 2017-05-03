@@ -31,6 +31,14 @@ various:
     # Indicate if we should start tensorboard
     tensorboard: false
 
+    # Save model only if save indicator is present. This is useful early in training as the
+    # system will use a LOT time saving models every single epoch. Running the TF based attention
+    # model, training and validating on a dataset of size 10k and 1k takes about 5 seconds on the GPU,
+    # while storing the model takes about 30 seconds. Turning this indicator on does not actually save
+    # the weights unless you have a file named 'save' in your output directory under the current uid.
+    # Note: This functioality is only implemented for the TF callbacks.
+    save-indicator: false
+
 
 ##################################################################
 #                           Path                                 #
@@ -98,7 +106,6 @@ preprocessing:
     text:
         fonts:
         - arial-mono
-        #- arial
         size: 35
 
     # Settings for the canvas we write on (should be irrelevant)

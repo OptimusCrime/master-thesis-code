@@ -24,17 +24,12 @@ class TensorflowSaverCallback(BaseSaverCallback):
         # Add save to plot
         self.data.add_list('stores', epoch)
 
-        # Delete earlier model files
-        dir_content = os.listdir(os.path.join(Config.get('path.output'), Config.get('uid')))
-        for content in dir_content:
-            if not TensorflowSaverCallback.MODEL_CKPT_PATTERN.match(content):
-                continue
-
-            os.remove(Config.get_path('path.output', content, fragment=Config.get('uid')))
-
-        # Save the ckpt dump
-        saver.save(
-            self.information['session'],
-            Config.get_path('path.output', 'model.ckpt', fragment=Config.get('uid')),
-            global_step=epoch
-        )
+        should_save = Config.get('various.save-indicator')
+        save_indicator = Config.get_path('path.output', 'save', fragment=Config.get('uid'))
+        if should_save in [False, None] or (should_save and os.path.exists(save_indicator)):
+            # Save the ckpt dump
+            saver.save(
+                self.information['session'],
+                Config.get_path('path.output', 'model.ckpt', fragment=Config.get('uid')),
+                global_step=epoch
+            )
