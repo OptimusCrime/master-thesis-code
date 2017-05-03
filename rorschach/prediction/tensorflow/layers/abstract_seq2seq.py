@@ -309,8 +309,8 @@ class AbstractSeq2seq(ABC):
         results = self.validate_test(AbstractSeq2seq.TEST)
 
         data = {
-            'loss': results['losses'],
-            'accuracy': results['accuracies']
+            'loss': np.mean(results['losses']),
+            'accuracy': np.mean(results['accuracies'])
         }
 
         with open(Config.get_path('path.output', 'results.json', fragment=Config.get('uid')), 'w') as outfile:
@@ -389,12 +389,12 @@ class AbstractSeq2seq(ABC):
         return self.create_session()
 
     def create_session(self):
-        self.saver = tf.train.Saver()
+        self.saver = tf.train.Saver(max_to_keep=1)
         self.session = tf.Session()
         self.session.run(tf.global_variables_initializer())
 
     def restore_last_session(self):
-        self.saver = tf.train.Saver()
+        self.saver = tf.train.Saver(max_to_keep=1)
 
         self.session = tf.Session()
 
