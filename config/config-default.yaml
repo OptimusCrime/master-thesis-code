@@ -66,9 +66,6 @@ wordlist:
     # Set to true to remove duplicates across all sets
     remove-duplicate-all: false
 
-    # Seed to use for randomness
-    noise-random-seed: 9001
-
 
 ##################################################################
 #                       Transformation                           #
