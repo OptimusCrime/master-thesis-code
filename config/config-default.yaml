@@ -76,7 +76,7 @@ wordlist:
 
 transformation:
     # If noise handler is called, use this degree of randomness (in percent)
-    noise-random-factor: 10
+    noise-random-factor: 0
 
     # Seed to use for randomness
     noise-random-seed: None

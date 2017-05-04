@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 
-from rorschach.prediction.common import BasePredictor
+from rorschach.prediction.common import BasePredictor, TransformationHandlerNoiseApplier
 from rorschach.prediction.tensorflow.tools import batch_gen
 
 from rorschach.utilities import Config, LoggerWrapper  # isort:skip
@@ -24,9 +24,6 @@ class AbstractSeq2SeqPredictor(BasePredictor, ABC):
             # Initialize the labels
             'transformation.handlers.initializers.LabelInitializeHandler',
 
-            # Noise
-            'transformation.handlers.input.NoiseHandler',
-
             # Translate individual bits to string representations
             'transformation.handlers.input.ConcatenateBinaryDataHandler',
 
@@ -45,6 +42,9 @@ class AbstractSeq2SeqPredictor(BasePredictor, ABC):
             # Swap inputs and labels
             'transformation.handlers.finalize.SwapHandler'
         ]
+
+        TransformationHandlerNoiseApplier.run(self.transformation_handlers)
+
 
     def build(self):
         self.build_batches()

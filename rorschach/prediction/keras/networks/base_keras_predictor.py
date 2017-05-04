@@ -3,7 +3,8 @@
 import os
 import json
 
-from rorschach.prediction.common import BasePredictor, CallbackRunner, KerasCallbackRunnerBridge
+from rorschach.prediction.common import BasePredictor, CallbackRunner, KerasCallbackRunnerBridge, \
+    TransformationHandlerNoiseApplier
 from rorschach.utilities import Config, LoggerWrapper
 
 
@@ -44,6 +45,8 @@ class BaseKerasPredictor(BasePredictor):
             # Swap inputs and labels
             'transformation.handlers.finalize.SwapHandler'
         ]
+
+        TransformationHandlerNoiseApplier.run(self.transformation_handlers)
 
     def build(self):
         self.callback = KerasCallbackRunnerBridge(
