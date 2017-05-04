@@ -18,6 +18,8 @@ class BaseHandler:
             if adjusted_list is not None:
                 input_lists[key] = adjusted_list
 
+        self.finish()
+
         return input_lists
 
     def list_handler(self, input_list, key):
@@ -31,3 +33,6 @@ class BaseHandler:
 
     def obj_handler(self, obj):
         return obj
+
+    def finish(self):
+        pass
