@@ -2,7 +2,8 @@
 
 from keras.callbacks import Callback
 
-from rorschach.prediction.common.callbacks import DataCallback, KerasSaverCallback, PlotterCallback
+from rorschach.prediction.common.callbacks import DataCallback, EpochIndicatorCallback, KerasSaverCallback, \
+    PlotterCallback
 
 
 class KerasCallbackRunnerBridge(Callback):
@@ -40,6 +41,7 @@ class KerasCallbackRunnerBridge(Callback):
         self.runner.run([PlotterCallback], [PlotterCallback.LOSS])
         self.runner.run([PlotterCallback], [PlotterCallback.ACCURACY])
         self.runner.run([DataCallback])
+        self.runner.run([EpochIndicatorCallback])
 
     def on_batch_begin(self, batch, logs=None):
         pass

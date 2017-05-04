@@ -12,7 +12,8 @@ import numpy as np
 import tensorflow as tf
 
 from rorschach.prediction.common import CallbackRunner
-from rorschach.prediction.common.callbacks import DataCallback, PlotterCallback, TensorflowSaverCallback
+from rorschach.prediction.common.callbacks import DataCallback, EpochIndicatorCallback, PlotterCallback, \
+    TensorflowSaverCallback
 from rorschach.prediction.tensorflow.tools import LogPrettifier, TimeParse
 from rorschach.utilities import Config, LoggerWrapper, JsonConfigEncoder
 
@@ -369,6 +370,9 @@ class AbstractSeq2seq(ABC):
                     'session': self.session,
                     'log': self.log
                 })
+
+                # Store epoch indicator
+                self.callback.run([EpochIndicatorCallback])
 
             self.log.write('- Execution: {}'.format(TimeParse.parse(self.epoch_time_start)))
 
