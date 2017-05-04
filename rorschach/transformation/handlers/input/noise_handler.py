@@ -27,6 +27,7 @@ class NoiseHandler(BaseHandler):
             random.seed(Config.get('transformation.noise-random-seed'))
 
         self.randomized_times = 0
+        self.values = 0
         self.original = []
         self.randomized = []
 
@@ -40,6 +41,7 @@ class NoiseHandler(BaseHandler):
     def obj_handler(self, obj):
         matrix = obj[DataSetTypes.IMAGES]['matrix'][0]
         self.original.append(copy.copy(obj[DataSetTypes.IMAGES]['matrix'][0]))
+        self.values += len(matrix)
         for i in range(len(matrix)):
             if random.randint(0, 100) <= self.random_factor:
                 self.randomized_times += 1
@@ -56,7 +58,7 @@ class NoiseHandler(BaseHandler):
                 if self.original[i][j] != self.randomized[i][j]:
                     differences += 1
 
-        differences_in_percent = (differences / float(len(self.original) * self.original[0].shape[0])) * 100
+        differences_in_percent = (differences / float(self.values)) * 100
 
         print('Randomizer called', self.randomized_times, 'times.')
         print(differences, 'differences found (', differences_in_percent, '%).')
