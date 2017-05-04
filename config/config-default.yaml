@@ -110,7 +110,7 @@ preprocessing:
 
     # Settings for the canvas we write on (should be irrelevant)
     canvas:
-        width: 300
+        width: 500
         height: 50
 
     # The signature stuff
