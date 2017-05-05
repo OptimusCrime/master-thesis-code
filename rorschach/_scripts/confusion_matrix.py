@@ -16,9 +16,11 @@ class ConfusionMatrix:
     def __init__(self):
         self.correct_format = None
         self.confusion_matrix = None
+        self.null_value = None
 
     def create_matrix(self, data):
-        self.confusion_matrix = np.zeros((len(data), len(data)), dtype=np.int32)
+        self.confusion_matrix = np.zeros((len(data) - 1, len(data) - 1), dtype=np.int32)
+        self.null_value = len(data) - 2
 
     def populate_matrix(self, data):
         # Foreach word
@@ -30,9 +32,18 @@ class ConfusionMatrix:
             for j in range(len(prediction)):
                 self.handle_values(prediction[j], correct[j])
 
+    def convert_values(self, value):
+        if value == 0:
+            return self.null_value
+
+        return value - 1
+
     def handle_values(self, prediction, correct):
         prediction_value = np.argmax(prediction)
         correct_value = self.handle_correct(correct)
+
+        prediction_value = self.convert_values(prediction_value)
+        correct_value = self.convert_values(correct_value)
 
         self.confusion_matrix[prediction_value][correct_value] += 1
 
@@ -58,7 +69,7 @@ class ConfusionMatrix:
 
     def debug(self):
         for i in range(len(self.confusion_matrix)):
-            print(self.confusion_matrix[i])
+            print(' '.join(str(x) for x in self.confusion_matrix[i]))
 
 
 if __name__ == '__main__':
