@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys
+import itertools
 
 import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 from rorschach.utilities import Config, unpickle_data
 
@@ -65,7 +67,44 @@ class ConfusionMatrix:
         self.create_matrix(data['predictions'][0][0])
         self.populate_matrix(data)
 
+        self.plot()
+
         self.debug()
+
+    def plot(self):
+        classes = Config.get('general.characters') + ['-']
+        normalize = True
+
+        if normalize:
+            self.confusion_matrix = self.confusion_matrix.astype('float') / self.confusion_matrix.sum(axis=1)[:, np.newaxis]
+
+        fig = plt.figure(figsize=(20, 20), dpi=80)
+
+        ax = fig.add_subplot(111)
+
+        im = ax.imshow(self.confusion_matrix,
+                   interpolation='nearest',
+                   cmap=plt.cm.Blues,
+        )
+
+        divider = make_axes_locatable(ax)
+        cax = divider.append_axes("right", size="5%", pad=0.4)
+        fig.colorbar(im, cax=cax)
+        tick_marks = np.arange(len(classes))
+        ax.set_xticks(tick_marks)
+        ax.set_xticklabels(classes)
+        ax.set_yticks(tick_marks)
+        ax.set_yticklabels(classes)
+
+        thresh = self.confusion_matrix.max() / 2.
+        for i, j in itertools.product(range(self.confusion_matrix.shape[0]), range(self.confusion_matrix.shape[1])):
+            ax.text(j, i, "{0:0.3f}".format(self.confusion_matrix[i, j]),
+                     horizontalalignment="center",
+                     color="white" if self.confusion_matrix[i, j] > thresh else "black")
+
+        plt.tight_layout()
+
+        fig.savefig(Config.get_path('path.output', 'confusion_matrix.png', fragment=Config.get('uid')))
 
     def debug(self):
         for i in range(len(self.confusion_matrix)):
