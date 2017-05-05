@@ -109,3 +109,10 @@ class AbstractSeq2SeqPredictor(BasePredictor, ABC):
         self.model.start_test()
 
         self.log.info('Finished')
+
+    def predict(self):
+        self.log.info('Begin')
+
+        self.model.start_predict()
+
+        self.log.info('Finished')

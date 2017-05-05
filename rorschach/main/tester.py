@@ -11,8 +11,7 @@ class Tester:
 
     @staticmethod
     def run():
-        if Config.get('general.mode') == 'test':
-            UidGetter.run()
+        UidGetter.run()
 
         log = LoggerWrapper.load(__name__)
         log.info('Current uid is %s', Config.get('uid'))

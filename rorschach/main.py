@@ -9,10 +9,10 @@ def main():
     if Config.get('general.mode') in ['train', 'both', 'continue']:
         Trainer.run()
 
-    if Config.get('general.mode') in ['test', 'both', 'continue']:
+    if Config.get('general.mode') in ['test', 'both', 'continue', 'predict']:
         Tester.run()
 
-    if Config.get('general.mode') in ['test', 'train', 'both', 'continue']:
+    if Config.get('general.mode') in ['test', 'train', 'both', 'continue', 'predict']:
         return
 
     raise Exception('Unknown mode. Should be either train, test or both.')

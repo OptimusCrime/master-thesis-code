@@ -5,7 +5,7 @@ import json
 
 from rorschach.prediction.common import BasePredictor, CallbackRunner, KerasCallbackRunnerBridge, \
     TransformationHandlerNoiseApplier
-from rorschach.utilities import Config, LoggerWrapper
+from rorschach.utilities import Config, pickle_data, LoggerWrapper
 
 
 class BaseKerasPredictor(BasePredictor):
@@ -55,6 +55,24 @@ class BaseKerasPredictor(BasePredictor):
 
     def compile(self):
         raise NotImplemented('Implement the compile function')
+
+    def predict(self):
+        self.log.info('Begin predict')
+
+        self.load()
+        self.compile()
+
+        predictions = self.model.predict(
+            self.test_images_transformed,
+            batch_size=Config.get('predicting.batch-size')
+        )
+
+        pickle_data({
+            'predictions': predictions,
+            'correct': self.test_labels_transformed
+        }, Config.get_path('path.output', 'predictions.pickl', fragment=Config.get('uid')))
+
+        self.log.info('Finish predict')
 
     def train(self):
         self.log.info('Begin')

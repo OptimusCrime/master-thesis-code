@@ -1,12 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from rorschach.utilities import Filesystem, unpickle_data
+import sys
 
-file_name = input('File name: ')
+import numpy as np
 
-data = unpickle_data(Filesystem.get_root_path('data/' + file_name + '.pickl'))
 
-print(' ')
-print('Content of file is:')
-print(data)
+from rorschach.utilities import Config, Filesystem, unpickle_data
+
+#file_name = input('File name: ')
+
+data = unpickle_data(Config.get_path('path.output', 'predictions.pickl', fragment="confusionmatrix"))
+
+
+for i in range(len(data['correct'])):
+    for j in range(len(data['correct'][i])):
+        print(np.argmax(data['correct'][i][j]))
+    print('')
+
+#print(' ')
+#print('Content of file is:')
+#print(data)

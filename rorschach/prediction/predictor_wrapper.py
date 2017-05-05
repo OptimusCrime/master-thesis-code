@@ -36,6 +36,9 @@ class PredictorWrapper:
 
     def test(self):
         self.setup()
+
+        if Config.get('general.mode') == 'predict':
+            return self.predictor.predict()
         self.predictor.test()
 
     def transform(self):

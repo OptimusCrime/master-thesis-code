@@ -15,7 +15,7 @@ from rorschach.prediction.common import CallbackRunner
 from rorschach.prediction.common.callbacks import DataCallback, EpochIndicatorCallback, PlotterCallback, \
     TensorflowSaverCallback
 from rorschach.prediction.tensorflow.tools import LogPrettifier, TimeParse
-from rorschach.utilities import Config, LoggerWrapper, JsonConfigEncoder
+from rorschach.utilities import Config, pickle_data, LoggerWrapper, JsonConfigEncoder
 
 
 class AbstractSeq2seq(ABC):
@@ -385,6 +385,54 @@ class AbstractSeq2seq(ABC):
         self.test()
 
         self.log.write('Finish test', LogPrettifier.NULL)
+
+    def start_predict(self):
+        self.log.write('Begin predict', LogPrettifier.NULL)
+
+        self.init_session(restore=True)
+        self.predict()
+
+        self.log.write('Finish predict', LogPrettifier.NULL)
+
+    def predict(self):
+        outputs = []
+        correct = []
+
+        for _ in range(self.calculate_batch_size(AbstractSeq2seq.TEST)):
+            results = self.predict_batch()
+
+            outputs.extend(results['output'])
+            correct.extend(results['correct'])
+
+        outputs_arr = np.array(outputs)
+        correct_arr = np.array(correct)
+
+        pickle_data({
+            'predictions': outputs_arr.tolist(),
+            'correct': correct_arr.tolist()
+        }, Config.get_path('path.output', 'predictions.pickl', fragment=Config.get('uid')))
+
+    def predict_batch(self):
+        batch_x, batch_y = self.test_set.__next__()
+
+        feed_dict = self.get_feed(
+            batch_x,
+            batch_y,
+            keep_prob=1.
+        )
+
+        loss, output = self.session.run(
+            [
+                self.loss,
+                self.decode_outputs_test
+            ],
+            feed_dict
+        )
+
+        return {
+            'output': np.array(output).transpose([1, 0, 2]),
+            'correct': np.array(batch_y).transpose([1, 0])
+        }
 
     def init_session(self, restore=False):
         if restore or Config.get('general.mode') in ['continue', 'test']:
