@@ -20,18 +20,22 @@ class ConfusionMatrix:
         self.confusion_matrix = None
         self.null_value = None
 
-    def create_matrix(self, data):
-        self.confusion_matrix = np.zeros((len(data) - 1, len(data) - 1), dtype=np.int32)
-        self.null_value = len(data) - 2
+    def create_matrix(self, data, list_type):
+        offset = 0
+        if list_type == False:
+            offset = 1
+
+        self.confusion_matrix = np.zeros((len(data) - offset, len(data) - offset), dtype=np.int32)
+        self.null_value = self.confusion_matrix.shape[0] - 1
 
     def populate_matrix(self, data):
         # Foreach word
-        for i in range(len(data['predictions'])):
+        for i in range(len(data['correct'])):
             prediction = data['predictions'][i]
             correct = data['correct'][i]
 
             # Foreach letter
-            for j in range(len(prediction)):
+            for j in range(len(correct)):
                 self.handle_values(prediction[j], correct[j])
 
     def convert_values(self, value):
@@ -47,7 +51,7 @@ class ConfusionMatrix:
         prediction_value = self.convert_values(prediction_value)
         correct_value = self.convert_values(correct_value)
 
-        self.confusion_matrix[prediction_value][correct_value] += 1
+        self.confusion_matrix[correct_value][prediction_value] += 1
 
     def handle_correct(self, correct):
         if self.correct_format is None:
@@ -64,7 +68,7 @@ class ConfusionMatrix:
     def run(self):
         data = unpickle_data(Config.get_path('path.output', 'predictions.pickl', fragment=Config.get('uid')))
 
-        self.create_matrix(data['predictions'][0][0])
+        self.create_matrix(data['predictions'][0][0], type(data['correct'][0] == list))
         self.populate_matrix(data)
 
         self.plot()
@@ -77,6 +81,11 @@ class ConfusionMatrix:
 
         if normalize:
             self.confusion_matrix = self.confusion_matrix.astype('float') / self.confusion_matrix.sum(axis=1)[:, np.newaxis]
+
+            for i in range(len(self.confusion_matrix)):
+                for j in range(len(self.confusion_matrix[0])):
+                    if np.isnan(self.confusion_matrix[i][j]):
+                        self.confusion_matrix[i][j] = 0.0
 
         fig = plt.figure(figsize=(20, 20), dpi=80)
 

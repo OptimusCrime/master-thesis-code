@@ -21,9 +21,6 @@ class BaseKerasPredictor(BasePredictor):
             # Initialize the labels
             'transformation.handlers.initializers.LabelInitializeHandler',
 
-            # Noise
-            'transformation.handlers.input.NoiseHandler',
-
             # Translate individual bits to string representations
             'transformation.handlers.input.ConcatenateBinaryDataHandler',
 
@@ -39,8 +36,8 @@ class BaseKerasPredictor(BasePredictor):
             # Translate the label text to corresponding integer ids (A -> 1, D -> 4, ...)
             'transformation.handlers.output.IntegerifyLabelHandler',
 
-            # Keras specific handler. Change the output length to the same as the input (LSTMs)
-            'transformation.handlers.output.KerasHandler',
+            # Turn into one hot matrix
+            'transformation.handlers.output.OneHotHandler',
 
             # Swap inputs and labels
             'transformation.handlers.finalize.SwapHandler'
