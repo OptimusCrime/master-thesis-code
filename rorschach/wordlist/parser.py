@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-from random import randrange
+from random import randint, randrange
 
 from rorschach.utilities import Config, Filesystem, LoggerWrapper
 
@@ -28,14 +28,25 @@ class WordListParser:
 
         # If both settings are false we can just return a random word
         if not remove_duplicate_set and not remove_duplicate_all:
-            return self.words[randrange(0, WordListParser.LIST_LENGTH)]
+            return self.pick_random_word()
+
 
         # Duplicate all has precedence over duplicate set
         while True:
-            random_word = self.words[randrange(0, WordListParser.LIST_LENGTH)]
+            random_word = self.pick_random_word()
 
             if self.not_duplicated_word(random_word, remove_duplicate_set, remove_duplicate_all, word_list=word_list):
                 return random_word
+
+    def pick_random_word(self):
+        word = self.words[randrange(0, WordListParser.LIST_LENGTH)]
+        if Config.get('preprocessing.random-upper-lower') in [None, False]:
+            return word
+
+        if randint(0, 1) == 0:
+            return word
+
+        return word.lower()
 
     def not_duplicated_word(self, word, remove_duplicate_set, remove_duplicate_all, word_list=None):
         if remove_duplicate_all:

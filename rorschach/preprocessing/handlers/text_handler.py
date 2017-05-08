@@ -29,6 +29,12 @@ class TextCreator:
 
         if Config.get('preprocessing.save.canvas'):
             file_name = text
+
+            if file_name.islower():
+                file_name += '_lower'
+            else:
+                file_name += '_upper'
+
             if data_set == DataSetTypes.type_to_keyword(DataSetTypes.LETTER_SET) and \
                     len(Config.get('preprocessing.text.fonts')) > 1:
                 file_name += MatrixSaver.font_name_cleaning(font)

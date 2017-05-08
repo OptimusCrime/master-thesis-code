@@ -88,6 +88,9 @@ preprocessing:
     # Remove all earlier data on each run
     wipe: true
 
+    # Randomize upper and lowercase (only use if both uppercase and lowercase characters are in the character list)
+    random-upper-lower: false
+
     # Saves
     save:
         # The entire canvas (as defined in this config file)

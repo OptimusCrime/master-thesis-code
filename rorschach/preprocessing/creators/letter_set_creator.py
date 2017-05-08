@@ -69,6 +69,10 @@ class LetterSetCreator(AbstractCreator):
                         if edge_right is None or x > edge_right:
                             edge_right = x
 
+            if edge_left is None or edge_right is None:
+                print(self.contents[i])
+                raise Exception('No edge detected for letter')
+
             # We slice the matrix here. We do not care about the upper/lower bounds, only the horizontal ones. Note
             # that we had, for some reason, to add + 1 on the right edge. ??? Magic
             self.contents[i]['matrix'] = self.contents[i]['matrix'][::, edge_left:edge_right + 1]
