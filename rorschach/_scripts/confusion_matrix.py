@@ -87,7 +87,11 @@ class ConfusionMatrix:
                     if np.isnan(self.confusion_matrix[i][j]):
                         self.confusion_matrix[i][j] = 0.0
 
-        fig = plt.figure(figsize=(20, 20), dpi=80)
+        size = 20
+        if len(classes) > 30:
+            size = 30
+
+        fig = plt.figure(figsize=(size, size), dpi=80)
 
         ax = fig.add_subplot(111)
 

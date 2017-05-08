@@ -35,7 +35,7 @@ class Filesystem:
 
     @staticmethod
     def create(path, outside=False):
-        path_split = path.split('/')
+        path_split = path.split(os.sep)
         current_path = Filesystem.get_root_path()
         path_rebuilt = []
 
@@ -44,7 +44,7 @@ class Filesystem:
                 current_path = os.path.join(current_path, path_fragment)
             else:
                 path_rebuilt.append(path_fragment)
-                current_path = '/'.join(path_rebuilt)
+                current_path = str(os.sep).join(path_rebuilt)
 
                 # Fix for Unix type systems where the path begins with a leading /
                 if current_path == '':

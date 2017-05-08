@@ -100,7 +100,7 @@ class Config:
 
             fonts = []
             for name in fonts_names:
-                fonts.append(Filesystem.get_root_path('fonts/' + name + '.ttf'))
+                fonts.append(Filesystem.get_root_path('fonts' + os.sep + name + '.ttf'))
 
             return fonts
 
