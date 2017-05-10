@@ -11,10 +11,11 @@ import re
 import numpy as np
 import tensorflow as tf
 
+from rorschach._scripts.attention_plot import AttentionPlot
 from rorschach.prediction.common import CallbackRunner
 from rorschach.prediction.common.callbacks import DataCallback, EpochIndicatorCallback, PlotterCallback, \
     TensorflowSaverCallback
-from rorschach.prediction.tensorflow.tools import LogPrettifier, TimeParse
+from rorschach.prediction.tensorflow.tools import batch_gen, LogPrettifier, TimeParse
 from rorschach.utilities import Config, pickle_data, LoggerWrapper, JsonConfigEncoder
 
 
@@ -27,6 +28,7 @@ class AbstractSeq2seq(ABC):
 
     def __init__(
         self,
+        model,
         xseq_len,
         yseq_len,
         xvocab_size,
@@ -36,6 +38,7 @@ class AbstractSeq2seq(ABC):
     ):
 
         self.log = LogPrettifier(LoggerWrapper.load(__name__, LoggerWrapper.SIMPLE))
+        self.model = model
         self.session = None
         self.callback = None
         self.data_container = None
@@ -87,6 +90,10 @@ class AbstractSeq2seq(ABC):
         self.merged_identifier = 0
 
         self.saver = None
+
+        # Attention mechanism
+        self.attention_output = None
+        self.attention_output_test = None
 
     def register_data_container(self, data_container):
         self.callback = CallbackRunner(data_container)
@@ -394,7 +401,34 @@ class AbstractSeq2seq(ABC):
 
         self.log.write('Finish predict', LogPrettifier.NULL)
 
+    def attention(self):
+        if self.attention_output is None or self.attention_output_test is None:
+            raise Exception('Special enc/dec not found')
+
+        attention_batch = batch_gen(
+            self.model.test_images_transformed,
+            self.model.test_labels_transformed,
+            1
+        )
+
+        batch_x, batch_y = attention_batch.__next__()
+
+        feed_dict = self.get_feed(batch_x, batch_y, keep_prob=1.)
+
+        attention_values = self.session.run(
+            [
+                self.attention_output_test
+            ],
+            feed_dict
+        )
+
+        attention_plot = AttentionPlot()
+        attention_plot.plot(attention_values[0], batch_x, batch_y)
+
     def predict(self):
+        if Config.get('general.special') == 'attention':
+            return self.attention()
+
         outputs = []
         correct = []
 

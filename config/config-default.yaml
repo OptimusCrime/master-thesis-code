@@ -7,9 +7,10 @@ general:
     # Separate each character with a comma with no ending comma present
     characters: A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z
 
-    # Code has two modes, training and test. 'train' trains the model and saves the best model as defined by
-    # criterias. 'test' runs the set suit and gives the final accuracy of the model.
+    # Valid modes are train, test, continue, both, and predict. test, continue, and predict requires a valid uid.
     mode: train
+
+    special: attention
 
     # Turn debug mode on/off
     debug: false
