@@ -97,7 +97,8 @@ class WordListParser:
     def get_word_files(self):
         wordfiles_dir = Filesystem.get_root_path('config/wordlists')
         files = os.listdir(wordfiles_dir)
-        files.remove('.gitignore')
+        if os.path.exists(wordfiles_dir + os.sep + '.gitignore'):
+            files.remove('.gitignore')
 
         # We preappend all the files in the list with the path for the wordlists directory
         files = ['{0}/{1}'.format(wordfiles_dir, i) for i in files]

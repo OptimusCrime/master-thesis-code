@@ -22,7 +22,7 @@ class ConfusionMatrix:
 
     def create_matrix(self, data, list_type):
         offset = 0
-        if list_type == False:
+        if list_type:
             offset = 1
 
         self.confusion_matrix = np.zeros((len(data) - offset, len(data) - offset), dtype=np.int32)

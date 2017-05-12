@@ -10,7 +10,9 @@ general:
     # Valid modes are train, test, continue, both, and predict. test, continue, and predict requires a valid uid.
     mode: train
 
-    special: attention
+    # Either attention or context to trigger special behavior. Leave blank to run normally. Must be used together
+    # with mode: predict to function
+    special:
 
     # Turn debug mode on/off
     debug: false

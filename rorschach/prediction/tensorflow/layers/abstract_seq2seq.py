@@ -95,6 +95,10 @@ class AbstractSeq2seq(ABC):
         self.attention_output = None
         self.attention_output_test = None
 
+        # Context vector
+        self.context_vector_output = None
+        self.context_vector_output_test = None
+
     def register_data_container(self, data_container):
         self.callback = CallbackRunner(data_container)
         self.data_container = data_container
@@ -401,19 +405,28 @@ class AbstractSeq2seq(ABC):
 
         self.log.write('Finish predict', LogPrettifier.NULL)
 
-    def attention(self):
-        if self.attention_output is None or self.attention_output_test is None:
-            raise Exception('Special enc/dec not found')
-
-        attention_batch = batch_gen(
+    def special_feed(self):
+        special_batch = batch_gen(
             self.model.test_images_transformed,
             self.model.test_labels_transformed,
             1
         )
 
-        batch_x, batch_y = attention_batch.__next__()
+        offset = 1
+        batch_x, batch_y = (None, None)
+        if Config.get('general.special-offset') is not None:
+            offset = Config.get('general.special-offset')
 
-        feed_dict = self.get_feed(batch_x, batch_y, keep_prob=1.)
+        for _ in range(offset):
+            batch_x, batch_y = special_batch.__next__()
+
+        return self.get_feed(batch_x, batch_y, keep_prob=1.), batch_x, batch_y
+
+    def attention(self):
+        if self.attention_output is None or self.attention_output_test is None:
+            raise Exception('Special enc/dec not found')
+
+        feed_dict, batch_x, batch_y = self.special_feed()
 
         attention_values = self.session.run(
             [
@@ -425,9 +438,28 @@ class AbstractSeq2seq(ABC):
         attention_plot = AttentionPlot()
         attention_plot.plot(attention_values[0], batch_x, batch_y)
 
+    def context(self):
+        if self.context_vector_output is None or self.context_vector_output_test is None:
+            raise Exception('Special context vector not found')
+
+        feed_dict, batch_x, batch_y = self.special_feed()
+
+        context_values = self.session.run(
+            [
+                self.context_vector_output_test
+            ],
+            feed_dict
+        )
+
+        #print(context_values.shape)
+        print(context_values)
+
     def predict(self):
         if Config.get('general.special') == 'attention':
             return self.attention()
+
+        if Config.get('general.special') == 'context':
+            return self.context()
 
         outputs = []
         correct = []

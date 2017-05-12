@@ -10,7 +10,7 @@ from rorschach.utilities import Config, Filesystem, unpickle_data
 
 #file_name = input('File name: ')
 
-data = unpickle_data(Config.get_path('path.output', 'predictions.pickl', fragment="confusionmatrix_test123"))
+data = unpickle_data(Config.get_path('path.data', 'test_set.pickl'))
 
 print(data)
 

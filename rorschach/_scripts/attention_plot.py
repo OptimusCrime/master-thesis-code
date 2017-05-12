@@ -106,24 +106,40 @@ class AttentionPlot:
 
     def plot(self, data, classes, labels):
 
+        # Input values
+        classes = classes.flatten()
+        classes = self.lookup_classes(classes)
+
+        classes_offset = 0
+        zero_padds = 0
+        for i in range(len(classes)):
+            if classes[i] == 0:
+                zero_padds += 1
+                if zero_padds == 4:
+                    classes_offset = i
+                    break
+
+        if classes_offset > 0:
+            classes = classes[:classes_offset]
+
+        # Output labels
+        labels = labels.flatten()
+        labels = self.lookup_labels(labels)
+
         data = np.array(data)
-        data = data.reshape((data.shape[0], data.shape[-1]))
+
+        if classes_offset == 0:
+            data = data.reshape((data.shape[0], data.shape[-1]))[:len(labels), :]
+        else:
+            data = data.reshape((data.shape[0], data.shape[-1]))[:len(labels), :classes_offset]
 
         fig = plt.figure(figsize=(20, 20), dpi=80)
 
         ax = fig.add_subplot(111)
         ax.imshow(data,
-            interpolation='nearest',
-            cmap=plt.cm.Blues,
-        )
-
-        # Input values
-        classes = classes.flatten()
-        classes = self.lookup_classes(classes)
-
-        # Output labels
-        labels = labels.flatten()
-        labels = self.lookup_labels(labels)
+                  interpolation='nearest',
+                  cmap=plt.cm.Blues,
+                  )
 
         ax.set_xticks(np.arange(len(classes)))
         ax.set_xticklabels(classes)
