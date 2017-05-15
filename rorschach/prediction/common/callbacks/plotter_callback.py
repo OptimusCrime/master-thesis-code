@@ -44,7 +44,7 @@ class PlotterCallback(BaseCallback):
         self.save_plot(fig)
 
     def build_axes(self):
-        fig = plt.figure(figsize=(16, 6), dpi=80)
+        fig = matplotlib.pyplot.figure(figsize=(16, 6), dpi=80)
 
         ax = fig.add_subplot(111)
 
@@ -132,4 +132,4 @@ class PlotterCallback(BaseCallback):
             file_name = 'plot_accuracy'
 
         fig.savefig(Config.get_path('path.output', file_name + '.png', fragment=Config.get('uid')))
-        plt.close()
+        matplotlib.pyplot.close()
