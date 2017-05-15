@@ -156,7 +156,6 @@ predicting:
     learning-rate: 0.001
 
     # Class to lazy load for the prediction
-    predictor: prediction.tensorflow.networks.sequence.EmbeddingRNNSeq2SeqPredictor
-
-    #predictor: prediction.tensorflow.networks.sequence.EmbeddingAttentionSeq2SeqPredictor
+    predictor: prediction.tensorflow.networks.sequence.EmbeddingAttentionSeq2SeqPredictor
+    #predictor: prediction.tensorflow.networks.sequence.EmbeddingRNNSeq2SeqPredictor
     #predictor: prediction.keras.networks.lstm.LSTMEmbeddingVectorPredictor

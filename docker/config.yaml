@@ -3,7 +3,15 @@
 ##################################################################
 
 general:
-    mode: train
+    mode: both
+
+
+##################################################################
+#                       Preprocessing                            #
+##################################################################
+
+preprocessing:
+    run: true
 
 
 ##################################################################
@@ -17,7 +25,7 @@ predicting:
     #predictor: prediction.keras.networks.lstm.LSTMEmbeddingVectorPredictor
 
     # Tensorflow based model. Named EncDecReg in the thesis
-    predictor: prediction.tensorflow.networks.sequence.EmbeddingRNNSeq2SeqPredictor
+    #predictor: prediction.tensorflow.networks.sequence.EmbeddingRNNSeq2SeqPredictor
 
     # Tensorflow based model. Named EncDecAtt in the thesis
-    #predictor: prediction.tensorflow.networks.sequence.EmbeddingAttentionSeq2SeqPredictor
+    predictor: prediction.tensorflow.networks.sequence.EmbeddingAttentionSeq2SeqPredictor
