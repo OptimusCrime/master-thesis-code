@@ -35,7 +35,7 @@ make prepare
 make run
 ```
 
-To stop the machine type:
+To stop the machine type
 
 ```
 make stop
@@ -47,7 +47,7 @@ If you already have built and prepared the system you can start it up again with
 make start
 ```
 
-To run the system, type
+When you want to run the system to train/test, type
 
 ```
 make run
