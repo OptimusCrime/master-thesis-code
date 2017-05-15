@@ -1,31 +1,15 @@
 version: '2'
 services:
 
-
-  ###############################################
-  #                    Files                    #
-  ###############################################
-
-  data:
-    image: "alpine:3.5"
-    command: tail -f /dev/null
-    user: "1000"
-    network_mode: "none"
-    volumes:
-      - .:/home/rorschach
-
-
   ###############################################
   #                 Application                 #
   ###############################################
 
   rorschach:
     #restart: always
-    depends_on:
-      - data
+    container_name: rorschach_system
     build:
       context: .
       dockerfile: Dockerfile
-    command: tail -f /dev/null
-    volumes_from:
-      - data
+    volumes:
+      - .:/home/rorschach
