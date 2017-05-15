@@ -9,7 +9,7 @@ bash:
 
 prepare:
 	@docker-compose run --rm $(SERVER_SERVICE_NAME) pip install -r requirements.txt
-	@docker-compose run --rm $(SERVER_SERVICE_NAME) sh install.sh
+	@docker-compose run --rm $(SERVER_SERVICE_NAME) sh docker/install.sh
 
 run:
 	@docker-compose run --rm $(SERVER_SERVICE_NAME) python rorschach/main.py
