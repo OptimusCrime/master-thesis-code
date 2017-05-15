@@ -8,7 +8,7 @@ general:
     characters: A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z
 
     # Valid modes are train, test, continue, both, and predict. test, continue, and predict requires a valid uid.
-    mode: train
+    mode: both
 
     # Either attention or context to trigger special behavior. Leave blank to run normally. Must be used together
     # with mode: predict to function
@@ -124,19 +124,19 @@ preprocessing:
     # Various settings for the input
     input:
         # Maximum length of a word to classify
-        max-length: 10
+        max-length: 7
 
     # Training set
     training-set:
-        size: 30
+        size: 500
 
     # Validate set
     validate-set:
-        size: 20
+        size: 50
 
     # Test set
     test-set:
-        size: 20
+        size: 50
 
 
 ##################################################################
@@ -147,17 +147,16 @@ predicting:
     run: true
 
     # How many epochs to run
-    epochs: 10
+    epochs: 20
 
     # Size of each batch. NOTE: This value must divide the size of training, validation and test sets
-    batch-size: 10
+    batch-size: 50
 
     # The learning rate for our network
     learning-rate: 0.001
 
-    # Evaluating best model to save weights for. With a value of 5 we will store the model if the results are the best
-    # we've seen the past 5 epochs. We evaluate this based on validation loss.
-    best-results: 5
-
     # Class to lazy load for the prediction
     predictor: prediction.tensorflow.networks.sequence.EmbeddingRNNSeq2SeqPredictor
+
+    #predictor: prediction.tensorflow.networks.sequence.EmbeddingAttentionSeq2SeqPredictor
+    #predictor: prediction.keras.networks.lstm.LSTMEmbeddingVectorPredictor
