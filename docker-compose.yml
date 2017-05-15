@@ -20,12 +20,12 @@ services:
   ###############################################
 
   rorschach:
-    restart: always
+    #restart: always
     depends_on:
       - data
     build:
       context: .
       dockerfile: Dockerfile
-    command: python
+    command: tail -f /dev/null
     volumes_from:
       - data

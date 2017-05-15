@@ -6,4 +6,4 @@ ENV PYTHONPATH=/home/rorschach
 
 WORKDIR $APP_DIR
 
-CMD ["bash"]
+CMD ["/bin/bash"]

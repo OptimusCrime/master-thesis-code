@@ -7,12 +7,70 @@ Code for the master thesis for Thomas Gautvedt.
 
 ## Install
 
-Run the script `install.sh`. This script downloads the necessary files to run the project, such as fonts and word lists.
+We are using Docker to make the installation of the system easy and platform independent.
 
-Install the requirements by running `pip install -r requirements.txt`. There might also be other dependencies necessary to install, depending on your OS.
+## Requirements
 
-Below are the steps necessary to run the code on a Linux disto such as Debian or Ubuntu:
+- [Docker](https://www.docker.com/community-edition)
+- [Docker compose](https://docs.docker.com/compose/install/)
+
+*Note that Docker compose is included in the Docker Toolbox, so if you install that you do not need to install the standalone version.*
+
+We supply a Makefile to make it easier to use this setup. UNIX based systems should have Make installed by default. Windows systems need to install this manually. It is also possible to use this setup without Make, but you will have to type out some of the tasks manualy instead of relying on the provided shortcuts.
+
+## Setup
+
+To start the system for the first time, type
 
 ```
-TODO
+make
 ```
+
+This is a shortcut for the following commands
+
+```
+make build
+make up
+make prepare
+make run
+```
+
+To stop the machine type:
+
+```
+make stop
+```
+
+If you already have built and prepared the system you can start it up again with
+
+```
+make start
+```
+
+To run the system, type
+
+```
+make run
+```
+
+If you want to SSH into the container, you can do this with
+
+```
+make bash
+```
+
+There are a few more shortcuts in the Makefile. Browse the file to see these.
+
+If you are unable to use the `make` commands on your system is the best alternative to run each consecutive command found in the Makefile manually. The file and its content should be pretty self-explanatory.
+
+### The `prepare` command
+
+This command runs various sub commands to set up the system correctly:
+
+- Install all the requirements in requirements.txt.
+- Downloads wordlists and fonts from [resource repository](https://github.com/OptimusCrime/master-thesis-resources).
+- Create a new config-file with a default setup.
+
+## Config file explanation
+
+Foobar
