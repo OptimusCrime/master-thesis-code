@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+import matplotlib
 from matplotlib import pyplot as plt
 from matplotlib import ticker as ticker
 
@@ -15,6 +16,10 @@ class PlotterCallback(BaseCallback):
 
     def __init__(self):
         super().__init__()
+
+        # See if we should set a backend for the matplotlib
+        if Config.get('various.matplotlib-backend') is not None:
+            matplotlib.use(Config.get('various.matplotlib-backend'))
 
     def run(self):
         # Do not produce any figure the first epoch, not enough data

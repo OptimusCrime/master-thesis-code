@@ -1,0 +1,31 @@
+##################################################################
+#                          General                               #
+##################################################################
+
+general:
+    mode: train
+
+
+##################################################################
+#                          Various                               #
+##################################################################
+
+various:
+    matplotlib: Agg
+
+
+##################################################################
+#                         Predicting                             #
+##################################################################
+
+predicting:
+    # Here you can override which predictor to load
+
+    # Keras based model. Named VecRep in the thesis
+    #predictor: prediction.keras.networks.lstm.LSTMEmbeddingVectorPredictor
+
+    # Tensorflow based model. Named EncDecReg in the thesis
+    #predictor: prediction.tensorflow.networks.sequence.EmbeddingRNNSeq2SeqPredictor
+
+    # Tensorflow based model. Named EncDecAtt in the thesis
+    #predictor: prediction.tensorflow.networks.sequence.EmbeddingAttentionSeq2SeqPredictor
