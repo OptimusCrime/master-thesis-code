@@ -43,8 +43,8 @@ various:
     save-indicator: false
 
     # This variable is used for systems which does not have a backend that works with matplotlib out
-    # of the box.
-    matplotlib-backend: None
+    # of the box. Leave blank to use system defaults.
+    matplotlib-backend:
 
 
 ##################################################################
