@@ -13,7 +13,7 @@ COPY requirements.txt $APP_DIR/requirements.txt
 RUN pip install -r $APP_DIR/requirements.txt
 
 # Change the matplotlib backend to Agg
-RUN sed -i "s/backend\s+: tkagg/backend : Agg/g"  /usr/local/lib/python3.5/site-packages/matplotlib/mpl-data/matplotlibrc
+RUN sed -i "s/backend      : tkagg/backend : Agg/g" /usr/local/lib/python3.5/site-packages/matplotlib/mpl-data/matplotlibrc
 
 # Default run bash
 CMD ["bash"]
