@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import matplotlib
+from matplotlib import pyplot as plt
+from matplotlib import ticker as ticker
 
 from rorschach.prediction.common.callbacks import BaseCallback
 from rorschach.utilities import Config
@@ -14,13 +15,6 @@ class PlotterCallback(BaseCallback):
 
     def __init__(self):
         super().__init__()
-
-        # See if we should set a backend for the matplotlib
-        if Config.get('various.matplotlib-backend') is not None:
-            matplotlib.use(Config.get('various.matplotlib-backend'))
-
-        from matplotlib import pyplot as plt
-        from matplotlib import ticker as ticker
 
     def run(self):
         # Do not produce any figure the first epoch, not enough data
@@ -44,7 +38,7 @@ class PlotterCallback(BaseCallback):
         self.save_plot(fig)
 
     def build_axes(self):
-        fig = matplotlib.pyplot.figure(figsize=(16, 6), dpi=80)
+        fig = plt.figure(figsize=(16, 6), dpi=80)
 
         ax = fig.add_subplot(111)
 
@@ -132,4 +126,4 @@ class PlotterCallback(BaseCallback):
             file_name = 'plot_accuracy'
 
         fig.savefig(Config.get_path('path.output', file_name + '.png', fragment=Config.get('uid')))
-        matplotlib.pyplot.close()
+        plt.close()

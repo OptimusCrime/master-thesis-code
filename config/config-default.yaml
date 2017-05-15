@@ -42,10 +42,6 @@ various:
     # Note: This functioality is only implemented for the TF callbacks.
     save-indicator: false
 
-    # This variable is used for systems which does not have a backend that works with matplotlib out
-    # of the box. Leave blank to use system defaults.
-    matplotlib-backend:
-
 
 ##################################################################
 #                           Path                                 #
