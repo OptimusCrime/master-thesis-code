@@ -2,8 +2,6 @@
 
 import numpy as np
 import matplotlib
-from matplotlib import pyplot as plt
-from matplotlib import ticker as ticker
 
 from rorschach.prediction.common.callbacks import BaseCallback
 from rorschach.utilities import Config
@@ -20,6 +18,9 @@ class PlotterCallback(BaseCallback):
         # See if we should set a backend for the matplotlib
         if Config.get('various.matplotlib-backend') is not None:
             matplotlib.use(Config.get('various.matplotlib-backend'))
+
+        from matplotlib import pyplot as plt
+        from matplotlib import ticker as ticker
 
     def run(self):
         # Do not produce any figure the first epoch, not enough data
