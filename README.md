@@ -21,7 +21,7 @@ We supply a Makefile to make it easier to use this setup. UNIX based systems sho
 
 #### Make
 
-Install the [GNU make utility for Windows](http://gnuwin32.sourceforge.net/packages/make.htm). 
+Install the [GNU make utility for Windows](http://gnuwin32.sourceforge.net/packages/make.htm).
 
 You now need to add this location to your system Path. Copy the location where the binary files were placed, by default this should be `C:\Program Files (x86)\GnuWin32\bin`. Open up the System Properties. On Windows 10 you can do this by right-clicking on the Windows icon in the left bottom corner and selecting System. Proceeed to click Advanced System Settings and change to the Advanced tab. Click the button Envionment Variables. Find Path in the bottom list, highlight it and click Edit... Click The New button in the new window and paste the path we previously found. Click Ok to close the windows.
 
@@ -98,7 +98,7 @@ There are three directories that separates the data:
 
 - `data/`:  This directory holds the data related to the datasets. This includes pickled binary files, as well as all the words in the datasets encoded as json files. There are a few more files for various purposes, but those are not that important.
 - `image/`: This directory holds the images of the dataset that was generated (if specified in the config file). Three subdirectories holds the orignal, big, images (`image/canvas/`), the cropped images (`image/cropped/`), and finally the signatures (`image/signatures/`).
-- `output/`: Holds the output for each run of the system, either testing or training. Every run gets is own unique id (`uid`) that contains the date, time, and a random string of letters. See uage of this uid below.
+- `output/`: Holds the output for each run of the system, either testing or training. Every run gets is own unique id (`uid`) that contains the date, time, and a random string of letters. See usage of this uid below. These directories contains various information, logs, and the weights for the models.
 
 ### Handling uids
 Say you have done training on a model and the uid for this run is "2017-05-16-11-58-31-jkavbo", if you want to continue, predict, or test on this run, you set the `mode` in the config file to reflect this, and when you run the system you are asked to input the uid that you wish to use. You can also specify the uid at the root level in the config yaml file. This prevents the system from prompting the user.
