@@ -8,7 +8,7 @@ bash:
 	@docker-compose run --rm $(SERVER_SERVICE_NAME) bash
 
 prepare:
-	@docker-compose run --rm $(SERVER_SERVICE_NAME) sh docker/install.sh
+	@docker-compose run --rm $(SERVER_SERVICE_NAME) bash docker/install.sh
 	@docker-compose run --rm $(SERVER_SERVICE_NAME) cp docker/config.yaml config/config.yaml
 
 run:
