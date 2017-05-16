@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import os
 import json
+import os
 
 from rorschach.common import DataSetTypes
 from rorschach.transformation import Transformator
@@ -92,4 +92,3 @@ class PredictorWrapper:
 
         with open(Config.get_path('path.output', 'dataset.json', fragment=Config.get('uid')), 'w') as outfile:
             json.dump(data, outfile)
-

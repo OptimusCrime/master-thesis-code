@@ -30,7 +30,6 @@ class WordListParser:
         if not remove_duplicate_set and not remove_duplicate_all:
             return self.pick_random_word()
 
-
         # Duplicate all has precedence over duplicate set
         while True:
             random_word = self.pick_random_word()

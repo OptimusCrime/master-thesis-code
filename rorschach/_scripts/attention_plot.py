@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
-import json
 import itertools
+import json
+import os
 
-import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits.axes_grid1 import make_axes_locatable
+import numpy as np
+from mpl_toolkits.axes_grid1 import make_axes_locatable  # NOQA
 
 from rorschach.utilities import Config
 
@@ -148,9 +148,13 @@ class AttentionPlot:
 
         thresh = data.max() / 2.
         for i, j in itertools.product(range(data.shape[0]), range(data.shape[1])):
-            ax.text(j, i, " ",
-                     horizontalalignment="center",
-                     color="white" if data[i, j] > thresh else "black")
+            ax.text(
+                j,
+                i,
+                " ",
+                horizontalalignment="center",
+                color="white" if data[i, j] > thresh else "black"
+            )
 
         plt.tight_layout()
 

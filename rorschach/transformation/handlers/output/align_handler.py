@@ -6,6 +6,7 @@ from rorschach.common import DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
 from rorschach.utilities import Config, unpickle_data
 
+
 '''
 AlignHandler
 

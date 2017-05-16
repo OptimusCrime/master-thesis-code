@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import os
 import json
+import os
 
-from rorschach.prediction.common import BasePredictor, CallbackRunner, KerasCallbackRunnerBridge, \
-    TransformationHandlerNoiseApplier
-from rorschach.utilities import Config, pickle_data, LoggerWrapper
+from rorschach.prediction.common import (BasePredictor, CallbackRunner, KerasCallbackRunnerBridge,
+                                         TransformationHandlerNoiseApplier)
+from rorschach.utilities import Config, LoggerWrapper, pickle_data
 
 
 class BaseKerasPredictor(BasePredictor):

@@ -45,7 +45,6 @@ class AbstractSeq2SeqPredictor(BasePredictor, ABC):
 
         TransformationHandlerNoiseApplier.run(self.transformation_handlers)
 
-
     def build(self):
         self.build_batches()
         self.build_model()

@@ -1,22 +1,22 @@
 # -*- coding: utf-8 -*-
 
-from abc import ABC, abstractmethod
-import math
-import os
 import glob
 import json
-import time
+import math
+import os
 import re
+import time
+from abc import ABC, abstractmethod
 
 import numpy as np
 import tensorflow as tf
 
 from rorschach._scripts.attention_plot import AttentionPlot
 from rorschach.prediction.common import CallbackRunner
-from rorschach.prediction.common.callbacks import DataCallback, EpochIndicatorCallback, PlotterCallback, \
-    TensorflowSaverCallback
-from rorschach.prediction.tensorflow.tools import batch_gen, LogPrettifier, TimeParse
-from rorschach.utilities import Config, pickle_data, LoggerWrapper, JsonConfigEncoder
+from rorschach.prediction.common.callbacks import (DataCallback, EpochIndicatorCallback, PlotterCallback,
+                                                   TensorflowSaverCallback)
+from rorschach.prediction.tensorflow.tools import LogPrettifier, TimeParse, batch_gen
+from rorschach.utilities import Config, JsonConfigEncoder, LoggerWrapper, pickle_data
 
 
 class AbstractSeq2seq(ABC):
@@ -451,7 +451,6 @@ class AbstractSeq2seq(ABC):
             feed_dict
         )
 
-        #print(context_values.shape)
         print(context_values)
 
     def predict(self):

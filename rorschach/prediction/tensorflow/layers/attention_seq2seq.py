@@ -2,8 +2,8 @@
 
 import tensorflow as tf
 
-from rorschach.prediction.tensorflow.lib import embedding_attention_seq2seq
 from rorschach.prediction.tensorflow.layers import AbstractSeq2seq
+from rorschach.prediction.tensorflow.lib import embedding_attention_seq2seq
 from rorschach.utilities import Config
 
 

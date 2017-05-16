@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import os
 import glob
+import os
 
 from rorschach.prediction.common.callbacks import BaseCallback
 from rorschach.utilities import Config

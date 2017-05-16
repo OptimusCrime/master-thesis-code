@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from rorschach.prediction.tensorflow.networks.sequence import AbstractSeq2SeqPredictor
 from rorschach.prediction.tensorflow.layers import RNNSeq2Seq
+from rorschach.prediction.tensorflow.networks.sequence import AbstractSeq2SeqPredictor
 from rorschach.utilities import Config
 
 

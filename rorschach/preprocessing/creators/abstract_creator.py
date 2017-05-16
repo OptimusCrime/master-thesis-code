@@ -19,7 +19,6 @@ class AbstractCreator:
         self.terms = []
         self.fonts = Config.get('preprocessing.text.fonts')
 
-
     @property
     def set_type_keyword(self):
         return DataSetTypes.type_to_keyword(self.type)

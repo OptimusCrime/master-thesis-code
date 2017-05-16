@@ -9,6 +9,7 @@ from rorschach.transformation.handlers import BaseHandler
 from rorschach.transformation.handlers.output import IntegerifyLabelHandler
 from rorschach.utilities import Config, Filesystem, pickle_data
 
+
 '''
 IntegerifyUniqueLabelHandler
 

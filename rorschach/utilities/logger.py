@@ -2,8 +2,6 @@
 
 import logging
 import os
-
-
 from logging.config import dictConfig
 
 from rorschach.utilities import Config, Filesystem, UidGenerator

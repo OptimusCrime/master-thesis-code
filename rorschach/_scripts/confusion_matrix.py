@@ -3,8 +3,8 @@
 
 import itertools
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 from rorschach.utilities import Config, unpickle_data
@@ -80,7 +80,8 @@ class ConfusionMatrix:
         normalize = True
 
         if normalize:
-            self.confusion_matrix = self.confusion_matrix.astype('float') / self.confusion_matrix.sum(axis=1)[:, np.newaxis]
+            self.confusion_matrix = \
+                self.confusion_matrix.astype('float') / self.confusion_matrix.sum(axis=1)[:, np.newaxis]
 
             for i in range(len(self.confusion_matrix)):
                 for j in range(len(self.confusion_matrix[0])):
@@ -94,10 +95,10 @@ class ConfusionMatrix:
         fig = plt.figure(figsize=(size, size), dpi=80)
 
         ax = fig.add_subplot(111)
-
-        im = ax.imshow(self.confusion_matrix,
-                   interpolation='nearest',
-                   cmap=plt.cm.Blues,
+        im = ax.imshow(
+            self.confusion_matrix,
+            interpolation='nearest',
+            cmap=plt.cm.Blues,
         )
 
         divider = make_axes_locatable(ax)
@@ -111,9 +112,15 @@ class ConfusionMatrix:
 
         thresh = self.confusion_matrix.max() / 2.
         for i, j in itertools.product(range(self.confusion_matrix.shape[0]), range(self.confusion_matrix.shape[1])):
-            ax.text(j, i, "{0:0.3f}".format(self.confusion_matrix[i, j]),
-                     horizontalalignment="center",
-                     color="white" if self.confusion_matrix[i, j] > thresh else "black")
+            ax.text(
+                j,
+                i,
+                "{0:0.3f}".format(
+                    self.confusion_matrix[i, j]
+                ),
+                horizontalalignment="center",
+                color="white" if self.confusion_matrix[i, j] > thresh else "black"
+            )
 
         plt.tight_layout()
 

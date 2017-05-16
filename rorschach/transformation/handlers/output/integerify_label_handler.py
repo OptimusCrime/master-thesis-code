@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 
-import os
 import json
+import os
 
 import numpy as np
 
 from rorschach.common import DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
 from rorschach.utilities import Config, Filesystem, pickle_data, unpickle_data
+
 
 '''
 IntegerifyLabelHandler
@@ -54,7 +55,6 @@ class IntegerifyLabelHandler(BaseHandler):
             raise Exception('Label length information not found in information.pickl file')
 
         return data['label_length']
-
 
     def build_lookup_table(self):
         characters = Config.get('general.characters')

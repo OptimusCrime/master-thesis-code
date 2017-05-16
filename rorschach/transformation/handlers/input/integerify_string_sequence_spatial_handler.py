@@ -5,6 +5,7 @@ import numpy as np
 from rorschach.common import Constants, DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
 
+
 '''
 IntegerifyStringSequenceSpatialHandler
 

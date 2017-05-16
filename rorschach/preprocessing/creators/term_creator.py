@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import gc
-import os
 import json
+import os
 from random import randrange
 
 from rorschach.preprocessing.creators import AbstractCreator
 from rorschach.preprocessing.handlers import TextCreator
-from rorschach.utilities import Config, unpickle_data, JsonConfigEncoder
+from rorschach.utilities import Config, JsonConfigEncoder, unpickle_data
 
 
 class TermCreator(AbstractCreator):

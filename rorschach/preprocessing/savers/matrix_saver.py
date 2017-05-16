@@ -42,7 +42,6 @@ class MatrixSaver:
 
         return MatrixSaver.font_name_cleaning(font)
 
-
     @staticmethod
     def save_image(matrix, name, directory, font=None):
         # Create new image

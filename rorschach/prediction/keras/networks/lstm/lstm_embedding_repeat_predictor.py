@@ -2,10 +2,10 @@
 
 import math
 
-from keras.layers import LSTM, Activation, Dense, Embedding, Dropout, TimeDistributed, RepeatVector
+from keras.initializers import RandomUniform
+from keras.layers import LSTM, Activation, Dense, Dropout, Embedding, RepeatVector, TimeDistributed
 from keras.models import Sequential
 from keras.optimizers import Adam
-from keras.initializers import RandomUniform
 
 from rorschach.prediction.keras.networks import BaseKerasPredictor
 from rorschach.prediction.keras.tools import DimCalculator

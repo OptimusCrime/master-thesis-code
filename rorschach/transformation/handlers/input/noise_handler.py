@@ -7,6 +7,7 @@ from rorschach.common import DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
 from rorschach.utilities import Config
 
+
 '''
 NoiseHandler
 
@@ -62,4 +63,3 @@ class NoiseHandler(BaseHandler):
 
         print('Randomizer called', self.randomized_times, 'times.')
         print(differences, 'differences found (', differences_in_percent, '%).')
-

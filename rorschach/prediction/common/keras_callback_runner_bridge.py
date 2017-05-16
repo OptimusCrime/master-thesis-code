@@ -2,8 +2,8 @@
 
 from keras.callbacks import Callback
 
-from rorschach.prediction.common.callbacks import DataCallback, EpochIndicatorCallback, KerasSaverCallback, \
-    PlotterCallback
+from rorschach.prediction.common.callbacks import (DataCallback, EpochIndicatorCallback, KerasSaverCallback,
+                                                   PlotterCallback)
 
 
 class KerasCallbackRunnerBridge(Callback):
