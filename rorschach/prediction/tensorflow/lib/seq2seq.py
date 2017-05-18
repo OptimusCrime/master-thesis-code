@@ -62,6 +62,9 @@ from tensorflow.python.framework import dtypes, ops
 from tensorflow.python.ops import array_ops, control_flow_ops, embedding_ops, math_ops, nn_ops, variable_scope
 from tensorflow.python.util import nest
 
+# Gautvedt edit
+import tensorflow as tf
+
 # TODO(ebrevdo): Remove once _linear is fully deprecated.
 linear = core_rnn_cell_impl._linear  # pylint: disable=protected-access
 
@@ -82,9 +85,13 @@ def _extract_argmax_and_embed(embedding,
     A loop function.
   """
 
-  def loop_function(prev, _):
+  # EDITS HERE
+  def loop_function(prev, _, index):
     if output_projection is not None:
       prev = nn_ops.xw_plus_b(prev, output_projection[0], output_projection[1])
+
+    # prev_symbol = math_ops.argmin(prev, 1)
+    # prev_symbol = tf.convert_to_tensor([0], dtype=tf.int64)
     prev_symbol = math_ops.argmax(prev, 1)
     # Note that gradients will not propagate through the second parameter of
     # embedding_lookup.
@@ -130,10 +137,13 @@ def rnn_decoder(decoder_inputs,
     state = initial_state
     outputs = []
     prev = None
+    # Gautvedt edit:
+    index = 0
     for i, inp in enumerate(decoder_inputs):
+      index += 1
       if loop_function is not None and prev is not None:
         with variable_scope.variable_scope("loop_function", reuse=True):
-          inp = loop_function(prev, i)
+          inp = loop_function(prev, i, index)
       if i > 0:
         variable_scope.get_variable_scope().reuse_variables()
       output, state = cell(inp, state)

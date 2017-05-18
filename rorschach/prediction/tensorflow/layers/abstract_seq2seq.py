@@ -444,13 +444,18 @@ class AbstractSeq2seq(ABC):
 
         feed_dict, batch_x, batch_y = self.special_feed()
 
-        context_values = self.session.run(
+        context_values, output = self.session.run(
             [
-                self.context_vector_output_test
+                self.context_vector_output_test,
+                self.decode_outputs_test
             ],
             feed_dict
         )
 
+        print(np.array(batch_y).transpose([1, 0]))
+
+        output = np.argmax(np.array(output).transpose([1, 0, 2]), axis=2)
+        print(output)
         print(context_values)
 
     def predict(self):
