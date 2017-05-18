@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import importlib
 import sys
+import importlib
 
 
 class ModuleImporter:
