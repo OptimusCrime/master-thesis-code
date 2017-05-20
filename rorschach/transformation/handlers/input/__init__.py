@@ -3,4 +3,5 @@ from .integerify_string_sequence_handler import IntegerifyStringSequenceHandler
 from .integerify_string_sequence_spatial_handler import IntegerifyStringSequenceSpatialHandler
 from .noise_handler import NoiseHandler
 from .pad_handler import PadHandler
+from .rearrange_context_vector_sequence_values_handler import RearrangeContextVectorSequenceValuesHandler
 from .rearrange_sequence_values_handler import RearrangeSequenceValuesHandler

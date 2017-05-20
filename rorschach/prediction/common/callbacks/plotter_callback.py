@@ -42,6 +42,11 @@ class PlotterCallback(BaseCallback):
 
         ax = fig.add_subplot(111)
 
+        if PlotterCallback.LOSS in self.flags:
+            ax.grid(True, which="both")
+        else:
+            ax.grid(True)
+
         return fig, ax
 
     def adjust_plot(self):
@@ -60,6 +65,7 @@ class PlotterCallback(BaseCallback):
         if PlotterCallback.LOSS in self.flags:
             ax.plot(self.data.get('train_loss'), label="training")
             ax.plot(self.data.get('validate_loss'), label="validation")
+            ax.plot(self.data.get('validate_loss'), label="best model")
 
             return
 
@@ -67,14 +73,16 @@ class PlotterCallback(BaseCallback):
         ax.plot(self.data.get('validate_accuracy'), label="accuracy")
 
     def add_labels(self, ax):
+        ax.set_xlabel('epochs', fontsize=18)
+
         if PlotterCallback.LOSS in self.flags:
-            ax.set_title('loss')
-            ax.set_ylabel('loss')
+            #ax.set_title('loss', fontsize=18)
+            ax.set_ylabel('loss', fontsize=18)
 
             return
 
-        ax.set_title('accuracy')
-        ax.set_ylabel('accuracy')
+        #ax.set_title('accuracy')
+        ax.set_ylabel('accuracy', fontsize=18)
 
     def set_ticks(self, ax):
         ax.minorticks_on()
@@ -100,6 +108,13 @@ class PlotterCallback(BaseCallback):
         ax.set_yticks(np.arange(0., 1.1, 0.1))
 
     def adjust_legend(self, ax):
+        if PlotterCallback.LOSS in self.flags:
+            legend = ax.legend(loc='upper left')
+
+            legend.get_frame().set_alpha(1)
+
+        return None
+
         # Fix legend below the graph
         box_loss = ax.get_position()
 
