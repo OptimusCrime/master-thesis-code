@@ -4,6 +4,7 @@ import numpy as np
 
 from rorschach.common import DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
+from rorschach.utilities import Config
 
 
 '''
@@ -23,6 +24,9 @@ class PadHandler(BaseHandler):
         self.widest_sequence = None
         self.widest_label = None
         self.sequence_key = None
+
+        if Config.get('transformation.force-input-witdth') is not None:
+            self.widest_sequence = Config.get('transformation.force-input-witdth')
 
     def run(self, input_lists):
         super().run(input_lists)
@@ -55,6 +59,9 @@ class PadHandler(BaseHandler):
         width_sequence = len(obj[DataSetTypes.IMAGES][self.sequence_key])
         if self.widest_sequence is None or width_sequence > self.widest_sequence:
             self.widest_sequence = width_sequence
+
+            if Config.get('transformation.force-input-witdth') is not None:
+                raise Exception('Input wider than the forced input width')
 
         return obj
 

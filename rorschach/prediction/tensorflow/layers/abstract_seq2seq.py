@@ -16,7 +16,7 @@ from rorschach.prediction.common import CallbackRunner
 from rorschach.prediction.common.callbacks import (DataCallback, EpochIndicatorCallback, PlotterCallback,
                                                    TensorflowSaverCallback)
 from rorschach.prediction.tensorflow.tools import LogPrettifier, TimeParse, batch_gen
-from rorschach.utilities import Config, JsonConfigEncoder, LoggerWrapper, pickle_data
+from rorschach.utilities import Config, JsonConfigEncoder, LoggerWrapper, pickle_data, unpickle_data
 
 
 class AbstractSeq2seq(ABC):
@@ -452,11 +452,25 @@ class AbstractSeq2seq(ABC):
             feed_dict
         )
 
-        print(np.array(batch_y).transpose([1, 0]))
+        context_state = []
+        for i in range(len(context_values)):
+            context_state.append(context_values[i].h[0])
 
-        output = np.argmax(np.array(output).transpose([1, 0, 2]), axis=2)
-        print(output)
-        print(context_values)
+        context_data_file = Config.get_path('path.output', 'context_data.pickl', fragment=Config.get('uid'))
+        if os.path.exists(context_data_file):
+            context_data = unpickle_data(context_data_file)
+        else:
+            context_data = {}
+
+        if Config.get('general.special-identifier') not in context_data:
+            context_data[Config.get('general.special-identifier')] = []
+
+        context_data[Config.get('general.special-identifier')].append({
+            'state': context_state,
+            'input': batch_x
+        })
+
+        pickle_data(context_data, context_data_file)
 
     def predict(self):
         if Config.get('general.special') == 'attention':

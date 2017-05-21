@@ -3,6 +3,6 @@
 
 from rorschach.utilities import Config, unpickle_data
 
-data = unpickle_data(Config.get_path('path.data', 'test_set.pickl'))
+data = unpickle_data(Config.get_path('path.output', 'context_data.pickl', fragment=Config.get('uid')))
 
 print(data)
