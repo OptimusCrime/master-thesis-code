@@ -5,7 +5,7 @@ import os
 
 import numpy as np
 from matplotlib import pyplot as plt
-from sklearn.manifold import TSNE
+from sklearn.decomposition import PCA
 
 from rorschach.utilities import Config, unpickle_data
 
@@ -45,12 +45,15 @@ class PlotVector:
 
         x = np.array(vectors_raw, dtype=np.float32)
 
-        model = TSNE(n_components=2, random_state=0, method='exact')
-        transformed = model.fit_transform(x)
+        model = PCA(n_components=2)
+        model.fit(x)
+        transformed = model.transform(x)
+
+        print(words)
 
         colors = []
         for word in words:
-            for i in word['vectors']:
+            for _ in word['vectors']:
                 colors.append(word['color'])
 
         scatter_x = []
@@ -59,9 +62,15 @@ class PlotVector:
             scatter_x.append(el[0])
             scatter_y.append(el[1])
 
+        sizes = [100] * len(scatter_x)
+
         fig, ax = plt.subplots()
-        ax.scatter(scatter_x, scatter_y, c=colors, alpha=0.5)
+        ax.scatter(scatter_x, scatter_y, s=sizes, c=colors, alpha=1)
         ax.grid(True)
+
+        ax.get_xaxis().set_ticklabels([])
+        ax.get_yaxis().set_ticklabels([])
+
         fig.tight_layout()
 
         fig.savefig(Config.get_path('path.output', 'context.png', fragment=Config.get('uid')))
