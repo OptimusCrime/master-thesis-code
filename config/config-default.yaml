@@ -79,7 +79,7 @@ transformation:
     noise-random-factor: 0
 
     # Seed to use for randomness
-    noise-random-seed: None
+    noise-random-seed:
 
 ##################################################################
 #                       Preprocessing                            #

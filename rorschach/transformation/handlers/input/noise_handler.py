@@ -3,6 +3,8 @@
 import copy
 import random
 
+import numpy as np
+
 from rorschach.common import DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
 from rorschach.utilities import Config
@@ -40,13 +42,29 @@ class NoiseHandler(BaseHandler):
         super().list_handler(input_list, key)
 
     def obj_handler(self, obj):
+        force_randomness = False
+        if Config.get('general.mode') == 'predict' and Config.get('general.special') == 'context':
+            if Config.get('general.special-identifier') is not None and\
+                    Config.get('general.special-identifier') == obj[DataSetTypes.LABELS]['text']:
+                force_randomness = True
+
         matrix = obj[DataSetTypes.IMAGES]['matrix'][0]
         self.original.append(copy.copy(obj[DataSetTypes.IMAGES]['matrix'][0]))
         self.values += len(matrix)
+        this_randomized_times = 0
         for i in range(len(matrix)):
             if random.randint(0, 100) <= self.random_factor:
+                this_randomized_times += 1
                 self.randomized_times += 1
                 matrix[i] = True if random.randint(0, 1) == 1 else False
+
+        if force_randomness and this_randomized_times == 0:
+            print('No randomness added to forced word, running again')
+            return self.obj_handler(obj)
+
+        if force_randomness:
+            actual_differences = np.sum(np.not_equal(self.original[-1], obj[DataSetTypes.IMAGES]['matrix'][0]))
+            print('Actual differences: ', actual_differences)
 
         self.randomized.append(copy.copy(obj[DataSetTypes.IMAGES]['matrix'][0]))
 
