@@ -65,7 +65,6 @@ class PlotterCallback(BaseCallback):
         if PlotterCallback.LOSS in self.flags:
             ax.plot(self.data.get('train_loss'), label="training")
             ax.plot(self.data.get('validate_loss'), label="validation")
-            ax.plot(self.data.get('validate_loss'), label="best model")
 
             return
 
@@ -109,7 +108,7 @@ class PlotterCallback(BaseCallback):
 
     def adjust_legend(self, ax):
         if PlotterCallback.LOSS in self.flags:
-            legend = ax.legend(loc='upper left')
+            legend = ax.legend(loc='upper right')
 
             legend.get_frame().set_alpha(1)
 
@@ -136,6 +135,8 @@ class PlotterCallback(BaseCallback):
         ax.scatter(self.data.get('stores'), values, s=sizes, color='red', alpha=0.3)
 
     def save_plot(self, fig):
+        fig.tight_layout()
+
         file_name = 'plot_loss'
         if PlotterCallback.ACCURACY in self.flags:
             file_name = 'plot_accuracy'
