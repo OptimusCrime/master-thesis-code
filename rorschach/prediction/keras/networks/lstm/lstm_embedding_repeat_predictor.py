@@ -14,8 +14,6 @@ from rorschach.utilities import Config
 
 class LSTMEmbeddingVectorPredictor(BaseKerasPredictor):
 
-    LSTM_REPEAT_SIZE = 3
-
     def __init__(self):
         super().__init__()
 
@@ -27,7 +25,7 @@ class LSTMEmbeddingVectorPredictor(BaseKerasPredictor):
         self.model.add(
             Embedding(
                 Config.get('dataset.voc_size_input'),
-                128,
+                Config.get('predicting.embedding-dim'),
                 input_length=self.dim_calculator.get(DimCalculator.INPUT_WIDTH),
                 mask_zero=True,
                 embeddings_initializer=RandomUniform(minval=math.sqrt(3), maxval=math.sqrt(3))
@@ -35,12 +33,12 @@ class LSTMEmbeddingVectorPredictor(BaseKerasPredictor):
         )
 
         # "Encoder"
-        for i in range(LSTMEmbeddingVectorPredictor.LSTM_REPEAT_SIZE):
+        for i in range(Config.get('predicting.rnn-group-depth')):
             # The last LSTM should not return the complete sequence
             self.model.add(
                 LSTM(
                     1024,
-                    return_sequences=(LSTMEmbeddingVectorPredictor.LSTM_REPEAT_SIZE - 1) != i,
+                    return_sequences=(Config.get('predicting.rnn-group-depth') - 1) != i,
                     recurrent_activation='sigmoid'
                 )
             )
@@ -51,7 +49,7 @@ class LSTMEmbeddingVectorPredictor(BaseKerasPredictor):
         self.model.add(RepeatVector(self.dim_calculator.get(DimCalculator.LABELS_WIDTH)))
 
         # "Decoder"
-        for _ in range(LSTMEmbeddingVectorPredictor.LSTM_REPEAT_SIZE):
+        for _ in range(Config.get('predicting.rnn-group-depth')):
             self.model.add(
                 LSTM(
                     1024,

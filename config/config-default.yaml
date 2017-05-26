@@ -155,6 +155,12 @@ predicting:
     # The learning rate for our network
     learning-rate: 0.001
 
+    # Specify the dimension of the embedding layer(s)
+    embedding-dim: 128
+
+    # Size of LSTM groups
+    rnn-group-depth: 3
+
     # Class to lazy load for the prediction
     predictor: prediction.tensorflow.networks.sequence.EmbeddingAttentionSeq2SeqPredictor
     #predictor: prediction.tensorflow.networks.sequence.EmbeddingRNNSeq2SeqPredictor
