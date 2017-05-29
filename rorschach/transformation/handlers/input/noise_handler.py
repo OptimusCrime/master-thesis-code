@@ -49,7 +49,7 @@ class NoiseHandler(BaseHandler):
                 force_randomness = True
 
         matrix = obj[DataSetTypes.IMAGES]['matrix'][0]
-        self.original.append(copy.copy(obj[DataSetTypes.IMAGES]['matrix'][0]))
+        original_temp = copy.copy(obj[DataSetTypes.IMAGES]['matrix'][0])
         self.values += len(matrix)
         this_randomized_times = 0
         for i in range(len(matrix)):
@@ -61,6 +61,8 @@ class NoiseHandler(BaseHandler):
         if force_randomness and this_randomized_times == 0:
             print('No randomness added to forced word, running again')
             return self.obj_handler(obj)
+
+        self.original.append(original_temp)
 
         if force_randomness:
             actual_differences = np.sum(np.not_equal(self.original[-1], obj[DataSetTypes.IMAGES]['matrix'][0]))

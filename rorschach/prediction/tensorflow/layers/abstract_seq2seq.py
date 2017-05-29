@@ -98,6 +98,7 @@ class AbstractSeq2seq(ABC):
         # Context vector
         self.context_vector_output = None
         self.context_vector_output_test = None
+        self.special_batch = None
 
     def register_data_container(self, data_container):
         self.callback = CallbackRunner(data_container)
@@ -406,11 +407,39 @@ class AbstractSeq2seq(ABC):
         self.log.write('Finish predict', LogPrettifier.NULL)
 
     def special_feed(self):
-        special_batch = batch_gen(
+        special_batch = self.create_special_batch()
+
+        batch_x, batch_y = AbstractSeq2seq.special_feed_batch(special_batch)
+
+        return self.get_feed(batch_x, batch_y, keep_prob=1.), batch_x, batch_y
+
+    def create_special_batch(self):
+        if Config.get('general.special-dataset') and self.special_batch is not None:
+            return self.special_batch
+
+        if Config.get('general.special-dataset'):
+            self.special_batch = batch_gen(
+                self.model.test_images_transformed,
+                self.model.test_labels_transformed,
+                1
+            )
+
+            if Config.get('general.special-offset') is not None:
+                for _ in range(Config.get('general.special-offset')):
+                    batch_x, batch_y = self.special_batch.__next__()
+
+            return self.special_batch
+
+        return batch_gen(
             self.model.test_images_transformed,
             self.model.test_labels_transformed,
             1
         )
+
+    @staticmethod
+    def special_feed_batch(special_batch):
+        if Config.get('general.special-dataset'):
+            return special_batch.__next__()
 
         offset = 1
         batch_x, batch_y = (None, None)
@@ -420,7 +449,7 @@ class AbstractSeq2seq(ABC):
         for _ in range(offset):
             batch_x, batch_y = special_batch.__next__()
 
-        return self.get_feed(batch_x, batch_y, keep_prob=1.), batch_x, batch_y
+        return batch_x, batch_y
 
     def attention(self):
         if self.attention_output is None or self.attention_output_test is None:
@@ -442,19 +471,30 @@ class AbstractSeq2seq(ABC):
         if self.context_vector_output is None or self.context_vector_output_test is None:
             raise Exception('Special context vector not found')
 
-        feed_dict, batch_x, batch_y = self.special_feed()
+        length = 1
+        if Config.get('general.special-length') is not None:
+            length = int(Config.get('general.special-length'))
 
-        context_values, output = self.session.run(
-            [
-                self.context_vector_output_test,
-                self.decode_outputs_test
-            ],
-            feed_dict
-        )
+        context_states = []
+        for _ in range(length):
+            feed_dict, batch_x, batch_y = self.special_feed()
 
-        context_state = []
-        for i in range(len(context_values)):
-            context_state.append(context_values[i].h[0])
+            context_values, output = self.session.run(
+                [
+                    self.context_vector_output_test,
+                    self.decode_outputs_test
+                ],
+                feed_dict
+            )
+
+            context_state = []
+            for i in range(len(context_values)):
+                context_state.append(context_values[i].h[0])
+
+            context_states.append({
+                'state': context_state,
+                'input': batch_x
+            })
 
         context_data_file = Config.get_path('path.output', 'context_data.pickl', fragment=Config.get('uid'))
         if os.path.exists(context_data_file):
@@ -465,10 +505,7 @@ class AbstractSeq2seq(ABC):
         if Config.get('general.special-identifier') not in context_data:
             context_data[Config.get('general.special-identifier')] = []
 
-        context_data[Config.get('general.special-identifier')].append({
-            'state': context_state,
-            'input': batch_x
-        })
+        context_data[Config.get('general.special-identifier')].extend(context_states)
 
         pickle_data(context_data, context_data_file)
 

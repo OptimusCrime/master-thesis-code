@@ -6,6 +6,7 @@ import os
 import numpy as np
 from matplotlib import pyplot as plt
 from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
 
 from rorschach.utilities import Config, unpickle_data
 
@@ -15,7 +16,15 @@ class PlotVector:
     COLORS = ['r', 'b', 'g']
 
     def __init__(self):
-        pass
+        self.mode = None
+        while True:
+            user_mode = input('Chose mode, [p] for PCA, [t] for TSNE')
+            if user_mode in ['p', 't']:
+                self.mode = user_mode
+                break
+
+            print('Invalid mode, please try again')
+            print('')
 
     def run(self):
         context_data_file = Config.get_path('path.output', 'context_data.pickl', fragment=Config.get('uid'))
@@ -45,9 +54,13 @@ class PlotVector:
 
         x = np.array(vectors_raw, dtype=np.float32)
 
-        model = PCA(n_components=2)
-        model.fit(x)
-        transformed = model.transform(x)
+        if self.mode == 'p':
+            model = PCA(n_components=2)
+            model.fit(x)
+            transformed = model.transform(x)
+        else:
+            model = TSNE(n_components=2, random_state=0)
+            transformed = model.fit_transform(x)
 
         print(words)
 
