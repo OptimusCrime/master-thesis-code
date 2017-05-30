@@ -1,0 +1,11 @@
+{
+  "name": "rorschach",
+  "version": "1.0.0",
+  "dependencies": {
+    "showdown": "^1.6.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "convert": "showdown makehtml -i README.md -o README.html"
+  }
+}

@@ -6,7 +6,7 @@ __pycache__
 tests/.cache
 data_*/
 rorschach/*.png
-
+node_modules/
 *.ttf
 *.whl
 *.jar
