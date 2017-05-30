@@ -75,12 +75,9 @@ class PlotterCallback(BaseCallback):
         ax.set_xlabel('epochs', fontsize=18)
 
         if PlotterCallback.LOSS in self.flags:
-            #ax.set_title('loss', fontsize=18)
             ax.set_ylabel('loss', fontsize=18)
-
             return
 
-        #ax.set_title('accuracy')
         ax.set_ylabel('accuracy', fontsize=18)
 
     def set_ticks(self, ax):

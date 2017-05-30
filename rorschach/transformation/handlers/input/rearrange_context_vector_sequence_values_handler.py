@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 
-import json
 
 import numpy as np
 
 from rorschach.common import Constants, DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
-from rorschach.utilities import Config
 
 
 '''
-RearrangeSequenceValuesHandler
+RearrangeContextVectorSequenceValuesHandler
 
 Because embedding solutions require whole integer values, we need to rearrange our upper and lower bounds and shift
 the values so that all values are whole integers.
+
+Special variant for the context vector plotting
 
 '''
 

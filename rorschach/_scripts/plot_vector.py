@@ -73,10 +73,12 @@ class PlotVector:
             scatter_x.append(el[0])
             scatter_y.append(el[1])
 
-        sizes = [100] * len(scatter_x)
-
         fig, ax = plt.subplots()
-        ax.scatter(scatter_x, scatter_y, c=colors, alpha=1)
+        if self.mode == 'p':
+            ax.scatter(scatter_x, scatter_y, c=colors, alpha=1)
+        else:
+            sizes = [100] * len(scatter_x)
+            ax.scatter(scatter_x, scatter_y, c=colors, s=sizes, alpha=1)
         ax.grid(True)
 
         ax.get_xaxis().set_ticklabels([])
