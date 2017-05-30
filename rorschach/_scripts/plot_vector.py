@@ -18,7 +18,7 @@ class PlotVector:
     def __init__(self):
         self.mode = None
         while True:
-            user_mode = input('Chose mode, [p] for PCA, [t] for TSNE')
+            user_mode = input('Chose mode, [p] for PCA, [t] for TSNE: ')
             if user_mode in ['p', 't']:
                 self.mode = user_mode
                 break
@@ -39,12 +39,12 @@ class PlotVector:
 
         for key, value in context_data.items():
             words.append({
-                'word':key,
+                'word': key,
                 'color': PlotVector.COLORS[len(words)],
                 'vectors': []
             })
 
-            for i in range(len(value)):
+            for i in range(min(len(value), 4000)):
                 temp_vector = []
                 for inner_vector in value[i]['state']:
                     temp_vector.extend(inner_vector)
@@ -59,10 +59,8 @@ class PlotVector:
             model.fit(x)
             transformed = model.transform(x)
         else:
-            model = TSNE(n_components=2, random_state=0)
+            model = TSNE(n_components=2, perplexity=100, n_iter=10000, verbose=True)
             transformed = model.fit_transform(x)
-
-        print(words)
 
         colors = []
         for word in words:
@@ -78,7 +76,7 @@ class PlotVector:
         sizes = [100] * len(scatter_x)
 
         fig, ax = plt.subplots()
-        ax.scatter(scatter_x, scatter_y, s=sizes, c=colors, alpha=1)
+        ax.scatter(scatter_x, scatter_y, c=colors, alpha=1)
         ax.grid(True)
 
         ax.get_xaxis().set_ticklabels([])
