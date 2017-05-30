@@ -9,8 +9,8 @@ from rorschach.utilities import Config, pickle_data, unpickle_data
 class DatasetSelector:
 
     def __init__(self):
-        self.words = [163, 469, 797]
-        self.individual_length = 1000
+        self.words = [797]
+        self.individual_length = 10000
 
     def run(self):
         data = unpickle_data(Config.get_path('path.data', 'test_set.pickl'))

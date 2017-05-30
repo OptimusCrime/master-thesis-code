@@ -487,6 +487,21 @@ class AbstractSeq2seq(ABC):
                 feed_dict
             )
 
+            # Transpose the validation output
+            output = np.array(output).transpose([1, 0, 2])
+
+            # Transpose the validate labels
+            labels = np.array(batch_y).transpose([1, 0])
+
+            # We use argmax to get the output with the highest probability for each character in the output
+            predictions = np.argmax(output, axis=2)
+
+            print('labels')
+            print(labels)
+            print('')
+            print('predictions')
+            print(predictions)
+
             context_state = []
             for i in range(len(context_values)):
                 context_state.append(context_values[i].h[0])

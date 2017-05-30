@@ -62,7 +62,6 @@ from tensorflow.python.framework import dtypes, ops
 from tensorflow.python.ops import array_ops, control_flow_ops, embedding_ops, math_ops, nn_ops, variable_scope
 from tensorflow.python.util import nest
 
-# Gautvedt edit
 import tensorflow as tf
 
 # TODO(ebrevdo): Remove once _linear is fully deprecated.
@@ -85,13 +84,11 @@ def _extract_argmax_and_embed(embedding,
     A loop function.
   """
 
-  # EDITS HERE
   def loop_function(prev, _, index):
     if output_projection is not None:
       prev = nn_ops.xw_plus_b(prev, output_projection[0], output_projection[1])
-
-    # prev_symbol = math_ops.argmin(prev, 1)
     # prev_symbol = tf.convert_to_tensor([0], dtype=tf.int64)
+    # prev_symbol = math_ops.argmin(prev, 1)
     prev_symbol = math_ops.argmax(prev, 1)
     # Note that gradients will not propagate through the second parameter of
     # embedding_lookup.
@@ -137,7 +134,7 @@ def rnn_decoder(decoder_inputs,
     state = initial_state
     outputs = []
     prev = None
-    # Gautvedt edit:
+
     index = 0
     for i, inp in enumerate(decoder_inputs):
       index += 1
@@ -653,7 +650,6 @@ def attention_decoder(decoder_inputs,
           d = math_ops.reduce_sum(
               array_ops.reshape(a, [-1, attn_length, 1, 1]) * hidden, [1, 2])
           ds.append(array_ops.reshape(d, [-1, attn_size]))
-      # Gautvedt: add a return value
       return ds, a
 
     outputs = []
@@ -666,11 +662,9 @@ def attention_decoder(decoder_inputs,
     for a in attns:  # Ensure the second shape of attention vectors is set.
       a.set_shape([None, attn_size])
 
-    # Gautvedt: create var
     attention_output = []
 
     if initial_state_attention:
-      # Gautvedt: add return value
       attns, new_attention_output = attention(initial_state)
       attention_output.append(new_attention_output)
     for i, inp in enumerate(decoder_inputs):
@@ -691,11 +685,9 @@ def attention_decoder(decoder_inputs,
       if i == 0 and initial_state_attention:
         with variable_scope.variable_scope(
             variable_scope.get_variable_scope(), reuse=True):
-          # Gautvedt: create var
           attns, new_attention_output = attention(state)
           attention_output.append(new_attention_output)
       else:
-        # Gautvedt: create var
         attns, new_attention_output = attention(state)
         attention_output.append(new_attention_output)
 
@@ -892,7 +884,6 @@ def embedding_attention_seq2seq(encoder_inputs,
       reuse = None if feed_previous_bool else True
       with variable_scope.variable_scope(
           variable_scope.get_variable_scope(), reuse=reuse) as scope:
-        # Gautvedt add: return value
         outputs, state, attention_output = embedding_attention_decoder(
             decoder_inputs,
             encoder_state,

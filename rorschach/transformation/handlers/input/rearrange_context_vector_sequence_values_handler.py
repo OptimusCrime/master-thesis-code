@@ -4,7 +4,7 @@ import json
 
 import numpy as np
 
-from rorschach.common import DataSetTypes, Constants
+from rorschach.common import Constants, DataSetTypes
 from rorschach.transformation.handlers import BaseHandler
 from rorschach.utilities import Config
 
@@ -64,4 +64,3 @@ class RearrangeContextVectorSequenceValuesHandler(BaseHandler):
         obj[DataSetTypes.IMAGES]['input'] = new_matrix
 
         return obj
-
