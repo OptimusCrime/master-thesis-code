@@ -21,7 +21,6 @@ class OneHotHandler(BaseHandler):
         super().__init__()
 
         self.depth = len(unpickle_data(Config.get_path('path.data', 'labels.pickl')))
-        print(self.depth)
 
     def list_handler(self, input_list, key):
         # Ignore the data set
