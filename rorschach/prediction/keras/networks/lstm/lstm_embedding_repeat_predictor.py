@@ -37,7 +37,7 @@ class LSTMEmbeddingVectorPredictor(BaseKerasPredictor):
             # The last LSTM should not return the complete sequence
             self.model.add(
                 LSTM(
-                    1024,
+                    128,
                     return_sequences=(Config.get('predicting.rnn-group-depth') - 1) != i,
                     recurrent_activation='sigmoid'
                 )
@@ -52,7 +52,7 @@ class LSTMEmbeddingVectorPredictor(BaseKerasPredictor):
         for _ in range(Config.get('predicting.rnn-group-depth')):
             self.model.add(
                 LSTM(
-                    1024,
+                    128,
                     return_sequences=True,
                     recurrent_activation='sigmoid'
                 )
