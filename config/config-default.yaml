@@ -128,15 +128,15 @@ preprocessing:
 
     # Training set
     training-set:
-        size: 500
+        size: 10000
 
     # Validate set
     validate-set:
-        size: 50
+        size: 1000
 
     # Test set
     test-set:
-        size: 500
+        size: 10000
 
 
 ##################################################################
