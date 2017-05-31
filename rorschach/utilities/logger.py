@@ -84,7 +84,7 @@ class LoggerWrapper:
 
     @staticmethod
     def load(name, logger_type=DEFAULT):
-        # This may be the ugliest hack every applied. Because static variable are evaluated on initialization
+        # This may be the ugliest hack ever. Because static variable are evaluated on initialization
         # we instead add this logic here, which is not ran before the first call to this function. We can then avoid
         # that our system creates a new directory for every uid seed.
         LoggerWrapper.LOG_CONFIGS[logger_type]['handlers']['file']['filename'] = \

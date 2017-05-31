@@ -1,5 +1,4 @@
 from .concatenate_binary_data_handler import ConcatenateBinaryDataHandler
-from .integerify_string_sequence_handler import IntegerifyStringSequenceHandler
 from .integerify_string_sequence_spatial_handler import IntegerifyStringSequenceSpatialHandler
 from .noise_handler import NoiseHandler
 from .pad_handler import PadHandler
