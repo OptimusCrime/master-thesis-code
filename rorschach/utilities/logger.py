@@ -6,8 +6,6 @@ from logging.config import dictConfig
 
 from rorschach.utilities import Config, Filesystem, UidGenerator
 
-UidGenerator.run()
-
 
 class LoggerWrapper:
 
@@ -79,11 +77,17 @@ class LoggerWrapper:
         }
     }
 
+    INIT = False
+
     def __init__(self):
         pass
 
     @staticmethod
     def load(name, logger_type=DEFAULT):
+        if not LoggerWrapper.INIT:
+            UidGenerator.run()
+            LoggerWrapper.INIT = True
+
         # This may be the ugliest hack ever. Because static variable are evaluated on initialization
         # we instead add this logic here, which is not ran before the first call to this function. We can then avoid
         # that our system creates a new directory for every uid seed.
